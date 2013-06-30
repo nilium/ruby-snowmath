@@ -1,0 +1,17 @@
+#! /usr/bin/env ruby -w
+# This file is part of ruby-snowmath.
+# Copyright (c) 2013 Noel Raymond Cower. All rights reserved.
+# See COPYING for license details.
+
+require 'mkmf'
+
+if ARGV.include?("--use-float") || ARGV.include?("-F")
+  $CFLAGS += " -DUSE_FLOAT"
+  puts "Using float as base type"
+else
+  puts "Using double as base type"
+end
+
+have_library('m', 'cos')
+
+create_makefile('snow-math/bindings', 'snow-math/')
