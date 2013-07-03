@@ -5,6 +5,9 @@
 
 require 'mkmf'
 
+# Compile as C99
+$CFLAGS += " -std=c99"
+
 if ARGV.include?("--use-float") || ARGV.include?("-F")
   $CFLAGS += " -DUSE_FLOAT"
   puts "Using float as base type"
