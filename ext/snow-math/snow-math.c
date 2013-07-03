@@ -89,10 +89,11 @@ static TYPE##_t * SM_UNWRAP(TYPE) (VALUE sm_value, TYPE##_t store)
 DECL_SM_WRAP_OP(TYPE)                                                                             \
 {                                                                                                 \
   TYPE##_t *copy;                                                                                 \
+  VALUE sm_wrapped = Qnil;                                                                        \
   if (!RTEST(klass)) {                                                                            \
     klass = SM_KLASS(TYPE);                                                                       \
   }                                                                                               \
-  VALUE sm_wrapped = Data_Make_Struct(klass, TYPE##_t, 0, free, copy);                            \
+  sm_wrapped = Data_Make_Struct(klass, TYPE##_t, 0, free, copy);                                  \
   if (value) {                                                                                    \
     TYPE##_copy(value, *copy);                                                                    \
   }                                                                                               \
@@ -140,11 +141,11 @@ static VALUE sm_##TYPE##_##FUNC (int argc, VALUE *argv, VALUE sm_self)          
   if (argc == 2) {                                                                                \
     if (!RTEST(sm_out)) {                                                                         \
       goto SM_LABEL(skip_output);                                                                 \
-    }                                                                                             \
+    }{                                                                                            \
     SM_RAISE_IF_NOT_TYPE(sm_out, OTYPE);                                                          \
     OTYPE##_t *output = SM_UNWRAP(OTYPE)(sm_out, NULL);                                           \
     TYPE##_##FUNC (*self, *rhs, *output);                                                         \
-  } else if (argc == 1) {                                                                         \
+  }} else if (argc == 1) {                                                                        \
 SM_LABEL(skip_output): {                                                                          \
     OTYPE##_t output;                                                                             \
     TYPE##_##FUNC (*self, *rhs, output);                                                          \
@@ -178,11 +179,11 @@ static VALUE sm_##TYPE##_##FUNC (int argc, VALUE *argv, VALUE sm_self)          
   if (argc == 1) {                                                                                \
     if (!RTEST(sm_out)) {                                                                         \
       goto SM_LABEL(skip_output);                                                                 \
-    }                                                                                             \
+    }{                                                                                            \
     SM_RAISE_IF_NOT_TYPE(sm_out, OTYPE);                                                          \
     OTYPE##_t *output = SM_UNWRAP(OTYPE)(sm_out, NULL);                                           \
     TYPE##_##FUNC (*self, *output);                                                               \
-  } else if (argc == 0) {                                                                         \
+  }} else if (argc == 0) {                                                                        \
 SM_LABEL(skip_output): {                                                                          \
     OTYPE##_t output;                                                                             \
     TYPE##_##FUNC (*self, output);                                                                \
