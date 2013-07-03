@@ -29,7 +29,7 @@ const mat4_t g_mat4_identity = {
   0.0, 0.0, 0.0, 1.0
 };
 
-static inline s_float_t mat4_cofactor(const mat4_t m, int r0, int r1, int r2, int c0, int c1, int c2);
+static s_float_t mat4_cofactor(const mat4_t m, int r0, int r1, int r2, int c0, int c1, int c2);
 
 void mat4_identity(mat4_t out)
 {
@@ -540,7 +540,7 @@ int mat4_inverse_affine(const mat4_t in, mat4_t out)
   return 1;
 }
 
-inline s_float_t mat4_cofactor(const mat4_t m, int r0, int r1, int r2, int c0, int c1, int c2)
+static s_float_t mat4_cofactor(const mat4_t m, int r0, int r1, int r2, int c0, int c1, int c2)
 {
   #define cofactor_addr(l, r) (m[l*4+r])
   return (
