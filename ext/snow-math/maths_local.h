@@ -14,10 +14,15 @@
 #include <math.h>
 #endif
 
+#define S_STATIC_INLINE
+#ifndef S_STATIC_INLINE
 #ifdef __SNOW__MATHS_C__
 #define S_INLINE
 #else
-#define S_INLINE inline
+#define S_INLINE extern inline
+#endif
+#else
+#define S_INLINE static
 #endif
 
 #if defined(__cplusplus)
