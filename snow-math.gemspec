@@ -4,7 +4,7 @@
 
 Gem::Specification.new { |s|
   s.name        = 'snow-math'
-  s.version     = '0.0.2'
+  s.version     = '1.0.0'
   s.date        = '2013-06-25'
   s.summary     = 'Snow Math Types'
   s.description = 'Math types built on the SnowPalm math code'
@@ -19,4 +19,5 @@ Gem::Specification.new { |s|
   s.rdoc_options << '--title' << 'snowmath -- 3D Math Types' <<
                     '--main' << 'README.md' <<
                     '--line-numbers'
+  s.required_ruby_version = '>= 2.0.0'
 }
