@@ -284,16 +284,16 @@ static VALUE sm_mathtype_array_length(VALUE sm_self)
 #define DEF_SM_ARR_TYPE(ELEM_TYPE)                                                                \
 static VALUE SM_ARR_KLASS(ELEM_TYPE) = Qnil;                                                      \
                                                                                                   \
-static VALUE sm_##ELEM_TYPE##_array_new(VALUE sm_self, VALUE sm_length)                           \
+static VALUE sm_##ELEM_TYPE##_array_new(VALUE sm_self, VALUE sm_length_or_copy)                   \
 {                                                                                                 \
-  int length = 0;                                                                                 \
+  size_t length = 0;                                                                              \
   ELEM_TYPE##_t *arr;                                                                             \
   VALUE sm_type_array;                                                                            \
   int copy_array = 0;                                                                             \
-  if ((copy_array = SM_IS_A(sm_length, ELEM_TYPE##_array))) {                                     \
-    length = NUM2INT(sm_mathtype_array_length(sm_length));                                        \
+  if ((copy_array = SM_IS_A(sm_length_or_copy, ELEM_TYPE##_array))) {                             \
+    length = NUM2SIZET(sm_mathtype_array_length(sm_length_or_copy));                              \
   } else {                                                                                        \
-    length = NUM2INT(sm_length);                                                                  \
+    length = NUM2SIZET(sm_length_or_copy);                                                        \
   }                                                                                               \
   if (length <= 0) {                                                                              \
     return Qnil;                                                                                  \
@@ -301,12 +301,12 @@ static VALUE sm_##ELEM_TYPE##_array_new(VALUE sm_self, VALUE sm_length)         
   arr = ALLOC_N(ELEM_TYPE##_t, length);                                                           \
   if (copy_array) {                                                                               \
     const ELEM_TYPE##_t *source;                                                                  \
-    Data_Get_Struct(sm_length, ELEM_TYPE##_t, source);                                            \
+    Data_Get_Struct(sm_length_or_copy, ELEM_TYPE##_t, source);                                    \
     MEMCPY(arr, source, ELEM_TYPE##_t, length);                                                   \
-    sm_length = sm_mathtype_array_length(sm_length);                                              \
+    sm_length_or_copy = sm_mathtype_array_length(sm_length_or_copy);                              \
   }                                                                                               \
   sm_type_array = Data_Wrap_Struct(sm_self, 0, free, arr);                                        \
-  rb_ivar_set(sm_type_array, kRB_IVAR_MATHARRAY_LENGTH, sm_length);                               \
+  rb_ivar_set(sm_type_array, kRB_IVAR_MATHARRAY_LENGTH, sm_length_or_copy);                       \
   rb_obj_call_init(sm_type_array, 0, 0);                                                          \
   return sm_type_array;                                                                           \
 }                                                                                                 \
@@ -323,12 +323,12 @@ static VALUE sm_##ELEM_TYPE##_array_resize(VALUE sm_self, VALUE sm_new_length)  
 static VALUE sm_##ELEM_TYPE##_array_fetch(VALUE sm_self, VALUE sm_index)                          \
 {                                                                                                 \
   ELEM_TYPE##_t *arr;                                                                             \
-  int length = NUM2INT(sm_mathtype_array_length(sm_self));                                        \
-  int index = NUM2INT(sm_index);                                                                  \
+  size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));                                   \
+  size_t index = NUM2SIZET(sm_index);                                                             \
   VALUE sm_inner;                                                                                 \
   if (index < 0 || index >= length) {                                                             \
     rb_raise(rb_eRangeError,                                                                      \
-      "Index %d out of bounds for array with length %d",                                          \
+      "Index %zu out of bounds for array with length %zu",                                        \
       index, length);                                                                             \
   }                                                                                               \
   Data_Get_Struct(sm_self, ELEM_TYPE##_t, arr);                                                   \
@@ -341,11 +341,11 @@ static VALUE sm_##ELEM_TYPE##_array_store(VALUE sm_self, VALUE sm_index, VALUE s
 {                                                                                                 \
   ELEM_TYPE##_t *arr;                                                                             \
   ELEM_TYPE##_t *value;                                                                           \
-  int length = NUM2INT(sm_mathtype_array_length(sm_self));                                        \
-  int index = NUM2INT(sm_index);                                                                  \
+  size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));                                   \
+  size_t index = NUM2SIZET(sm_index);                                                             \
   if (index < 0 || index >= length) {                                                             \
     rb_raise(rb_eRangeError,                                                                      \
-      "Index %d out of bounds for array with length %d",                                          \
+      "Index %zu out of bounds for array with length %zu",                                        \
       index, length);                                                                             \
   } else if (!SM_IS_A(sm_value, ELEM_TYPE)) {                                                     \
     rb_raise(rb_eTypeError,                                                                       \
@@ -364,7 +364,7 @@ static VALUE sm_##ELEM_TYPE##_array_store(VALUE sm_self, VALUE sm_index, VALUE s
                                                                                                   \
 static VALUE sm_##ELEM_TYPE##_array_size(VALUE sm_self)                                           \
 {                                                                                                 \
-  int length = NUM2INT(sm_mathtype_array_length(sm_self));                                        \
+  size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));                                   \
   return SIZET2NUM(length * sizeof(ELEM_TYPE##_t));                                               \
 }
 
