@@ -275,6 +275,7 @@ static VALUE sm_mathtype_array_length(VALUE sm_self)
     rb_define_singleton_method(klass_, "new", sm_##ELEM_TYPE##_array_new, 1);                     \
     rb_define_method(klass_, "fetch", sm_##ELEM_TYPE##_array_fetch, 1);                           \
     rb_define_method(klass_, "store", sm_##ELEM_TYPE##_array_store, 2);                           \
+    rb_define_method(klass_, "resize!", sm_##ELEM_TYPE##_array_resize, 1);                        \
     rb_define_method(klass_, "size", sm_##ELEM_TYPE##_array_size, 0);                             \
     rb_define_method(klass_, "length", sm_mathtype_array_length, 0);                              \
     rb_define_method(klass_, "address", sm_get_address, 0);                                       \
@@ -308,6 +309,15 @@ static VALUE sm_##ELEM_TYPE##_array_new(VALUE sm_self, VALUE sm_length)         
   rb_ivar_set(sm_type_array, kRB_IVAR_MATHARRAY_LENGTH, sm_length);                               \
   rb_obj_call_init(sm_type_array, 0, 0);                                                          \
   return sm_type_array;                                                                           \
+}                                                                                                 \
+                                                                                                  \
+static VALUE sm_##ELEM_TYPE##_array_resize(VALUE sm_self, VALUE sm_new_length)                    \
+{                                                                                                 \
+  size_t new_length;                                                                              \
+  new_length = NUM2SIZET(sm_new_length);                                                          \
+  REALLOC_N(RDATA(sm_self)->data, ELEM_TYPE##_t, new_length);                                     \
+  rb_ivar_set(sm_self, kRB_IVAR_MATHARRAY_LENGTH, sm_new_length);                                 \
+  return sm_self;                                                                                 \
 }                                                                                                 \
                                                                                                   \
 static VALUE sm_##ELEM_TYPE##_array_fetch(VALUE sm_self, VALUE sm_index)                          \
