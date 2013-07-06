@@ -8,6 +8,14 @@ require 'mkmf'
 # Compile as C99
 $CFLAGS += " -std=c99"
 
+if ARGV.include?("--debug") || ARGV.include?("-D")
+  $CFLAGS += " -g"
+  puts "Building extension source in debug mode"
+else
+  $CFLAGS += " -O3 -fno-fast-math -fno-strict-aliasing"
+  puts "Building extension source in release mode"
+end
+
 if ARGV.include?("--use-float") || ARGV.include?("-F")
   $CFLAGS += " -DUSE_FLOAT"
   puts "Using float as base type"
