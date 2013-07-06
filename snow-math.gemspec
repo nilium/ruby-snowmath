@@ -5,7 +5,7 @@
 Gem::Specification.new { |s|
   s.name        = 'snow-math'
   s.version     = '1.1.0'
-  s.date        = '2013-06-25'
+  s.date        = '2013-07-05'
   s.summary     = 'Snow Math Types'
   s.description = 'Math types built on the SnowPalm math code'
   s.authors     = [ 'Noel Raymond Cower' ]
