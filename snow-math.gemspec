@@ -11,11 +11,16 @@ Gem::Specification.new { |s|
   s.authors     = [ 'Noel Raymond Cower' ]
   s.email       = 'ncower@gmail.com'
   s.files       = Dir.glob('lib/**/*.rb') +
-                  Dir.glob('ext/**/*.{c,h,rb}')# +
-                  # [ 'COPYING', 'README.md' ]
+                  Dir.glob('ext/**/*.{c,h,rb}') +
+                  [ 'COPYING', 'README.md' ]
   s.extensions << 'ext/extconf.rb'
   s.homepage    = 'https://github.com/nilium/ruby-snowmath'
   s.license     = 'Simplified BSD'
+  s.has_rdoc    = true
+  s.extra_rdoc_files = [
+      'README.md',
+      'COPYING'
+  ]
   s.rdoc_options << '--title' << 'snowmath -- 3D Math Types' <<
                     '--main' << 'README.md' <<
                     '--line-numbers'
