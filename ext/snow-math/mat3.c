@@ -378,14 +378,23 @@ int mat3_inverse(const mat3_t in, mat3_t out)
 
 void mat3_get_row3(const mat3_t in, int row, vec3_t out)
 {
-  const s_float_t *p = &in[0];
   switch (row) {
-  case 2: { p += 3; }
-  case 1: { p += 3; }
   case 0: {
     out[0] = in[0];
     out[1] = in[1];
     out[2] = in[2];
+    break;
+  }
+  case 1: {
+    out[0] = in[3];
+    out[1] = in[4];
+    out[2] = in[5];
+    break;
+  }
+  case 2: {
+    out[0] = in[6];
+    out[1] = in[7];
+    out[2] = in[8];
     break;
   }
   default: { break; }
@@ -396,14 +405,23 @@ void mat3_get_row3(const mat3_t in, int row, vec3_t out)
 
 void mat3_get_column3(const mat3_t in, int column, vec3_t out)
 {
-  const s_float_t *p = &in[0];
   switch (column) {
-  case 2: { ++p; }
-  case 1: { ++p; }
   case 0: {
     out[0] = in[0];
     out[1] = in[3];
     out[2] = in[6];
+    break;
+  }
+  case 1: {
+    out[0] = in[1];
+    out[1] = in[4];
+    out[2] = in[7];
+    break;
+  }
+  case 2: {
+    out[0] = in[2];
+    out[1] = in[5];
+    out[2] = in[8];
     break;
   }
   default: { break; }
@@ -414,14 +432,23 @@ void mat3_get_column3(const mat3_t in, int column, vec3_t out)
 
 void mat3_set_row3(int row, const vec3_t in, mat3_t out)
 {
-  const s_float_t *p = &out[0];
   switch (row) {
-  case 2: { p += 3; }
-  case 1: { p += 3; }
   case 0: {
     out[0] = in[0];
     out[1] = in[1];
     out[2] = in[2];
+    break;
+  }
+  case 1: {
+    out[3] = in[0];
+    out[4] = in[1];
+    out[5] = in[2];
+    break;
+  }
+  case 2: {
+    out[6] = in[0];
+    out[7] = in[1];
+    out[8] = in[2];
     break;
   }
   default: { break; }
@@ -432,14 +459,23 @@ void mat3_set_row3(int row, const vec3_t in, mat3_t out)
 
 void mat3_set_column3(int column, const vec3_t in, mat3_t out)
 {
-  const s_float_t *p = &out[0];
   switch (column) {
-  case 2: { ++p; }
-  case 1: { ++p; }
   case 0: {
     out[0] = in[0];
     out[3] = in[1];
     out[6] = in[2];
+    break;
+  }
+  case 1: {
+    out[3] = in[0];
+    out[4] = in[1];
+    out[5] = in[2];
+    break;
+  }
+  case 2: {
+    out[6] = in[0];
+    out[7] = in[1];
+    out[8] = in[2];
     break;
   }
   default: { break; }
