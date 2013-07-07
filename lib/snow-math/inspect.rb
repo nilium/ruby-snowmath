@@ -4,17 +4,32 @@
 
 require 'snow-math'
 
-module Snow ; end
+module Snow
 
-module Snow::MathInspect
+  [:Vec3, :Vec4, :Quat, :Mat3, :Mat4].each {
+    |klass_sym|
+    if const_defined?(klass_sym)
+      const_get(klass_sym).class_exec {
 
-  def inspect
-    "<#{self.class.name}:0x#{self.address.to_s(16)} #{(0 ... self.length).map { |i| self[i] }.join(' ')}>"
-  end
+        def inspect
+          "<#{self.class.name}:0x#{self.address.to_s(16)} #{(0 ... self.length).map { |i| self.fetch(i) }.join(' ')}>"
+        end
+
+      }
+    end
+  }
+
+  [:Vec3Array, :Vec4Array, :QuatArray, :Mat3Array, :Mat4Array].each {
+    |klass_sym|
+    if const_defined?(klass_sym)
+      const_get(klass_sym).class_exec {
+
+        def inspect
+          "<#{self.class.name}:0x#{self.address.to_s(16)} #{(0 ... self.length).map { |i| self.fetch(i).inspect }.join(' ')}>"
+        end
+
+      }
+    end
+  }
 
 end
-
-class Snow::Vec3 ; include Snow::MathInspect ; end
-class Snow::Vec4 ; include Snow::MathInspect ; end
-class Snow::Quat ; include Snow::MathInspect ; end
-class Snow::Mat4 ; include Snow::MathInspect ; end
