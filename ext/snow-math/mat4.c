@@ -756,18 +756,22 @@ void mat4_inv_rotate_vec3(const mat4_t left, const vec3_t right, vec3_t out)
 
 void mat4_scale(const mat4_t in, s_float_t x, s_float_t y, s_float_t z, mat4_t out)
 {
-  mat4_copy(in, out);
-  out[0] *= x;
-  out[4] *= x;
-  out[8] *= x;
-
-  out[1] *= y;
-  out[5] *= y;
-  out[9] *= y;
-
-  out[2 ] *= z;
-  out[6 ] *= z;
-  out[10] *= z;
+  out[0]  = in[0]  * x;
+  out[1]  = in[1]  * y;
+  out[2]  = in[2]  * z;
+  out[3]  = in[3];
+  out[4]  = in[4]  * x;
+  out[5]  = in[5]  * y;
+  out[6]  = in[6]  * z;
+  out[7]  = in[7];
+  out[8]  = in[8]  * x;
+  out[9]  = in[9]  * y;
+  out[10] = in[10] * z;
+  out[11] = in[11];
+  out[12] = in[12];
+  out[13] = in[13];
+  out[14] = in[14];
+  out[15] = in[15];
 }
 
 #if defined(__cplusplus)
