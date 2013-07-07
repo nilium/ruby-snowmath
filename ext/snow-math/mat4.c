@@ -85,6 +85,19 @@ void mat4_set(
   out[15] = m15;
 }
 
+void mat4_to_mat3(const mat4_t in, mat3_t out)
+{
+  out[0] = in[0];
+  out[1] = in[1];
+  out[2] = in[2];
+  out[3] = in[4];
+  out[4] = in[5];
+  out[5] = in[6];
+  out[6] = in[8];
+  out[7] = in[9];
+  out[8] = in[10];
+}
+
 void mat4_set_axes3(const vec3_t x, const vec3_t y, const vec3_t z, const vec3_t w, mat4_t out)
 {
   out[0] = x[0];

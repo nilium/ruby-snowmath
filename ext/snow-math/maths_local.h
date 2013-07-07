@@ -168,6 +168,40 @@ int           vec4_equals(const vec4_t left, const vec4_t right);
 
 /*==============================================================================
 
+  3x3 Matrix (mat3_t)
+
+==============================================================================*/
+
+extern const mat3_t g_mat3_identity;
+
+void          mat3_identity(mat3_t out);
+void          mat3_copy(const mat3_t in, mat3_t out);
+void          mat3_set(s_float_t m00, s_float_t m10, s_float_t m20,
+                       s_float_t m01, s_float_t m11, s_float_t m21,
+                       s_float_t m02, s_float_t m12, s_float_t m22,
+                       mat3_t out);
+void          mat3_to_mat4(const mat3_t in, mat4_t out);
+void          mat3_rotation(s_float_t angle, s_float_t x, s_float_t y, s_float_t z, mat3_t out);
+void          mat3_from_quat(const quat_t in, mat3_t out);
+void          mat3_transpose(const mat3_t in, mat3_t out);
+void          mat3_scale(const mat3_t in, s_float_t x, s_float_t y, s_float_t z, mat3_t out);
+void          mat3_orthogonal(const mat3_t in, mat3_t out);
+void          mat3_multiply(const mat3_t lhs, const mat3_t rhs, mat3_t out);
+void          mat3_rotate_vec3(const mat3_t lhs, const vec3_t rhs, vec3_t out);
+void          mat3_inv_rotate_vec3(const mat3_t lhs, const vec3_t rhs, vec3_t out);
+void          mat3_cofactor(const mat3_t in, mat3_t out);
+void          mat3_adjoint(const mat3_t in, mat3_t out);
+void          mat3_get_row3(const mat3_t in, int row, vec3_t out);
+void          mat3_get_column3(const mat3_t in, int column, vec3_t out);
+void          mat3_set_row3(int row, const vec3_t in, mat3_t out);
+void          mat3_set_column3(int column, const vec3_t in, mat3_t out);
+s_float_t     mat3_determinant(const mat3_t in);
+int           mat3_equals(const mat3_t lhs, const mat3_t rhs);
+int           mat3_inverse(const mat3_t in, mat3_t out);
+
+
+/*==============================================================================
+
   4x4 Matrix (mat4_t)
 
 ==============================================================================*/
@@ -182,6 +216,7 @@ void          mat4_set(
   s_float_t m08, s_float_t m09, s_float_t m10, s_float_t m11,
   s_float_t m12, s_float_t m13, s_float_t m14, s_float_t m15,
   mat4_t out);
+void          mat4_to_mat3(const mat4_t in, mat3_t out);
 
 void          mat4_set_axes3(const vec3_t x, const vec3_t y, const vec3_t z, const vec3_t w, mat4_t out);
 void          mat4_get_axes3(const mat4_t m, vec3_t x, vec3_t y, vec3_t z, vec3_t w);
@@ -254,6 +289,7 @@ void          quat_multiply_vec3(const quat_t left, const vec3_t right, vec3_t o
 
 void          quat_from_angle_axis(s_float_t angle, s_float_t x, s_float_t y, s_float_t z, quat_t out);
 void          quat_from_mat4(const mat4_t mat, quat_t out);
+void          quat_from_mat3(const mat3_t mat, quat_t out);
 
 void          quat_slerp(const quat_t from, const quat_t to, s_float_t delta, quat_t out);
 

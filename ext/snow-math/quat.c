@@ -150,6 +150,65 @@ void quat_from_mat4(const mat4_t mat, quat_t out)
   }
 }
 
+void quat_from_mat3(const mat3_t mat, quat_t out)
+{
+  s_float_t trace, r;
+  const s_float_t *m = m;
+  s_float_t m01 = mat[3], m02 = mat[6], m10 = mat[1],
+            m12 = mat[7], m20 = mat[2], m21 = mat[5];
+
+  trace = mat[0] + mat[4] + mat[8];
+
+  if (trace > 0.0) {
+    r = s_sqrt(trace + 1);
+    out[3] = r * 0.5;
+    r = 0.5 / r;
+    out[0] = (m12 - m21) * r;
+    out[1] = (m20 - m02) * r;
+    out[2] = (m01 - m10) * r;
+  } else {
+    int index = 0;
+    if (mat[8] > (index ? mat[4] : mat[0])) {
+      index = 2;
+    } else if (mat[4] > mat[0]) {
+      index = 1;
+    }
+
+    switch (index) {
+    default:
+    case 0:
+      r = out[0] = s_sqrt(mat[0] - (mat[4] + mat[8]) + 1) * 0.5;
+      if (r != 0.0 && r != -0.0) {
+        r = 0.5 / r;
+      }
+      out[1] = (m10 + m01) * r;
+      out[2] = (m20 + m02) * r;
+      out[3] = (m12 - m21) * r;
+      break;
+
+    case 1:
+      r = out[1] = s_sqrt(mat[4] - (mat[8] + mat[0]) + 1) * 0.5;
+      if (r != 0.0 && r != -0.0) {
+        r = 0.5 / r;
+      }
+      out[0] = (m10 + m01) * r;
+      out[2] = (m12 + m21) * r;
+      out[3] = (m20 - m02) * r;
+      break;
+
+    case 2:
+      r = out[2] = s_sqrt(mat[4] - (mat[0] + mat[4]) + 1) * 0.5;
+      if (r != 0.0 && r != -0.0) {
+        r = 0.5 / r;
+      }
+      out[0] = (m20 + m02) * r;
+      out[1] = (m21 + m12) * r;
+      out[3] = (m01 - m10) * r;
+      break;
+    }
+  }
+}
+
 void quat_slerp(const quat_t from, const quat_t to, s_float_t delta, quat_t out)
 {
   s_float_t dot, scale0, scale1, angle, inverse_sin;
