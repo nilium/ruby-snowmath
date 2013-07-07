@@ -1455,9 +1455,9 @@ static VALUE sm_mat4_to_s(VALUE self)
   v = (const s_float_t *)*sm_unwrap_mat4(self, NULL);
   return rb_sprintf(
     "{ "
-    "%f, %f, %f, %f" ",\n "
-    "%f, %f, %f, %f" ",\n "
-    "%f, %f, %f, %f" ",\n "
+    "%f, %f, %f, %f" ",\n  "
+    "%f, %f, %f, %f" ",\n  "
+    "%f, %f, %f, %f" ",\n  "
     "%f, %f, %f, %f"
     " }",
     v[0], v[1], v[2], v[3],
@@ -2178,8 +2178,8 @@ static VALUE sm_mat3_to_s(VALUE self)
   v = (const s_float_t *)*sm_unwrap_mat3(self, NULL);
   return rb_sprintf(
     "{ "
-    "%f, %f, %f" ",\n "
-    "%f, %f, %f" ",\n "
+    "%f, %f, %f" ",\n  "
+    "%f, %f, %f" ",\n  "
     "%f, %f, %f"
     " }",
     v[0],   v[1],   v[2],
