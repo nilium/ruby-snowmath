@@ -106,7 +106,7 @@ class Snow::Quat
   alias_method :-, :subtract
   alias_method :+, :add
   alias_method :**, :dot_product
-  alias_method :*, :scale
+  alias_method :*, :multiply
   alias_method :/, :divide
   alias_method :-@, :negate
   alias_method :~, :inverse
