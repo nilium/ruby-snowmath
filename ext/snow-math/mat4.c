@@ -673,25 +673,50 @@ void mat4_translation(s_float_t x, s_float_t y, s_float_t z, mat4_t out) {
 void mat4_multiply(const mat4_t left, const mat4_t right, mat4_t out)
 {
   mat4_t temp;
-  int index;
+  s_float_t cx, cy, cz, cw;
 
   // Transpose the left matrix so we can be a little more cache-friendly.
   mat4_transpose(left, temp);
 
-  for (index = 0; index < 4; ++index) {
-    const int inner_index = index * 4;
-    s_float_t cx, cy, cz, cw;
+  cx       = temp[0];
+  cy       = temp[1];
+  cz       = temp[2];
+  cw       = temp[3];
 
-    cx = temp[inner_index];
-    cy = temp[inner_index + 1];
-    cz = temp[inner_index + 2];
-    cw = temp[inner_index + 3];
+  temp[0]  = (cx * right[0 ]) + (cy * right[1 ]) + (cz * right[2 ]) + (cw * right[3 ]);
+  temp[1]  = (cx * right[4 ]) + (cy * right[5 ]) + (cz * right[6 ]) + (cw * right[7 ]);
+  temp[2]  = (cx * right[8 ]) + (cy * right[9 ]) + (cz * right[10]) + (cw * right[11]);
+  temp[3]  = (cx * right[12]) + (cy * right[13]) + (cz * right[14]) + (cw * right[15]);
 
-    temp[inner_index]     = (cx * right[0 ]) + (cy * right[1 ]) + (cz * right[2 ]) + (cw * right[3 ]);
-    temp[inner_index + 1] = (cx * right[4 ]) + (cy * right[5 ]) + (cz * right[6 ]) + (cw * right[7 ]);
-    temp[inner_index + 2] = (cx * right[8 ]) + (cy * right[9 ]) + (cz * right[10]) + (cw * right[11]);
-    temp[inner_index + 3] = (cx * right[12]) + (cy * right[13]) + (cz * right[14]) + (cw * right[15]);
-  }
+  cx       = temp[4];
+  cy       = temp[5];
+  cz       = temp[6];
+  cw       = temp[7];
+
+  temp[4]  = (cx * right[0 ]) + (cy * right[1 ]) + (cz * right[2 ]) + (cw * right[3 ]);
+  temp[5]  = (cx * right[4 ]) + (cy * right[5 ]) + (cz * right[6 ]) + (cw * right[7 ]);
+  temp[6]  = (cx * right[8 ]) + (cy * right[9 ]) + (cz * right[10]) + (cw * right[11]);
+  temp[7]  = (cx * right[12]) + (cy * right[13]) + (cz * right[14]) + (cw * right[15]);
+
+  cx       = temp[8];
+  cy       = temp[9];
+  cz       = temp[10];
+  cw       = temp[11];
+
+  temp[8]  = (cx * right[0 ]) + (cy * right[1 ]) + (cz * right[2 ]) + (cw * right[3 ]);
+  temp[9]  = (cx * right[4 ]) + (cy * right[5 ]) + (cz * right[6 ]) + (cw * right[7 ]);
+  temp[10] = (cx * right[8 ]) + (cy * right[9 ]) + (cz * right[10]) + (cw * right[11]);
+  temp[11] = (cx * right[12]) + (cy * right[13]) + (cz * right[14]) + (cw * right[15]);
+
+  cx       = temp[12];
+  cy       = temp[13];
+  cz       = temp[14];
+  cw       = temp[15];
+
+  temp[12] = (cx * right[0 ]) + (cy * right[1 ]) + (cz * right[2 ]) + (cw * right[3 ]);
+  temp[13] = (cx * right[4 ]) + (cy * right[5 ]) + (cz * right[6 ]) + (cw * right[7 ]);
+  temp[14] = (cx * right[8 ]) + (cy * right[9 ]) + (cz * right[10]) + (cw * right[11]);
+  temp[15] = (cx * right[12]) + (cy * right[13]) + (cz * right[14]) + (cw * right[15]);
 
   mat4_transpose(temp, out);
 }
