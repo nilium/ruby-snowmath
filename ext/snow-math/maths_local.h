@@ -32,22 +32,24 @@ extern "C" {
 /* Typedefs and macros for specific floating point types */
 #ifdef USE_FLOAT
 typedef float s_float_t;
-#define s_cos cosf
-#define s_sin sinf
-#define s_tan tanf
-#define s_acos acosf
-#define s_asin asinf
-#define s_atan atanf
-#define s_fabs fabsf
+#define s_cos(X)  (cosf((X)))
+#define s_sin(X)  (sinf((X)))
+#define s_tan(X)  (tanf((X)))
+#define s_acos(X) (acosf((X)))
+#define s_asin(X) (asinf((X)))
+#define s_atan(X) (atanf((X)))
+#define s_fabs(X) (fabsf((X)))
+#define s_sqrt(X) (sqrtf((X)))
 #else
 typedef double s_float_t;
-#define s_cos cos
-#define s_sin sin
-#define s_tan tan
-#define s_acos acos
-#define s_asin asin
-#define s_atan atan
-#define s_fabs fabs
+#define s_cos(X)  (cos((X)))
+#define s_sin(X)  (sin((X)))
+#define s_tan(X)  (tan((X)))
+#define s_acos(X) (acos((X)))
+#define s_asin(X) (asin((X)))
+#define s_atan(X) (atan((X)))
+#define s_fabs(X) (fabs((X)))
+#define s_sqrt(X) (sqrt((X)))
 #endif
 
 typedef s_float_t mat4_t[16];
