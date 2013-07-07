@@ -53,6 +53,7 @@ typedef double s_float_t;
 #endif
 
 typedef s_float_t mat4_t[16];
+typedef s_float_t mat3_t[9];
 typedef s_float_t vec4_t[4];
 typedef s_float_t vec3_t[3];
 typedef s_float_t vec2_t[2];
