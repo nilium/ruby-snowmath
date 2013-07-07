@@ -101,6 +101,18 @@ void vec4_inverse(const vec4_t v, vec4_t out)
   out[0] = (v[0] != 0.0 && v[0] != -0.0) ? (1.0 / v[0]) : v[0];
 }
 
+void vec4_project(const vec4_t in, const vec4_t normal, vec4_t out)
+{
+  vec4_scale(normal, vec4_dot_product(in, normal), out);
+}
+
+void vec4_reflect(const vec4_t in, const vec4_t normal, vec4_t out)
+{
+  vec4_t temp;
+  vec4_scale(normal, 2 * vec4_dot_product(in, normal), temp);
+  vec4_subtract(in, temp, out);
+}
+
 s_float_t vec4_dot_product(const vec4_t left, const vec4_t right)
 {
   return ((left[0] * right[0]) + (left[1] * right[1]) + (left[2] * right[2]) + (left[3] * right[3]));

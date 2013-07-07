@@ -117,6 +117,8 @@ void          vec3_multiply(const vec3_t left, const vec3_t right, vec3_t out);
 void          vec3_negate(const vec3_t v, vec3_t out);
 void          vec3_inverse(const vec3_t v, vec3_t out);
 
+void          vec3_project(const vec3_t in, const vec3_t normal, vec3_t out);
+void          vec3_reflect(const vec3_t in, const vec3_t normal, vec3_t out);
 void          vec3_cross_product(const vec3_t left, const vec3_t right, vec3_t out);
 s_float_t     vec3_dot_product(const vec3_t left, const vec3_t right);
 
@@ -157,6 +159,8 @@ void          vec4_multiply(const vec4_t left, const vec4_t right, vec4_t out);
 void          vec4_negate(const vec4_t v, vec4_t out);
 void          vec4_inverse(const vec4_t v, vec4_t out);
 
+void          vec4_project(const vec4_t in, const vec4_t normal, vec4_t out);
+void          vec4_reflect(const vec4_t in, const vec4_t normal, vec4_t out);
 s_float_t     vec4_dot_product(const vec4_t left, const vec4_t right);
 
 void          vec4_scale(const vec4_t v, s_float_t scalar, vec4_t out);

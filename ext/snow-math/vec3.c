@@ -92,6 +92,18 @@ void vec3_inverse(const vec3_t v, vec3_t out)
   out[0] = (v[0] != 0.0 && v[0] != -0.0) ? (1.0 / v[0]) : v[0];
 }
 
+void vec3_project(const vec3_t in, const vec3_t normal, vec3_t out)
+{
+  vec3_scale(normal, vec3_dot_product(in, normal), out);
+}
+
+void vec3_reflect(const vec3_t in, const vec3_t normal, vec3_t out)
+{
+  vec3_t temp;
+  vec3_scale(normal, 2 * vec3_dot_product(in, normal), temp);
+  vec3_subtract(in, temp, out);
+}
+
 void vec3_cross_product(const vec3_t left, const vec3_t right, vec3_t out)
 {
   s_float_t x, y, z;
