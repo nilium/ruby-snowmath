@@ -430,26 +430,26 @@ int mat4_equals(const mat4_t left, const mat4_t right)
   to vary between checks
   */
   return (
-    s_fabs(left[0] - right[0]) < S_FLOAT_EPSILON &&
-    s_fabs(left[1] - right[1]) < S_FLOAT_EPSILON &&
-    s_fabs(left[2] - right[2]) < S_FLOAT_EPSILON &&
+    float_equals(left[0],  right[0])  &&
+    float_equals(left[1],  right[1])  &&
+    float_equals(left[2],  right[2])  &&
 
-    s_fabs(left[4] - right[4]) < S_FLOAT_EPSILON &&
-    s_fabs(left[5] - right[5]) < S_FLOAT_EPSILON &&
-    s_fabs(left[6] - right[6]) < S_FLOAT_EPSILON &&
+    float_equals(left[4],  right[4])  &&
+    float_equals(left[5],  right[5])  &&
+    float_equals(left[6],  right[6])  &&
 
-    s_fabs(left[8] - right[8]) < S_FLOAT_EPSILON &&
-    s_fabs(left[9] - right[9]) < S_FLOAT_EPSILON &&
-    s_fabs(left[10] - right[10]) < S_FLOAT_EPSILON &&
+    float_equals(left[8],  right[8])  &&
+    float_equals(left[9],  right[9])  &&
+    float_equals(left[10], right[10]) &&
 
-    s_fabs(left[12] - right[12]) < S_FLOAT_EPSILON &&
-    s_fabs(left[13] - right[13]) < S_FLOAT_EPSILON &&
-    s_fabs(left[14] - right[14]) < S_FLOAT_EPSILON &&
+    float_equals(left[12], right[12]) &&
+    float_equals(left[13], right[13]) &&
+    float_equals(left[14], right[14]) &&
 
-    s_fabs(left[3] - right[3]) < S_FLOAT_EPSILON &&
-    s_fabs(left[7] - right[7]) < S_FLOAT_EPSILON &&
-    s_fabs(left[11] - right[11]) < S_FLOAT_EPSILON &&
-    s_fabs(left[15] - right[15]) < S_FLOAT_EPSILON
+    float_equals(left[3],  right[3])  &&
+    float_equals(left[7],  right[7])  &&
+    float_equals(left[11], right[11]) &&
+    float_equals(left[15], right[15])
     );
 }
 
