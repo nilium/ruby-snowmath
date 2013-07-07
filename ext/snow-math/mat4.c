@@ -23,21 +23,21 @@ extern "C"
 */
 
 const mat4_t g_mat4_identity = {
-  1.0, 0.0, 0.0, 0.0,
-  0.0, 1.0, 0.0, 0.0,
-  0.0, 0.0, 1.0, 0.0,
-  0.0, 0.0, 0.0, 1.0
+  s_float_lit(1.0), s_float_lit(0.0), s_float_lit(0.0), s_float_lit(0.0),
+  s_float_lit(0.0), s_float_lit(1.0), s_float_lit(0.0), s_float_lit(0.0),
+  s_float_lit(0.0), s_float_lit(0.0), s_float_lit(1.0), s_float_lit(0.0),
+  s_float_lit(0.0), s_float_lit(0.0), s_float_lit(0.0), s_float_lit(1.0)
 };
 
 static s_float_t mat4_cofactor(const mat4_t m, int r0, int r1, int r2, int c0, int c1, int c2);
 
 void mat4_identity(mat4_t out)
 {
-  out[0] = out[5] = out[10] = out[15] = 1.0;
+  out[0] = out[5] = out[10] = out[15] = s_float_lit(1.0);
   out[1] = out[2] = out[3] =
   out[4] = out[6] = out[7] =
   out[8] = out[9] = out[11] =
-  out[12] = out[13] = out[14] = 0.0;
+  out[12] = out[13] = out[14] = s_float_lit(0.0);
 }
 
 void mat4_copy(const mat4_t in, mat4_t out)
@@ -116,8 +116,8 @@ void mat4_set_axes3(const vec3_t x, const vec3_t y, const vec3_t z, const vec3_t
   out[7] = w[1];
   out[11] = w[2];
 
-  out[12] = out[13] = out[14] = 0.0;
-  out[15] = 1.0;
+  out[12] = out[13] = out[14] = s_float_lit(0.0);
+  out[15] = s_float_lit(1.0);
 }
 
 void mat4_get_axes3(const mat4_t m, vec3_t x, vec3_t y, vec3_t z, vec3_t w)
@@ -208,7 +208,7 @@ void mat4_rotation(s_float_t angle, s_float_t x, s_float_t y, s_float_t z, mat4_
   const s_float_t angle_rad = angle * S_DEG2RAD;
   const s_float_t c = s_cos(angle_rad);
   const s_float_t s = s_sin(angle_rad);
-  const s_float_t ic = 1.0 - c;
+  const s_float_t ic = s_float_lit(1.0) - c;
   const s_float_t xy = x * y * ic;
   const s_float_t yz = y * z * ic;
   const s_float_t xz = x * z * ic;
@@ -226,8 +226,8 @@ void mat4_rotation(s_float_t angle, s_float_t x, s_float_t y, s_float_t z, mat4_
   out[9] = yz - xs;
   out[10] = ((z * z) * ic) + c;
   out[3] = out[7] = out[11] =
-  out[12] = out[13] = out[14] = 0.0;
-  out[15] = 1.0;
+  out[12] = out[13] = out[14] = s_float_lit(0.0);
+  out[15] = s_float_lit(1.0);
 }
 
 void mat4_frustum(s_float_t left, s_float_t right, s_float_t bottom, s_float_t top, s_float_t near, s_float_t far, mat4_t out)
@@ -235,18 +235,18 @@ void mat4_frustum(s_float_t left, s_float_t right, s_float_t bottom, s_float_t t
   const s_float_t xdelta = right - left;
   const s_float_t ydelta = top - bottom;
   const s_float_t zdelta = far - near;
-  const s_float_t neardouble = 2.0 * near;
+  const s_float_t neardouble = s_float_lit(2.0) * near;
 
   out[0] = neardouble / xdelta;
   out[2] = (right + left) / xdelta;
   out[5] = neardouble / ydelta;
   out[6] = (top + bottom) / ydelta;
   out[10] = -((far + near) / zdelta);
-  out[11] = -1.0;
+  out[11] = s_float_lit(-1.0);
   out[14] = -((neardouble * far) / zdelta);
   out[1] = out[3] = out[4] =
   out[7] = out[8] = out[9] =
-  out[12] = out[13] = out[15] = 0.0;
+  out[12] = out[13] = out[15] = s_float_lit(0.0);
 }
 
 void mat4_orthographic(s_float_t left, s_float_t right, s_float_t bottom, s_float_t top, s_float_t near, s_float_t far, mat4_t out)
@@ -255,37 +255,37 @@ void mat4_orthographic(s_float_t left, s_float_t right, s_float_t bottom, s_floa
   const s_float_t ydelta = top - bottom;
   const s_float_t zdelta = far - near;
 
-  out[0] = 2.0 / xdelta;
-  out[5] = 2.0 / ydelta;
-  out[10] = -2.0 / zdelta;
+  out[0] = s_float_lit(2.0) / xdelta;
+  out[5] = s_float_lit(2.0) / ydelta;
+  out[10] = s_float_lit(-2.0) / zdelta;
   out[12] = -((right + left) / xdelta);
   out[13] = -((top + bottom) / ydelta);
   out[14] = -((far + near) / zdelta);
-  out[15] = 1.0;
+  out[15] = s_float_lit(1.0);
   out[1] = out[2] = out[3] =
   out[4] = out[6] = out[7] =
-  out[8] = out[9] = out[11] = 0.0;
+  out[8] = out[9] = out[11] = s_float_lit(0.0);
 }
 
 void mat4_perspective(s_float_t fov_y, s_float_t aspect, s_float_t near, s_float_t far, mat4_t out)
 {
-  const s_float_t r = s_tan(fov_y * 0.5 * S_DEG2RAD);
+  const s_float_t r = s_tan(fov_y * s_float_lit(0.5) * S_DEG2RAD);
   const s_float_t left = -r * aspect;
   const s_float_t right = r * aspect;
   const s_float_t bottom = -r;
   const s_float_t top = r;
-  const s_float_t two_near = 2 * near;
-  const s_float_t zdelta = 1.0 / (near - far);
+  const s_float_t two_near = s_float_lit(2.0) * near;
+  const s_float_t zdelta = s_float_lit(1.0) / (near - far);
 
   out[0] = two_near * (right - left);
   out[5] = two_near / (top - bottom);
   out[10] = (far + near) * zdelta;
-  out[11] = -1.0;
+  out[11] = s_float_lit(-1.0);
   out[14] = (two_near * far) * zdelta;
   out[1] = out[2] = out[3] =
   out[4] = out[6] = out[7] =
   out[8] = out[9] = out[12] =
-  out[13] = out[15] = 0.0;
+  out[13] = out[15] = s_float_lit(0.0);
 }
 
 void mat4_look_at(const vec3_t eye, const vec3_t center, const vec3_t up, mat4_t out)
@@ -315,9 +315,9 @@ void mat4_from_quat(const quat_t quat, mat4_t out)
 {
   s_float_t tx, ty, tz, xx, xy, xz, yy, yz, zz, wx, wy, wz;
 
-  tx = 2.0 * quat[0];
-  ty = 2.0 * quat[1];
-  tz = 2.0 * quat[2];
+  tx = s_float_lit(2.0) * quat[0];
+  ty = s_float_lit(2.0) * quat[1];
+  tz = s_float_lit(2.0) * quat[2];
 
   xx = tx * quat[0];
   xy = tx * quat[1];
@@ -332,24 +332,24 @@ void mat4_from_quat(const quat_t quat, mat4_t out)
   wy = ty * quat[3];
   wz = tz * quat[3];
 
-  out[0 ] = 1.0 - (yy + zz);
+  out[0 ] = s_float_lit(1.0) - (yy + zz);
   out[1 ] = xy - wz;
   out[2 ] = xz + wy;
   out[4 ] = xy + wz;
-  out[5 ] = 1.0 - (xx + zz);
+  out[5 ] = s_float_lit(1.0) - (xx + zz);
   out[6 ] = yz - wx;
   out[8 ] = xz - wy;
   out[9 ] = yz + wx;
-  out[10] = 1.0 - (xx + yy);
+  out[10] = s_float_lit(1.0) - (xx + yy);
 
-  out[7 ] = 0.0;
-  out[3 ] = 0.0;
-  out[11] = 0.0;
-  out[12] = 0.0;
-  out[13] = 0.0;
-  out[14] = 0.0;
+  out[7 ] = s_float_lit(0.0);
+  out[3 ] = s_float_lit(0.0);
+  out[11] = s_float_lit(0.0);
+  out[12] = s_float_lit(0.0);
+  out[13] = s_float_lit(0.0);
+  out[14] = s_float_lit(0.0);
 
-  out[15] = 1.0;
+  out[15] = s_float_lit(1.0);
 }
 
 void mat4_get_row4(const mat4_t in, int row, vec4_t out)
@@ -491,21 +491,21 @@ void mat4_inverse_orthogonal(const mat4_t in, mat4_t out)
     in[0],
     in[4],
     in[8],
-    0.0,
+    s_float_lit(0.0),
     in[1],
     in[5],
     in[9],
-    0.0,
+    s_float_lit(0.0),
     in[2],
     in[6],
     in[10],
-    0.0
+    s_float_lit(0.0)
   };
 
   temp[12] = -((m12 * temp[0]) + (m13 * temp[4]) + (m14 * temp[8]));
   temp[13] = -((m12 * temp[1]) + (m13 * temp[5]) + (m14 * temp[9]));
   temp[14] = -((m12 * temp[2]) + (m13 * temp[6]) + (m14 * temp[10]));
-  temp[15] = 1.0;
+  temp[15] = s_float_lit(1.0);
 
   mat4_copy(temp, out);
 }
@@ -539,7 +539,7 @@ int mat4_inverse_affine(const mat4_t in, mat4_t out)
     return 0;
   }
 
-  det = 1.0 / det;
+  det = s_float_lit(1.0) / det;
 
   out[0] = temp[0] * det;
   out[1] = temp[1] * det;
@@ -559,8 +559,8 @@ int mat4_inverse_affine(const mat4_t in, mat4_t out)
   out[13] = -((m12 * temp[1]) + (m13 * temp[5]) + (m14 * temp[9 ]));
   out[14] = -((m12 * temp[2]) + (m13 * temp[6]) + (m14 * temp[10]));
 
-  out[3] = out[7] = out[11] = 0.0;
-  out[15] = 1.0;
+  out[3] = out[7] = out[11] = s_float_lit(0.0);
+  out[15] = s_float_lit(1.0);
 
   return 1;
 }
@@ -644,7 +644,7 @@ int mat4_inverse_general(const mat4_t in, mat4_t out)
   }
 
   mat4_adjoint(in, out);
-  det = 1.0 / det;
+  det = s_float_lit(1.0) / det;
   for (index = 0; index < 16; ++index) {
     out[index] *= det;
   }
@@ -673,7 +673,7 @@ void mat4_translation(s_float_t x, s_float_t y, s_float_t z, mat4_t out) {
   s_float_t m12 = x;
   s_float_t m13 = y;
   s_float_t m14 = z;
-  s_float_t m15 = 1;
+  s_float_t m15 = s_float_lit(1.0);
 
   mat4_copy(g_mat4_identity, out);
 

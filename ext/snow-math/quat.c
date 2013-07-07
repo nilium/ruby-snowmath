@@ -14,7 +14,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-const quat_t g_quat_identity = {0.0, 0.0, 0.0, 1.0};
+const quat_t g_quat_identity = { s_float_lit(0.0), s_float_lit(0.0), s_float_lit(0.0), s_float_lit(1.0) };
 
 void quat_set(s_float_t x, s_float_t y, s_float_t z, s_float_t w, quat_t out)
 {
@@ -36,8 +36,8 @@ void quat_copy(const quat_t in, quat_t out)
 
 void quat_identity(quat_t q)
 {
-  q[0] = q[1] = q[2] = 0.0;
-  q[3] = 1.0;
+  q[0] = q[1] = q[2] = s_float_lit(0.0);
+  q[3] = s_float_lit(1.0);
 }
 
 void quat_inverse(const quat_t in, quat_t out)
@@ -81,8 +81,8 @@ void quat_multiply_vec3(const quat_t left, const vec3_t right, vec3_t out)
   vec3_t lxr_cross, lxlr_cross;
   vec3_cross_product(left, right, lxr_cross);
   vec3_cross_product(left, lxr_cross, lxlr_cross);
-  vec3_scale(lxr_cross, 2.0 * left[3], lxr_cross);
-  vec3_scale(lxlr_cross, 2.0, lxlr_cross);
+  vec3_scale(lxr_cross, s_float_lit(2.0) * left[3], lxr_cross);
+  vec3_scale(lxlr_cross, s_float_lit(2.0), lxlr_cross);
   vec3_add(lxr_cross, lxlr_cross, lxr_cross);
   vec3_add(right, lxr_cross, out);
 }
@@ -92,7 +92,7 @@ void quat_from_angle_axis(s_float_t angle, s_float_t x, s_float_t y, s_float_t z
   vec3_t v = {x, y, z};
   vec3_normalize(v, v);
 
-  angle *= (S_DEG2RAD * 0.5);
+  angle *= (S_DEG2RAD * s_float_lit(0.5));
   const s_float_t s = s_sin(angle);
 
   out[0] = v[0] * s;
@@ -108,9 +108,9 @@ void quat_from_mat4(const mat4_t mat, quat_t out)
 
   trace = mat[0] + mat[5] + mat[10];
   if (trace > 0) {
-    r = s_sqrt(trace + 1.0);
-    out[3] = r * 0.5;
-    r = 0.5 / r;
+    r = s_sqrt(trace + s_float_lit(1.0));
+    out[3] = r * s_float_lit(0.5);
+    r = s_float_lit(0.5) / r;
     out[0] = (mat[9] - mat[6]) * r;
     out[1] = (mat[2] - mat[8]) * r;
     out[2] = (mat[4] - mat[1]) * r;
@@ -122,10 +122,10 @@ void quat_from_mat4(const mat4_t mat, quat_t out)
       index = 1;
     }
 
-    r = s_sqrt(mat[index * 5] - (mat[((index + 1)) % 3 * 5] + mat[((index + 2) % 3) * 5]) + 1.0);
-    out[index] = r * 0.5;
+    r = s_sqrt(mat[index * 5] - (mat[((index + 1)) % 3 * 5] + mat[((index + 2) % 3) * 5]) + s_float_lit(1.0));
+    out[index] = r * s_float_lit(0.5);
 
-    if (r) r = 0.5 / r;
+    if (r) r = s_float_lit(0.5) / r;
 
     switch (index)
     {
@@ -159,10 +159,10 @@ void quat_from_mat3(const mat3_t mat, quat_t out)
 
   trace = mat[0] + mat[4] + mat[8];
 
-  if (trace > 0.0) {
-    r = s_sqrt(trace + 1);
-    out[3] = r * 0.5;
-    r = 0.5 / r;
+  if (trace > s_float_lit(0.0)) {
+    r = s_sqrt(trace + s_float_lit(1.0));
+    out[3] = r * s_float_lit(0.5);
+    r = s_float_lit(0.5) / r;
     out[0] = (m12 - m21) * r;
     out[1] = (m20 - m02) * r;
     out[2] = (m01 - m10) * r;
@@ -177,9 +177,9 @@ void quat_from_mat3(const mat3_t mat, quat_t out)
     switch (index) {
     default:
     case 0:
-      r = out[0] = s_sqrt(mat[0] - (mat[4] + mat[8]) + 1) * 0.5;
-      if (r != 0.0 && r != -0.0) {
-        r = 0.5 / r;
+      r = out[0] = s_sqrt(mat[0] - (mat[4] + mat[8]) + s_float_lit(1.0)) * s_float_lit(0.5);
+      if (r != s_float_lit(0.0) && r != s_float_lit(-0.0)) {
+        r = s_float_lit(0.5) / r;
       }
       out[1] = (m10 + m01) * r;
       out[2] = (m20 + m02) * r;
@@ -187,9 +187,9 @@ void quat_from_mat3(const mat3_t mat, quat_t out)
       break;
 
     case 1:
-      r = out[1] = s_sqrt(mat[4] - (mat[8] + mat[0]) + 1) * 0.5;
-      if (r != 0.0 && r != -0.0) {
-        r = 0.5 / r;
+      r = out[1] = s_sqrt(mat[4] - (mat[8] + mat[0]) + s_float_lit(1.0)) * s_float_lit(0.5);
+      if (r != s_float_lit(0.0) && r != s_float_lit(-0.0)) {
+        r = s_float_lit(0.5) / r;
       }
       out[0] = (m10 + m01) * r;
       out[2] = (m12 + m21) * r;
@@ -197,9 +197,9 @@ void quat_from_mat3(const mat3_t mat, quat_t out)
       break;
 
     case 2:
-      r = out[2] = s_sqrt(mat[4] - (mat[0] + mat[4]) + 1) * 0.5;
-      if (r != 0.0 && r != -0.0) {
-        r = 0.5 / r;
+      r = out[2] = s_sqrt(mat[4] - (mat[0] + mat[4]) + s_float_lit(1.0)) * s_float_lit(0.5);
+      if (r != s_float_lit(0.0) && r != s_float_lit(-0.0)) {
+        r = s_float_lit(0.5) / r;
       }
       out[0] = (m20 + m02) * r;
       out[1] = (m21 + m12) * r;
@@ -216,7 +216,7 @@ void quat_slerp(const quat_t from, const quat_t to, s_float_t delta, quat_t out)
 
   dot = vec4_dot_product((const s_float_t *)from, (const s_float_t *)to);
 
-  if (dot < 0.0) {
+  if (dot < s_float_lit(0.0)) {
     dot = -dot;
     dx = -to[0];
     dy = -to[1];
@@ -229,12 +229,12 @@ void quat_slerp(const quat_t from, const quat_t to, s_float_t delta, quat_t out)
     dw = to[3];
   }
 
-  delta = fminf(fmaxf(delta, 0.0), 1.0);
+  delta = fminf(fmaxf(delta, s_float_lit(0.0)), s_float_lit(1.0));
 
   angle = s_acos(dot);
-  inverse_sin = 1.0 / s_sin(dot);
+  inverse_sin = s_float_lit(1.0) / s_sin(dot);
 
-  scale0 = s_sin((1.0 - delta) * angle) * inverse_sin;
+  scale0 = s_sin((s_float_lit(1.0) - delta) * angle) * inverse_sin;
   scale1 = s_sin(delta * angle) * inverse_sin;
 
   out[0] = (from[0] * scale0) + (dx * scale1);

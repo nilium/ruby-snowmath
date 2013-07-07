@@ -17,9 +17,9 @@ extern "C"
 
 
 const mat3_t g_mat3_identity = {
-  1.0, 0.0, 0.0,
-  0.0, 1.0, 0.0,
-  0.0, 0.0, 1.0
+  s_float_lit(1.0), s_float_lit(0.0), s_float_lit(0.0),
+  s_float_lit(0.0), s_float_lit(1.0), s_float_lit(0.0),
+  s_float_lit(0.0), s_float_lit(0.0), s_float_lit(1.0)
 };
 
 
@@ -57,14 +57,14 @@ void mat3_identity(mat3_t out)
 {
   out[0] =
   out[4] =
-  out[8] = 1;
+  out[8] = s_float_lit(1.0);
 
   out[1] =
   out[2] =
   out[3] =
   out[5] =
   out[6] =
-  out[7] = 0;
+  out[7] = s_float_lit(0.0);
 }
 
 
@@ -74,19 +74,19 @@ void mat3_to_mat4(const mat3_t in, mat4_t out)
   out[0] = in[0];
   out[1] = in[1];
   out[2] = in[2];
-  out[3] = 0;
+  out[3] = s_float_lit(0.0);
   out[4] = in[3];
   out[5] = in[4];
   out[6] = in[5];
-  out[7] = 0;
+  out[7] = s_float_lit(0.0);
   out[8] = in[6];
   out[9] = in[7];
   out[10] = in[8];
   out[14] =
   out[13] =
   out[12] =
-  out[11] = 0;
-  out[15] = 1;
+  out[11] = s_float_lit(0.0);
+  out[15] = s_float_lit(1.0);
 }
 
 
@@ -114,7 +114,7 @@ void mat3_rotation(s_float_t angle, s_float_t x, s_float_t y, s_float_t z, mat3_
   const s_float_t angle_rad = angle * S_DEG2RAD;
   const s_float_t c  = s_cos(angle_rad);
   const s_float_t s  = s_sin(angle_rad);
-  const s_float_t ic = 1.0 - c;
+  const s_float_t ic = s_float_lit(1.0) - c;
   const s_float_t xy = x * y * ic;
   const s_float_t yz = y * z * ic;
   const s_float_t xz = x * z * ic;
@@ -139,9 +139,9 @@ void mat3_from_quat(const quat_t in, mat3_t out)
 {
   s_float_t tx, ty, tz, xx, xy, xz, yy, yz, zz, wx, wy, wz;
 
-  tx = 2.0 * in[0];
-  ty = 2.0 * in[1];
-  tz = 2.0 * in[2];
+  tx = s_float_lit(2.0) * in[0];
+  ty = s_float_lit(2.0) * in[1];
+  tz = s_float_lit(2.0) * in[2];
 
   xx = tx * in[0];
   xy = tx * in[1];
@@ -156,15 +156,15 @@ void mat3_from_quat(const quat_t in, mat3_t out)
   wy = ty * in[3];
   wz = tz * in[3];
 
-  out[0] = 1.0 - (yy + zz);
+  out[0] = s_float_lit(1.0) - (yy + zz);
   out[1] = xy - wz;
   out[2] = xz + wy;
   out[3] = xy + wz;
-  out[4] = 1.0 - (xx + zz);
+  out[4] = s_float_lit(1.0) - (xx + zz);
   out[5] = yz - wx;
   out[6] = xz - wy;
   out[7] = yz + wx;
-  out[8] = 1.0 - (xx + yy);
+  out[8] = s_float_lit(1.0) - (xx + yy);
 }
 
 
@@ -353,8 +353,8 @@ void mat3_adjoint(const mat3_t in, mat3_t out)
 int mat3_inverse(const mat3_t in, mat3_t out)
 {
   s_float_t determinant = mat3_determinant(in);
-  if (determinant != 0.0 && determinant != -0.0) {
-    determinant = 1.0 / determinant;
+  if (determinant != s_float_lit(0.0) && determinant != s_float_lit(-0.0)) {
+    determinant = s_float_lit(1.0) / determinant;
   } else {
     return 0;
   }

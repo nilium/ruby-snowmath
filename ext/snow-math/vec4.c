@@ -14,9 +14,9 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-const vec4_t g_vec4_zero = {0.0, 0.0, 0.0, 0.0};
-const vec4_t g_vec4_one = {1.0, 1.0, 1.0, 1.0};
-const vec4_t g_vec4_identity = {0.0, 0.0, 0.0, 1.0};
+const vec4_t g_vec4_zero = {s_float_lit(0.0), s_float_lit(0.0), s_float_lit(0.0), s_float_lit(0.0)};
+const vec4_t g_vec4_one = {s_float_lit(1.0), s_float_lit(1.0), s_float_lit(1.0), s_float_lit(1.0)};
+const vec4_t g_vec4_identity = {s_float_lit(0.0), s_float_lit(0.0), s_float_lit(0.0), s_float_lit(1.0)};
 
 void vec4_copy(const vec4_t in, vec4_t out)
 {
@@ -54,7 +54,7 @@ s_float_t vec4_length(const vec4_t v)
 void vec4_normalize(const vec4_t in, vec4_t out)
 {
   s_float_t mag = vec4_length(in);
-  if (mag) mag = 1.0 / mag;
+  if (mag) mag = s_float_lit(1.0) / mag;
   out[0] = in[0] * mag;
   out[1] = in[1] * mag;
   out[2] = in[2] * mag;
@@ -95,10 +95,10 @@ void vec4_negate(const vec4_t v, vec4_t out)
 
 void vec4_inverse(const vec4_t v, vec4_t out)
 {
-  out[3] = (v[3] != 0.0 && v[3] != -0.0) ? (1.0 / v[3]) : v[3];
-  out[2] = (v[2] != 0.0 && v[2] != -0.0) ? (1.0 / v[2]) : v[2];
-  out[1] = (v[1] != 0.0 && v[1] != -0.0) ? (1.0 / v[1]) : v[1];
-  out[0] = (v[0] != 0.0 && v[0] != -0.0) ? (1.0 / v[0]) : v[0];
+  out[3] = (v[3] != s_float_lit(0.0) && v[3] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[3]) : v[3];
+  out[2] = (v[2] != s_float_lit(0.0) && v[2] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[2]) : v[2];
+  out[1] = (v[1] != s_float_lit(0.0) && v[1] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[1]) : v[1];
+  out[0] = (v[0] != s_float_lit(0.0) && v[0] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[0]) : v[0];
 }
 
 void vec4_project(const vec4_t in, const vec4_t normal, vec4_t out)
@@ -109,7 +109,7 @@ void vec4_project(const vec4_t in, const vec4_t normal, vec4_t out)
 void vec4_reflect(const vec4_t in, const vec4_t normal, vec4_t out)
 {
   vec4_t temp;
-  vec4_scale(normal, 2 * vec4_dot_product(in, normal), temp);
+  vec4_scale(normal, s_float_lit(2.0) * vec4_dot_product(in, normal), temp);
   vec4_subtract(in, temp, out);
 }
 
@@ -133,7 +133,7 @@ void vec4_scale(const vec4_t v, s_float_t scalar, vec4_t out)
 int vec4_divide(const vec4_t v, s_float_t divisor, vec4_t out)
 {
   if (divisor) {
-    divisor = ((s_float_t)1.0) / divisor;
+    divisor = s_float_lit(1.0) / divisor;
     out[3] = v[3] * divisor;
     out[2] = v[2] * divisor;
     out[1] = v[1] * divisor;

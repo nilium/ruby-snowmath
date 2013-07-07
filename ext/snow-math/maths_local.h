@@ -40,6 +40,7 @@ typedef float s_float_t;
 #define s_atan(X) (atanf((X)))
 #define s_fabs(X) (fabsf((X)))
 #define s_sqrt(X) (sqrtf((X)))
+#define s_float_lit(X) (X##f)
 #else
 typedef double s_float_t;
 #define s_cos(X)  (cos((X)))
@@ -50,6 +51,7 @@ typedef double s_float_t;
 #define s_atan(X) (atan((X)))
 #define s_fabs(X) (fabs((X)))
 #define s_sqrt(X) (sqrt((X)))
+#define s_float_lit(X) (X)
 #endif
 
 typedef s_float_t mat4_t[16];
@@ -67,10 +69,10 @@ typedef s_float_t quat_t[4];
  *
  * It should be stressed that this is absolutely not an accurate epsilon.
  */
-#define S_FLOAT_EPSILON (1.0e-9)
+#define S_FLOAT_EPSILON s_float_lit(1.0e-9)
 
-#define S_DEG2RAD (0.01745329)
-#define S_RAD2DEG (57.2957795)
+#define S_DEG2RAD s_float_lit(0.01745329)
+#define S_RAD2DEG s_float_lit(57.2957795)
 
 
 
