@@ -2101,7 +2101,7 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
       break;
     }
 
-    // Copy Mat3
+    // Copy Mat4
     if (SM_IS_A(argv[0], mat4)) {
       mat4_to_mat3(*sm_unwrap_mat4(argv[0], NULL), *self);
       break;
@@ -2122,7 +2122,7 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
     // Array of values
     if (SM_RB_IS_A(argv[0], rb_cArray)) {
       VALUE arrdata = argv[0];
-      const size_t arr_end = arr_index + 16;
+      const size_t arr_end = arr_index + 9;
       s_float_t *mat_elem = *self;
       for (; arr_index < arr_end; ++arr_index, ++mat_elem) {
         *mat_elem = rb_num2dbl(rb_ary_entry(arrdata, (long)arr_index));
@@ -2134,25 +2134,25 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
     break;
   }
 
-  // Mat3(Vec4, Vec4, Vec4, Vec4)
-  case 4: {
+  // Mat3(Vec3, Vec3, Vec3)
+  case 3: {
     size_t arg_index;
     s_float_t *mat_elem = *self;
-    for (arg_index = 0; arg_index < 4; ++arg_index, mat_elem += 4) {
-      if (!SM_IS_A(argv[arg_index], vec4) && !SM_IS_A(argv[arg_index], quat)) {
+    for (arg_index = 0; arg_index < 3; ++arg_index, mat_elem += 3) {
+      if (!SM_IS_A(argv[arg_index], vec3)) {
         rb_raise(
           rb_eArgError,
-          "Argument %d must be a Vec4 or Quat when supplying four arguments to Mat3.initialize",
+          "Argument %d must be a Vec3 when supplying three arguments to Mat3.initialize",
           (int)(arg_index + 1));
       }
 
-      sm_unwrap_vec4(argv[arg_index], mat_elem);
+      sm_unwrap_vec3(argv[arg_index], mat_elem);
     }
     break;
   }
 
   // Mat3(Numeric m00 .. m16)
-  case 16: {
+  case 9: {
     s_float_t *mat_elem = *self;
     VALUE *argv_p = argv;
     for (; argc; --argc, ++argv_p, ++mat_elem) {
