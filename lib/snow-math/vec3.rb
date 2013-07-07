@@ -73,7 +73,7 @@ class Snow::Vec3
 
   def multiply(rhs, output = nil)
     case rhs
-    when Vec3 then multiply_vec3(rhs, output)
+    when ::Snow::Vec3 then multiply_vec3(rhs, output)
     when Numeric then scale(rhs, output)
     else raise TypeError, "Invalid type for RHS"
     end
