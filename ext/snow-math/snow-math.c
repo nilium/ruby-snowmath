@@ -931,10 +931,6 @@ static VALUE sm_quat_to_s(VALUE self)
 
 
 
-
-
-
-
 static VALUE sm_quat_angle_axis(int argc, VALUE *argv, VALUE self)
 {
   VALUE sm_angle;
