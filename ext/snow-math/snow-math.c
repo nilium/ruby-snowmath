@@ -381,18 +381,21 @@ static VALUE s_sm_snowmath_mod = Qnil;
 DEF_SM_TYPE_KLASS(vec3);
 DEF_SM_TYPE_KLASS(vec4);
 DEF_SM_TYPE_KLASS(quat);
+DEF_SM_TYPE_KLASS(mat3);
 DEF_SM_TYPE_KLASS(mat4);
 
 // Declare wrapping operations
 DECL_SM_UNWRAP_OP(vec3);
 DECL_SM_UNWRAP_OP(vec4);
 DECL_SM_UNWRAP_OP(quat);
+DECL_SM_UNWRAP_OP(mat3);
 DECL_SM_UNWRAP_OP(mat4);
 
 // Declare unwrapping operations
 DECL_SM_WRAP_OP(vec3);
 DECL_SM_WRAP_OP(vec4);
 DECL_SM_WRAP_OP(quat);
+DECL_SM_WRAP_OP(mat3);
 DECL_SM_WRAP_OP(mat4);
 
 
@@ -407,6 +410,7 @@ DECL_SM_WRAP_OP(mat4);
 DEF_SM_ARR_TYPE(vec3);
 DEF_SM_ARR_TYPE(vec4);
 DEF_SM_ARR_TYPE(quat);
+DEF_SM_ARR_TYPE(mat3);
 DEF_SM_ARR_TYPE(mat4);
 #endif
 
@@ -866,6 +870,12 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
       break;
     }
 
+    if (SM_IS_A(argv[0], mat3)) {
+      const mat3_t *mat = sm_unwrap_mat3(argv[0], NULL);
+      quat_from_mat3(*mat, *self);
+      break;
+    }
+
     // Optional offset into array provided
     if (0) {
       case 2:
@@ -1141,6 +1151,7 @@ DEF_SM_LENGTH_OP(mat4);
 DEF_SM_FETCH_OP(mat4);
 DEF_SM_STORE_OP(mat4);
 DEF_SM_UNARY_OP(copy, mat4, mat4);
+DEF_SM_UNARY_OP(to_mat3, mat4, mat3);
 DEF_SM_UNARY_OP(transpose, mat4, mat4);
 DEF_SM_UNARY_OP(inverse_orthogonal, mat4, mat4);
 DEF_SM_UNARY_OP(adjoint, mat4, mat4);
@@ -1364,6 +1375,12 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
     // Copy Mat4
     if (SM_IS_A(argv[0], mat4)) {
       sm_unwrap_mat4(argv[0], *self);
+      break;
+    }
+
+    // Copy Mat3
+    if (SM_IS_A(argv[0], mat3)) {
+      mat3_to_mat4(*sm_unwrap_mat4(argv[0], NULL), *self);
       break;
     }
 
@@ -1979,6 +1996,430 @@ static VALUE sm_mat4_equals(VALUE sm_self, VALUE sm_other)
 
 /*==============================================================================
 
+  mat3_t functions
+
+==============================================================================*/
+
+DEF_SM_WRAP_OP(mat3);
+DEF_SM_UNWRAP_OP(mat3);
+DEF_SM_SIZE_OP(mat3);
+DEF_SM_LENGTH_OP(mat3);
+DEF_SM_FETCH_OP(mat3);
+DEF_SM_STORE_OP(mat3);
+DEF_SM_UNARY_OP(copy, mat3, mat3);
+DEF_SM_UNARY_OP(to_mat4, mat3, mat4);
+DEF_SM_UNARY_OP(transpose, mat3, mat3);
+DEF_SM_UNARY_OP(adjoint, mat3, mat3);
+DEF_SM_UNARY_OP(orthogonal, mat3, mat3);
+DEF_SM_UNARY_OP(cofactor, mat3, mat3);
+DEF_SM_BINARY_OP(multiply, mat3, mat3, mat3);
+DEF_SM_BINARY_OP(rotate_vec3, mat3, vec3, vec3);
+DEF_SM_BINARY_OP(inv_rotate_vec3, mat3, vec3, vec3);
+
+
+
+static VALUE sm_mat3_determinant(VALUE sm_self)
+{
+  return mat3_determinant(*sm_unwrap_mat3(sm_self, NULL));
+}
+
+
+
+static VALUE sm_mat3_inverse(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out = Qnil;
+  mat3_t *self;
+
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat3(sm_self, NULL);
+
+  if (argc == 1) {
+    mat3_t *output;
+
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }
+
+    if (!SM_IS_A(sm_out, mat3)) {
+      rb_raise(rb_eTypeError,
+        "Invalid argument to output of inverse_general: expected %s, got %s",
+        rb_class2name(SM_KLASS(mat3)),
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+
+    output = sm_unwrap_mat3(sm_out, NULL);
+    if (!mat3_inverse(*self, *output)) {
+      return Qnil;
+    }
+
+  } else if (argc == 0) {
+    SM_LABEL(skip_output): {
+      mat3_t output;
+      if (!mat3_inverse(*self, output)) {
+        return Qnil;
+      }
+
+      sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
+      rb_obj_call_init(sm_out, 0, 0);
+    }
+  } else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
+  }
+
+  return sm_out;
+}
+
+
+
+static VALUE sm_mat3_new(int argc, VALUE *argv, VALUE self)
+{
+  VALUE sm_mat = sm_wrap_mat3(g_mat3_identity, self);
+  rb_obj_call_init(sm_mat, argc, argv);
+  return sm_mat;
+}
+
+
+
+static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
+{
+  mat3_t *self = sm_unwrap_mat3(sm_self, NULL);
+  size_t arr_index = 0;
+
+  switch (argc) {
+
+  case 0: {
+    // Identity (handled in _new)
+    break;
+  }
+
+  // Copy Mat3 or provided [Numeric..]
+  case 1: {
+    // Copy Mat3
+    if (SM_IS_A(argv[0], mat3)) {
+      sm_unwrap_mat3(argv[0], *self);
+      break;
+    }
+
+    // Copy Mat3
+    if (SM_IS_A(argv[0], mat4)) {
+      mat4_to_mat3(*sm_unwrap_mat4(argv[0], NULL), *self);
+      break;
+    }
+
+    // Build from Quaternion
+    if (SM_IS_A(argv[0], quat)) {
+      mat3_from_quat(*sm_unwrap_quat(argv[0], NULL), *self);
+      break;
+    }
+
+    // Optional offset into array provided
+    if (0) {
+      case 2:
+      arr_index = NUM2SIZET(argv[1]);
+    }
+
+    // Array of values
+    if (SM_RB_IS_A(argv[0], rb_cArray)) {
+      VALUE arrdata = argv[0];
+      const size_t arr_end = arr_index + 16;
+      s_float_t *mat_elem = *self;
+      for (; arr_index < arr_end; ++arr_index, ++mat_elem) {
+        *mat_elem = rb_num2dbl(rb_ary_entry(arrdata, (long)arr_index));
+      }
+      break;
+    }
+
+    rb_raise(rb_eArgError, "Expected either an array of Numerics or a Mat3");
+    break;
+  }
+
+  // Mat3(Vec4, Vec4, Vec4, Vec4)
+  case 4: {
+    size_t arg_index;
+    s_float_t *mat_elem = *self;
+    for (arg_index = 0; arg_index < 4; ++arg_index, mat_elem += 4) {
+      if (!SM_IS_A(argv[arg_index], vec4) && !SM_IS_A(argv[arg_index], quat)) {
+        rb_raise(
+          rb_eArgError,
+          "Argument %d must be a Vec4 or Quat when supplying four arguments to Mat3.initialize",
+          (int)(arg_index + 1));
+      }
+
+      sm_unwrap_vec4(argv[arg_index], mat_elem);
+    }
+    break;
+  }
+
+  // Mat3(Numeric m00 .. m16)
+  case 16: {
+    s_float_t *mat_elem = *self;
+    VALUE *argv_p = argv;
+    for (; argc; --argc, ++argv_p, ++mat_elem) {
+      *mat_elem = (s_float_t)rb_num2dbl(*argv_p);
+    }
+    break;
+  }
+
+  default: {
+    rb_raise(rb_eArgError, "Invalid arguments to Mat3.initialize");
+    break;
+  }
+  } // swtich (argc)
+
+  return sm_self;
+}
+
+
+
+static VALUE sm_mat3_to_s(VALUE self)
+{
+  const s_float_t *v;
+  v = (const s_float_t *)*sm_unwrap_mat3(self, NULL);
+  return rb_sprintf(
+    "{ "
+    "%f, %f, %f" ",\n "
+    "%f, %f, %f" ",\n "
+    "%f, %f, %f"
+    " }",
+    v[0],   v[1],   v[2],
+    v[3],   v[4],   v[5],
+    v[6],   v[7],   v[8] );
+}
+
+
+
+static VALUE sm_mat3_angle_axis(int argc, VALUE *argv, VALUE self)
+{
+  VALUE sm_angle;
+  VALUE sm_axis;
+  VALUE sm_out;
+  s_float_t angle;
+  const vec3_t *axis;
+
+  rb_scan_args(argc, argv, "21", &sm_angle, &sm_axis, &sm_out);
+  SM_RAISE_IF_NOT_TYPE(sm_axis, vec3);
+
+  angle = (s_float_t)rb_num2dbl(sm_angle);
+  axis = sm_unwrap_vec3(sm_axis, NULL);
+
+  if (SM_IS_A(sm_out, mat3)) {
+    mat3_t *out = sm_unwrap_mat3(sm_out, NULL);
+    mat3_rotation(angle, (*axis)[0], (*axis)[1], (*axis)[2], *out);
+  } else {
+    mat3_t out;
+    mat3_rotation(angle, (*axis)[0], (*axis)[1], (*axis)[2], out);
+    sm_out = sm_wrap_mat3(out, self);
+    rb_obj_call_init(sm_out, 0, 0);
+  }
+
+  return sm_out;
+}
+
+
+
+static VALUE sm_mat3_get_row3(int argc, VALUE *argv, VALUE sm_self)
+{
+  mat3_t *self;
+  int index;
+  VALUE sm_out;
+
+  self = sm_unwrap_mat3(sm_self, NULL);
+  index = NUM2INT(argv[0]);
+  sm_out = Qnil;
+
+  if (index < 0 || index > 3) {
+    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 3)", index);
+    return Qnil;
+  }
+
+  switch (argc) {
+  case 2: {
+    vec3_t *out;
+
+    sm_out = argv[1];
+
+    if (RTEST(sm_out)) {
+      SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    } else {
+      goto SM_LABEL(no_output);
+    }
+
+    out = sm_unwrap_vec3(sm_out, NULL);
+    mat3_get_row3(*self, index, *out);
+
+    break;
+  }
+
+  case 1: SM_LABEL(no_output): {
+    vec3_t out;
+    mat3_get_row3(*self, index, out);
+    sm_out = sm_wrap_vec3(out, Qnil);
+    rb_obj_call_init(sm_out, 0, 0);
+    break;
+  }
+
+  default: {
+    rb_raise(rb_eArgError, "Invalid number of arguments to get_row3 - expected 1 or 2");
+    break;
+  }
+  }
+
+  return sm_out;
+}
+
+
+
+static VALUE sm_mat3_get_column3(int argc, VALUE *argv, VALUE sm_self)
+{
+  mat3_t *self;
+  int index;
+  VALUE sm_out;
+
+  self = sm_unwrap_mat3(sm_self, NULL);
+  index = NUM2INT(argv[0]);
+  sm_out = Qnil;
+
+  if (index < 0 || index > 3) {
+    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 3)", index);
+    return Qnil;
+  }
+
+  switch (argc) {
+  case 2: {
+    vec3_t *out;
+
+    sm_out = argv[1];
+
+    if (RTEST(sm_out)) {
+      SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    } else {
+      goto SM_LABEL(no_output);
+    }
+
+    out = sm_unwrap_vec3(sm_out, NULL);
+    mat3_get_column3(*self, index, *out);
+
+    break;
+  }
+
+  case 1: SM_LABEL(no_output): {
+    vec3_t out;
+    mat3_get_column3(*self, index, out);
+    sm_out = sm_wrap_vec3(out, Qnil);
+    rb_obj_call_init(sm_out, 0, 0);
+    break;
+  }
+
+  default: {
+    rb_raise(rb_eArgError, "Invalid number of arguments to get_column3 - expected 1 or 2");
+    break;
+  }
+  }
+
+  return sm_out;
+}
+
+
+
+static VALUE sm_mat3_set_row3(VALUE sm_self, VALUE sm_index, VALUE sm_value)
+{
+  const vec3_t *value;
+  int index;
+  mat3_t *self;
+
+  SM_RAISE_IF_NOT_TYPE(sm_value, vec3);
+
+  self = sm_unwrap_mat3(sm_self, NULL);
+  value = sm_unwrap_vec3(sm_value, NULL);
+  index = NUM2INT(sm_index);
+
+  if (index < 0 || index > 3) {
+    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 3)", index);
+    return Qnil;
+  }
+
+  mat3_set_row3(index, *value, *self);
+
+  return sm_self;
+}
+
+
+
+static VALUE sm_mat3_set_column3(VALUE sm_self, VALUE sm_index, VALUE sm_value)
+{
+  const vec3_t *value;
+  int index;
+  mat3_t *self;
+
+  SM_RAISE_IF_NOT_TYPE(sm_value, vec3);
+
+  self = sm_unwrap_mat3(sm_self, NULL);
+  value = sm_unwrap_vec3(sm_value, NULL);
+  index = NUM2INT(sm_index);
+
+  if (index < 0 || index > 3) {
+    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 3)", index);
+    return Qnil;
+  }
+
+  mat3_set_column3(index, *value, *self);
+
+  return sm_self;
+}
+
+
+
+static VALUE sm_mat3_identity(VALUE sm_self)
+{
+  mat3_t *self = sm_unwrap_mat3(sm_self, NULL);
+  mat3_identity(*self);
+  return sm_self;
+}
+
+
+
+static VALUE sm_mat3_scale(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  VALUE sm_x, sm_y, sm_z;
+  s_float_t x, y, z;
+  mat3_t *self = sm_unwrap_mat3(sm_self, NULL);
+
+  rb_scan_args(argc, argv, "31", &sm_x, &sm_y, &sm_z, &sm_out);
+  x = rb_num2dbl(sm_x);
+  y = rb_num2dbl(sm_y);
+  z = rb_num2dbl(sm_z);
+
+  if (SM_IS_A(sm_out, mat3)) {
+    mat3_scale(*self, x, y, z, *sm_unwrap_mat3(sm_out, NULL));
+  } else {
+    mat3_t out;
+    mat3_scale(*self, x, y, z, out);
+    sm_out = sm_wrap_mat3(out, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }
+
+  return sm_out;
+}
+
+
+
+static VALUE sm_mat3_equals(VALUE sm_self, VALUE sm_other)
+{
+  if (!RTEST(sm_other)) {
+    return Qfalse;
+  } else {
+    SM_RAISE_IF_NOT_TYPE(sm_other, mat3);
+  }
+
+  return mat3_equals(*sm_unwrap_mat3(sm_self, NULL), *sm_unwrap_mat3(sm_other, NULL)) ? Qtrue : Qfalse;
+}
+
+
+
+/*==============================================================================
+
   General-purpose functions
 
 ==============================================================================*/
@@ -2001,6 +2442,7 @@ void Init_bindings()
   SM_KLASS(vec3)            = rb_define_class_under(s_sm_snowmath_mod, "Vec3", rb_cObject);
   SM_KLASS(vec4)            = rb_define_class_under(s_sm_snowmath_mod, "Vec4", rb_cObject);
   SM_KLASS(quat)            = rb_define_class_under(s_sm_snowmath_mod, "Quat", rb_cObject);
+  SM_KLASS(mat3)            = rb_define_class_under(s_sm_snowmath_mod, "Mat3", rb_cObject);
   SM_KLASS(mat4)            = rb_define_class_under(s_sm_snowmath_mod, "Mat4", rb_cObject);
 
   rb_define_singleton_method(SM_KLASS(vec3), "new", sm_vec3_new, -1);
@@ -2087,6 +2529,7 @@ void Init_bindings()
   rb_define_singleton_method(SM_KLASS(mat4), "look_at", sm_mat4_look_at, -1);
   rb_define_method(SM_KLASS(mat4), "initialize", sm_mat4_init, -1);
   rb_define_method(SM_KLASS(mat4), "set", sm_mat4_init, -1);
+  rb_define_method(SM_KLASS(mat4), "to_mat3", sm_mat4_to_mat3, -1);
   rb_define_method(SM_KLASS(mat4), "load_identity", sm_mat4_identity, 0);
   rb_define_method(SM_KLASS(mat4), "fetch", sm_mat4_fetch, 1);
   rb_define_method(SM_KLASS(mat4), "store", sm_mat4_store, 2);
@@ -2118,10 +2561,40 @@ void Init_bindings()
   rb_define_method(SM_KLASS(mat4), "get_column4", sm_mat4_get_column4, -1);
   rb_define_method(SM_KLASS(mat4), "==", sm_mat4_equals, 1);
 
+  rb_define_singleton_method(SM_KLASS(mat3), "new", sm_mat3_new, -1);
+  rb_define_singleton_method(SM_KLASS(mat3), "angle_axis", sm_mat3_angle_axis, -1);
+  rb_define_method(SM_KLASS(mat3), "initialize", sm_mat3_init, -1);
+  rb_define_method(SM_KLASS(mat3), "set", sm_mat3_init, -1);
+  rb_define_method(SM_KLASS(mat3), "to_mat4", sm_mat3_to_mat4, -1);
+  rb_define_method(SM_KLASS(mat3), "load_identity", sm_mat3_identity, 0);
+  rb_define_method(SM_KLASS(mat3), "fetch", sm_mat3_fetch, 1);
+  rb_define_method(SM_KLASS(mat3), "store", sm_mat3_store, 2);
+  rb_define_method(SM_KLASS(mat3), "size", sm_mat3_size, 0);
+  rb_define_method(SM_KLASS(mat3), "length", sm_mat3_length, 0);
+  rb_define_method(SM_KLASS(mat3), "to_s", sm_mat3_to_s, 0);
+  rb_define_method(SM_KLASS(mat3), "address", sm_get_address, 0);
+  rb_define_method(SM_KLASS(mat3), "copy", sm_mat3_copy, -1);
+  rb_define_method(SM_KLASS(mat3), "transpose", sm_mat3_transpose, -1);
+  rb_define_method(SM_KLASS(mat3), "adjoint", sm_mat3_adjoint, -1);
+  rb_define_method(SM_KLASS(mat3), "cofactor", sm_mat3_cofactor, -1);
+  rb_define_method(SM_KLASS(mat3), "orthogonal", sm_mat3_orthogonal, -1);
+  rb_define_method(SM_KLASS(mat3), "scale", sm_mat3_scale, -1);
+  rb_define_method(SM_KLASS(mat3), "multiply_mat3", sm_mat3_multiply, -1);
+  rb_define_method(SM_KLASS(mat3), "rotate_vec3", sm_mat3_rotate_vec3, -1);
+  rb_define_method(SM_KLASS(mat3), "inverse_rotate_vec3", sm_mat3_inv_rotate_vec3, -1);
+  rb_define_method(SM_KLASS(mat3), "inverse", sm_mat3_inverse, -1);
+  rb_define_method(SM_KLASS(mat3), "determinant", sm_mat3_determinant, 0);
+  rb_define_method(SM_KLASS(mat3), "set_row3", sm_mat3_set_row3, 2);
+  rb_define_method(SM_KLASS(mat3), "get_row3", sm_mat3_get_row3, -1);
+  rb_define_method(SM_KLASS(mat3), "set_column3", sm_mat3_set_column3, 2);
+  rb_define_method(SM_KLASS(mat3), "get_column3", sm_mat3_get_column3, -1);
+  rb_define_method(SM_KLASS(mat3), "==", sm_mat3_equals, 1);
+
   #ifdef BUILD_ARRAY_TYPE
   REG_SM_ARR_TYPE(vec3, "Vec3Array");
   REG_SM_ARR_TYPE(vec4, "Vec4Array");
   REG_SM_ARR_TYPE(quat, "QuatArray");
+  REG_SM_ARR_TYPE(mat3, "Mat3Array");
   REG_SM_ARR_TYPE(mat4, "Mat4Array");
   #endif
 

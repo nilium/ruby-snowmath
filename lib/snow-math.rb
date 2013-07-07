@@ -5,6 +5,7 @@
 require 'snow-math/bindings'
 require 'snow-math/vec3'
 require 'snow-math/vec4'
+require 'snow-math/mat3'
 require 'snow-math/mat4'
 require 'snow-math/quat'
 require 'snow-math/swizzle'
