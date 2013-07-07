@@ -108,7 +108,7 @@ void quat_from_mat4(const mat4_t mat, quat_t out)
 
   trace = mat[0] + mat[5] + mat[10];
   if (trace > 0) {
-    r = sqrtf(trace + 1.0);
+    r = s_sqrt(trace + 1.0);
     out[3] = r * 0.5;
     r = 0.5 / r;
     out[0] = (mat[9] - mat[6]) * r;
@@ -116,10 +116,13 @@ void quat_from_mat4(const mat4_t mat, quat_t out)
     out[2] = (mat[4] - mat[1]) * r;
   } else {
     index = 0;
-    if (mat[5] > mat[0]) index = 1;
-    if (mat[10] > mat[index * 5]) index = 2;
+    if (mat[10] > mat[index * 5]) {
+      index = 2;
+    } else if (mat[5] > mat[0]) {
+      index = 1;
+    }
 
-    r = sqrtf(mat[index * 5] - (mat[((index + 1)) % 3 * 5] + mat[((index + 2) % 3) * 5]) + 1.0);
+    r = s_sqrt(mat[index * 5] - (mat[((index + 1)) % 3 * 5] + mat[((index + 2) % 3) * 5]) + 1.0);
     out[index] = r * 0.5;
 
     if (r) r = 0.5 / r;

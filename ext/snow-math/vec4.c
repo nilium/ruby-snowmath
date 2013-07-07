@@ -48,7 +48,7 @@ s_float_t vec4_length_squared(const vec4_t v)
  */
 s_float_t vec4_length(const vec4_t v)
 {
-  return sqrtf((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]) + (v[3] * v[3]));
+  return s_sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]) + (v[3] * v[3]));
 }
 
 void vec4_normalize(const vec4_t in, vec4_t out)
