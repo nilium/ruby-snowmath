@@ -2228,8 +2228,8 @@ static VALUE sm_mat3_get_row3(int argc, VALUE *argv, VALUE sm_self)
   index = NUM2INT(argv[0]);
   sm_out = Qnil;
 
-  if (index < 0 || index > 3) {
-    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 3)", index);
+  if (index < 0 || index > 2) {
+    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 2)", index);
     return Qnil;
   }
 
@@ -2280,8 +2280,8 @@ static VALUE sm_mat3_get_column3(int argc, VALUE *argv, VALUE sm_self)
   index = NUM2INT(argv[0]);
   sm_out = Qnil;
 
-  if (index < 0 || index > 3) {
-    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 3)", index);
+  if (index < 0 || index > 2) {
+    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 2)", index);
     return Qnil;
   }
 
@@ -2334,8 +2334,8 @@ static VALUE sm_mat3_set_row3(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   value = sm_unwrap_vec3(sm_value, NULL);
   index = NUM2INT(sm_index);
 
-  if (index < 0 || index > 3) {
-    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 3)", index);
+  if (index < 0 || index > 2) {
+    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 2)", index);
     return Qnil;
   }
 
@@ -2358,8 +2358,8 @@ static VALUE sm_mat3_set_column3(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   value = sm_unwrap_vec3(sm_value, NULL);
   index = NUM2INT(sm_index);
 
-  if (index < 0 || index > 3) {
-    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 3)", index);
+  if (index < 0 || index > 2) {
+    rb_raise(rb_eRangeError, "Index %d is out of range, must be (0 .. 2)", index);
     return Qnil;
   }
 
