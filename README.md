@@ -13,6 +13,7 @@ provides four 3D math types:
     - Snow::Vec3
     - Snow::Vec4
     - Snow::Quat
+    - Snow::Mat3
     - Snow::Mat4
 
 _Most_ of their functionality is implemented in the C bindings, particularly
@@ -159,21 +160,18 @@ obvious but are as follows:
 
       def inverse(output = nil) -> new vec3 or output
       def inverse! -> self
+      ~vec3 -> new vec3
         Returns a vector whose components are the multiplicative inverse of the
         vector's components.
-        Aliased as :~
 
       def negate(output = nil) -> new vec3 or output
       def negate! -> self
+      -vec3 -> new vec3
         Returns a vector whose components are the negated form of the vector's
         components. Beware of -0.0 here.
-        Aliased as :-@
 
       def normalize(output = nil) -> new vec3 or output
       def normalize!() -> self
-
-      def cross_product(rhs, output = nil) -> new vec3 or output
-      def cross_product!(rhs) -> self
 
       def multiply_vec3(rhs, output = nil) -> new vec3 or output
         Multiplies both vector's components together and returns the result.
@@ -181,18 +179,28 @@ obvious but are as follows:
       def multiply(vec3, output = nil) -> same as multiply_vec3
       def multiply(scalar, output = nil) -> same as scale
       def multiply!(rhs) -> same as multiply(rhs, self)
-        Non-mutable form aliased as :*
+      vec3 * rhs -> vec3.multiply(rhs)
 
       def add(rhs, output = nil) -> new vec3 or output
       def add!(rhs)
-        Aliased as :+
+      vec3 + vec3
 
       def subtract(rhs, output = nil) -> new vec3 or output
       def subtract!(rhs) -> self
-        Aliased as :-
+      vec3 - vec3
+
+      def project(normal, output = nil) -> new vec4 or output
+      def reflect(normal, output = nil) -> new vec4 or output
+        Returns either the projected or reflected vector, respectively. These
+        methods expect the 'normal' argument to be normalized -- that is, they
+        will not normalize their input for you.
+
+      def cross_product(rhs, output = nil) -> new vec3 or output
+      def cross_product!(rhs) -> self
+      vec3 ^ vec3 -> new vec3
 
       def dot_product(rhs) -> Float
-        Aliased as :**
+      vec3 ** vec3 -> float
 
       def magnitude_squared -> Float
       def magnitude -> Float
@@ -202,10 +210,11 @@ obvious but are as follows:
         of two things, you can skip a call to sqrt and use the squared magnitude.
 
       def scale(scalar, output = nil) -> new vec3 or output
+      vec3 * scalar
       def divide(scalar, output = nil) -> new vec3 or output
+      vec3 / scalar
         Multiplies or divides all components of the vector by a scalar. In the case
         of divide, a scalar of 0 is undefined behaviour.
-        divide is aliased as :/
 
       def size -> size in bytes
       def length -> length in floats
@@ -259,11 +268,13 @@ component. In addition, it is at times interchangeable with Quat.
 
       def inverse(output = nil) -> new vec4 or output
       def inverse! -> self
+      ~vec4 -> new vec4
         Returns a vector whose components are the multiplicative inverse of the
         vector's components.
 
       def negate(output = nil) -> new vec4 or output
       def negate! -> self
+      -vec4 -> new vec4
         Returns a vector whose components are the negated form of the vector's
         components. Beware of -0.0 here.
 
@@ -272,20 +283,30 @@ component. In addition, it is at times interchangeable with Quat.
 
       def multiply_vec4(rhs, output = nil) -> new vec4 or output
       def multiply_vec4!(rhs) -> self
+      vec4 * vec4 -> new vec4
         Multiplies both vector's components together and returns the result.
 
       def multiply(vec4, output = nil) -> same as multiply_vec4
       def multiply(numeric, output = nil) -> same as scale
       def multiply!(rhs) -> same as multiply(rhs, self)
-        Aliased as :*
+      vec4 * rhs -> vec4.multiply(rhs)
 
       def add(rhs, output = nil) -> new vec4 or output
-      def add!(rhs)
+      def add!(rhs) -> self
+      vec4 + vec4 -> new vec4
 
       def subtract(rhs, output = nil) -> new vec4 or output
       def subtract!(rhs) -> self
+      vec4 - vec4 -> new vec4
+
+      def project(normal, output = nil) -> new vec4 or output
+      def reflect(normal, output = nil) -> new vec4 or output
+        Returns either the projected or reflected vector, respectively. These
+        methods expect the 'normal' argument to be normalized -- that is, they
+        will not normalize their input for you.
 
       def dot_product(rhs) -> Float
+      vec4 ** vec4 -> Float
 
       def magnitude_squared -> Float
       def magnitude -> Float
@@ -295,7 +316,9 @@ component. In addition, it is at times interchangeable with Quat.
         of two things, you can skip a call to sqrt and use the squared magnitude.
 
       def scale(scalar, output = nil) -> new vec4 or output
+      vec4 * scalar -> new vec4
       def divide(scalar, output = nil) -> new vec4 or output
+      vec4 / scalar -> new vec4
         Multiplies or divides all components of the vector by a scalar. In the case
         of divide, a scalar of 0 is undefined behaviour.
 
@@ -365,11 +388,13 @@ and an attempt to make code more readable.
 
       def inverse(output = nil) -> new quat or output
       def inverse! -> self
+      ~quat -> new quat
         Returns the inverse of this quaternion (or writes the inverse to an output
         or itself). This is not the same as a vector's inverse -- keep that in mind.
 
       def negate(output = nil) -> new quat or output
       def negate! -> self
+      -quat -> new quat
         Returns a quaternion whose components are the negated form of the vector's
         components. Beware of -0.0 here. This is the same as negating a vector.
 
@@ -378,28 +403,34 @@ and an attempt to make code more readable.
 
       def multiply_quat(rhs: Quat, output = nil) -> new quat or output
       def multiply!(rhs: Quat) -> self
+      quat * quat -> new quat
         The first form, multiply_quat, multiplies two quaternions and returns the
         resulting quaternion. The second form, multiply!, is the same as calling
         multiply_quat(rhs, self).
 
       def mutliply_vec3(rhs: Vec3, output = nil) -> new vec3 or output
+      quat * vec3 -> new vec3
         Multiplies a vec3 by a quat and returns the resulting vec3.
 
       def multiply(vec3, output = nil) -> new vec3 or output
       def multiply(quat, output = nil) -> new quat or output
       def multiply(numeric, output = nil) -> new quat or output
+      quat * rhs -> quat.multiply(rhs)
         In its first form, it's the same as #multiply_vec3. In its second, it's the
         same as #multiply_quat. In its third, it's the same as #scale.
 
       def add(rhs, output = nil) -> new quat or output
       def add!(rhs)
+      quat + quat -> new quat
         Same as Vec4#add and Vec4#add!.
 
       def subtract(rhs, output = nil) -> new quat or output
       def subtract!(rhs) -> self
+      quat - quat -> new quat
         Same as Vec4#subtract and Vec4#subtract!.
 
       def dot_product(rhs) -> Float
+      quat ** quat -> new quat
         Same as Vec4#dot_product.
 
       def magnitude_squared -> Float
@@ -410,7 +441,9 @@ and an attempt to make code more readable.
         of two things, you can skip a call to sqrt and use the squared magnitude.
 
       def scale(scalar, output = nil) -> new quat or output
+      quat * scalar -> new quat
       def divide(scalar, output = nil) -> new quat or output
+      quat / scalar -> new quat
         Multiplies or divides all components of the quaternion by a scalar. In the
         case of divide, a scalar of 0 is undefined behaviour.
 
@@ -439,6 +472,78 @@ and an attempt to make code more readable.
 
 
 
+#### Snow::Mat3
+
+    class Snow::Mat3
+
+      def self.new() -> identity mat3
+      def self.new(m1, m2, m3, ..., m9) -> mat3 with the given components
+      def self.new([Vec3, Vec3, Vec3]) -> mat3 with rows defined by the given Vec3s
+      def self.new(Quat) -> Mat3 from Quat
+      def self.new(Mat3) -> copy of the given Mat3
+      def self.new(Mat4) -> copy of the given Mat4 as a Mat3
+        Aliased as `[]`, so you can use Mat3[...] to create a new Mat3.
+
+      def self.angle_axis(angle_degrees, axis: Vec3, output = nil) -> new mat3 or output
+        Returns a new rotation matrix for the given angle and axis. The angle is in
+        degrees.
+
+      def set(...) -> self
+        Same variations and arguments as self.new(...)
+
+      def load_identity() -> self
+        Resets self to the identity matrix.
+
+      def to_mat4(output = nil) -> new mat4 or output
+
+      def copy(output = nil) -> new mat3 or output
+        Copies self to the given output matrix.
+
+      def transpose(output = nil) -> new mat3 or output
+      def transpose!() -> self
+
+      def inverse(output = nil) -> new mat3 or output
+      def inverse!() -> self on success, nil on failure
+
+      def multiply_mat3(rhs, output = nil) -> new mat3 or output
+      def multiply_mat3!(rhs) -> self
+        Multiplies this and the rhs matrix and returns the result.
+
+      def rotate_vec3(rhs, output = nil) -> new vec3 or output
+        Rotates a vec3 by the matrix and returns the result.
+
+      def inverse_rotate_vec3(vec3, output = nil) -> new vec3 or output
+        Essentially just a convenience function.
+
+      def multiply(mat3, output = nil) -> same as mutliply_mat3
+      def multiply(vec3, output = nil) -> same as mutliply_vec3
+      def multiply(numeric, output = nil) -> same as scale(N, N, N, output)
+      def multiply!(rhs) -> same as multiply(rhs, self)
+        The fourth form, multiply!, will fail if attempting to multiply a vec3.
+
+      def adjoint(output = nil) -> new mat3 or output
+      def adjoint!() -> new mat3 or output
+
+      def cofactor(output = nil) -> new mat3 or output
+      def cofactor!() -> new mat3 or output
+
+      def determinant -> Float
+
+      def scale(x, y, z, output = nil) -> new mat3 or output
+      def scale!(x, y, z) -> new mat3 or output
+        Returns a matrix with its columns scaled by the given components.
+
+      def set_row3, set_column3(index, V) -> self
+        V is a vector with the number of components in the function name. Sets the
+        Mat3's row or column to the components of the given Vec3.
+
+      def get_row3, get_column3(index, output = nil) -> new vec3 for row/column
+        Returns a Vec3 for the given row or column in the Mat3.
+
+    end
+
+
+
 #### Snow::Mat4
 
     class Snow::Mat4
@@ -447,6 +552,7 @@ and an attempt to make code more readable.
       def self.new(m1, m2, m3, ..., m16) -> mat4 with the given components
       def self.new([Vec4, Vec4, Vec4, Vec4]) -> mat4 with rows defined by the given Vec4s
       def self.new(Quat) -> Mat4 from Quat
+      def self.new(Mat3) -> copy of the given Mat3 as a Mat4
       def self.new(Mat4) -> copy of the given Mat4
         Aliased as `[]`, so you can use Mat4[...] to create a new Mat4.
 
@@ -473,6 +579,8 @@ and an attempt to make code more readable.
 
       def load_identity() -> self
         Resets self to the identity matrix.
+
+      def to_mat3(output = nil) -> new mat3 or output
 
       def copy(output = nil) -> new mat4 or output
         Copies self to the given output matrix.
@@ -524,27 +632,28 @@ and an attempt to make code more readable.
 
       def scale(x, y, z, output = nil) -> new mat4 or output
       def scale!(x, y, z) -> new mat4 or output
-        Returns a matrix with its inner 3x3 matrix's rows scaled by the given
+        Returns a matrix with its inner 3x3 matrix's columns scaled by the given
         components.
 
       def set_row3, set_column3, set_row4, set_column4(index, V) -> self
-        V is a vector with the number of components in the function name. Sets the
-        Mat4's row or column to the components of the given vec3 or vec4.
+        Sets the Mat4's row or column to the components of the given vec3 or vec4.
+        V must be a vector with the number of components specified by the function
+        name.
 
-      def get_row3, get_column3, get_row4, get_column4(index, output = nil) -> row/column
-        Returns a vector with the number of components as specific by the name for
+      def get_row3, get_column3, get_row4, get_column4(index, output = nil) -> new vec3 or vec4 for row/column
+        Returns a vector with the number of components as specified by the name for
         the given row or column in the Mat4.
 
     end
 
 
 
-#### Snow::Vec3Array, Snow::Vec4Array, Snow::QuatArray, Snow::Mat4Array
+#### Snow::Vec3Array, Snow::Vec4Array, Snow::QuatArray, Snow::Mat3Array, Snow::Mat4Array
 
 All typed arrays have the same interface and differ only in the kind of object
 they contain. As such, this applies to all typed arrays.
 
-    class Snow::Vec3Array, Snow::Vec4Array, Snow::QuatArray, Snow::Mat4Array
+    class Snow::Vec3Array, Snow::Vec4Array, Snow::QuatArray, Snow::Mat3Array, Snow::Mat4Array
 
       def self.new(length) -> new array
       def self.new(array) -> copy of array
