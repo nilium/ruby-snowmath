@@ -11,5 +11,6 @@ require 'snow-math/quat'
 require 'snow-math/swizzle'
 require 'snow-math/inspect'
 require 'snow-math/to_a'
+require 'snow-math/marshal'
 
 module Snow ; end
