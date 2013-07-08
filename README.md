@@ -60,6 +60,43 @@ The SnowPalm code is designed to handle this and will not accidentally trash
 itself because the input and output refer to the same location in memory.
 
 
+#### Thread Safety
+
+Act as though no object is thread-safe. That is, if an object is being modified
+on one thread, it should not be read from or written to on another. One thread
+at a time. If possible, don't share objects between threads. The best case
+scenario is you are passing serializable messages to threads rather than giving
+objects directly to other threads. That said, as long as only one thread is
+interacting with a given object at a time, you should be fine. To reiterate
+that with an example, if you have two threads and they both allocate their own
+Vec3 object, you're fine. If you have two threads and they're both using the
+same Vec3 object, you are playing with fire.
+
+Typed arrays, like Vec3Array and so on, require a little more explanation. When
+accessing elements of a typed array, the array returns an object that accesses
+the array's memory. The object does not have its own buffer to play with. As
+such, arrays and the elements of arrays are both not thread-safe and you should
+not modify an array or its elements from multiple threads at the same time.
+Also, never attempt to fetch an element from an array on multiple threads at a
+time, as the underlying object cache of the array is being modified even if you
+aren't altering any array elements.
+
+If you need to pass an array's element to another thread but don't care about
+it modifying the underlying array data, simply #copy, #clone, or #dup the
+fetched object and pass ownership of the copy to the other thread -- or pass
+the object via a deserializable message so that you're not even trying to pass
+objects directly to threads.
+
+When in doubt, don't use threads. When you have to use threads and are still in
+doubt, use a messaging system to pass data between threads, like [ZeroMQ],
+rather than passing objects directly to threads. Safety first.
+
+(Further note: all snow-math types work with Marshal.load and Marshal.dump, so
+make use of that where it's practical and smart to do so.)
+
+[ZeroMQ]: http://www.zeromq.org
+
+
 #### Shared by All Types
 
 All types share the following functions. These are not included in the class
