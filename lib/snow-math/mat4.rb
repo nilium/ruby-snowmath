@@ -105,7 +105,6 @@ class Snow::Mat4
   #     multiply(vec3, output = nil) -> output or new vec3
   #     multiply(scalar, output = nil) -> output or new mat4
   def multiply(rhs, out = nil)
-    raise "Invalid type for output, must be the same as RHS" if !out.nil? && !out.kind_of?(rhs.class)
     case rhs
     when ::Snow::Mat4 then multiply_mat4(rhs, out)
     when ::Snow::Vec4 then multiply_vec4(rhs, out)

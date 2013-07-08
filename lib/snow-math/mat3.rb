@@ -95,7 +95,6 @@ class Snow::Mat3
   #   multiply(scalar, output = nil) -> output or new mat3
   #
   def multiply(rhs, out = nil)
-    raise "Invalid type for output, must be the same as RHS" if !out.nil? && !out.kind_of?(rhs.class)
     case rhs
     when ::Snow::Mat3 then multiply_mat3(rhs, out)
     when ::Snow::Vec3 then rotate_vec3(rhs, out)
