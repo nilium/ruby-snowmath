@@ -13,4 +13,7 @@ require 'snow-math/inspect'
 require 'snow-math/to_a'
 require 'snow-math/marshal'
 
+#
+# Snow module -- covers Snow-related classes and methods.
+#
 module Snow ; end
