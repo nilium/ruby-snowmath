@@ -6,7 +6,7 @@
 require 'mkmf'
 
 # Compile as C99
-$CFLAGS += " -std=c99"
+$CFLAGS += " -std=c99 -march=native"
 
 if ARGV.include?("--debug") || ARGV.include?("-D")
   $CFLAGS += " -g"
