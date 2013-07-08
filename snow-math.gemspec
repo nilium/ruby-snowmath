@@ -18,11 +18,13 @@ Gem::Specification.new { |s|
   s.license     = 'Simplified BSD'
   s.has_rdoc    = true
   s.extra_rdoc_files = [
+      'ext/snow-math/snow-math.c',
       'README.md',
       'COPYING'
   ]
   s.rdoc_options << '--title' << 'snowmath -- 3D Math Types' <<
                     '--main' << 'README.md' <<
+                    '--markup=markdown' <<
                     '--line-numbers'
   s.required_ruby_version = '>= 2.0.0'
 }
