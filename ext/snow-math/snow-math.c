@@ -3976,7 +3976,7 @@ static VALUE sm_mat4_angle_axis(int argc, VALUE *argv, VALUE self)
  * Returns a Vec3 whose components are that of the row at the given index.
  *
  * call-seq:
- *    get_row3(index) -> new vec3
+ *    get_row3(index, output = nil) -> output or new vec3
  */
 static VALUE sm_mat4_get_row3(int argc, VALUE *argv, VALUE sm_self)
 {
@@ -4034,7 +4034,7 @@ static VALUE sm_mat4_get_row3(int argc, VALUE *argv, VALUE sm_self)
  * Returns a Vec4 whose components are that of the row at the given index.
  *
  * call-seq:
- *    get_row4(index) -> new vec4
+ *    get_row4(index, output = nil) -> output or new vec4
  */
 static VALUE sm_mat4_get_row4(int argc, VALUE *argv, VALUE sm_self)
 {
@@ -4092,7 +4092,7 @@ static VALUE sm_mat4_get_row4(int argc, VALUE *argv, VALUE sm_self)
  * Returns a Vec3 whose components are that of the column at the given index.
  *
  * call-seq:
- *    get_column3(index) -> new vec3
+ *    get_column3(index, output = nil) -> output or new vec3
  */
 static VALUE sm_mat4_get_column3(int argc, VALUE *argv, VALUE sm_self)
 {
@@ -4150,7 +4150,7 @@ static VALUE sm_mat4_get_column3(int argc, VALUE *argv, VALUE sm_self)
  * Returns a Vec4 whose components are that of the column at the given index.
  *
  * call-seq:
- *    get_column4(index) -> new vec4
+ *    get_column4(index, output = nil) -> output or new vec4
  */
 static VALUE sm_mat4_get_column4(int argc, VALUE *argv, VALUE sm_self)
 {
@@ -5220,7 +5220,7 @@ static VALUE sm_mat3_angle_axis(int argc, VALUE *argv, VALUE self)
  * Returns a Vec3 whose components are that of the row at the given index.
  *
  * call-seq:
- *    get_row3(index) -> new vec3
+ *    get_row3(index, output = nil) -> output or new vec3
  */
 static VALUE sm_mat3_get_row3(int argc, VALUE *argv, VALUE sm_self)
 {
@@ -5278,7 +5278,7 @@ static VALUE sm_mat3_get_row3(int argc, VALUE *argv, VALUE sm_self)
  * Returns a Vec3 whose components are that of the column at the given index.
  *
  * call-seq:
- *    get_column3(index) -> new vec3
+ *    get_column3(index, output = nil) -> output or new vec3
  */
 static VALUE sm_mat3_get_column3(int argc, VALUE *argv, VALUE sm_self)
 {
