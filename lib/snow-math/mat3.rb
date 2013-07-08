@@ -35,26 +35,64 @@ class Snow::Mat3
   alias_method :dup, :copy
   alias_method :clone, :copy
 
+  #
+  # Calls #transpose(self)
+  #
+  # call-seq: transpose! -> self
+  #
   def transpose!
     transpose self
   end
 
+  #
+  # Calls #inverse(self)
+  #
+  # call-seq: inverse! -> self
+  #
   def inverse!
     inverse self
   end
 
+  #
+  # Calls #adjoint(self)
+  #
+  # call-seq: adjoint! -> self
+  #
   def adjoint!
     adjoint self
   end
 
+  #
+  # Calls #cofactor(self)
+  #
+  # call-seq: cofactor! -> self
+  #
   def cofactor!
     cofactor self
   end
 
+  #
+  # Calls #multiply_mat3(rhs, self)
+  #
+  # call-seq: multiply_mat3!(rhs) -> self
+  #
   def multiply_mat3!(rhs)
     multiply_mat3 rhs, self
   end
 
+  #
+  # Multiplies self and RHS and returns the result. This is a wrapper around
+  # other multiply methods. See multiply_mat3, rotate_vec3, and #scale for more
+  # reference.
+  #
+  # In the third form, the scalar value provided is passed for all three columns
+  # when calling scale.
+  #
+  # call-seq:
+  #   multiply(mat3, output = nil) -> output or new mat3
+  #   multiply(vec3, output = nil) -> output or new vec3
+  #   multiply(scalar, output = nil) -> output or new mat3
+  #
   def multiply(rhs, out = nil)
     raise "Invalid type for output, must be the same as RHS" if !out.nil? && !out.kind_of?(rhs.class)
     case rhs
@@ -65,6 +103,13 @@ class Snow::Mat3
     end
   end
 
+  #
+  # Calls #multiply(rhs, self).
+  #
+  # call-seq: multiply!(mat3) -> self
+  # call-seq: multiply!(vec3) -> vec3
+  # call-seq: multiply!(scalar) -> self
+  #
   def multiply!(rhs)
     multiply rhs, case rhs
       when Mat3, Numeric then self
@@ -73,6 +118,11 @@ class Snow::Mat3
       end
   end
 
+  #
+  # Calls scale(x, y, z, self)
+  #
+  # call-seq: scale!(x, y, z) -> self
+  #
   def scale!(x, y, z)
     scale x, y, z, self
   end
