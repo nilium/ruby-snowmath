@@ -16,4 +16,11 @@ require 'snow-math/marshal'
 #
 # Snow module -- covers Snow-related classes and methods.
 #
-module Snow ; end
+module Snow
+
+  #
+  # snow-math bindings version string.
+  #
+  SNOW_MATH_VERSION = '1.3.0pre0'
+
+end
