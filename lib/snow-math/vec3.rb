@@ -7,6 +7,13 @@ require 'snow-math/bindings'
 module Snow ; end
 
 if Snow.const_defined?(:Vec3Array)
+  #
+  # A contiguous array of Vec3s. Allocated as a single block of memory so that
+  # it can easily be passed back to C libraries (like OpenGL) and to aid with
+  # cache locality.
+  #
+  # Useful for storing vertex data such as positions, normals, and so on.
+  #
   class Snow::Vec3Array
     class << self ; alias_method :[], :new ; end
 
@@ -15,6 +22,9 @@ if Snow.const_defined?(:Vec3Array)
   end
 end
 
+#
+# A 3-component vector class.
+#
 class Snow::Vec3
 
   # Shortcut through to new

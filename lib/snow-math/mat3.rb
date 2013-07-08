@@ -6,7 +6,15 @@ require 'snow-math/bindings'
 
 module Snow ; end
 
-if Snow.const_defined?(:Mat4Array)
+if Snow.const_defined?(:Mat3Array)
+  #
+  # A contiguous array of Mat3s. Allocated as a single block of memory so that
+  # it can easily be passed back to C libraries (like OpenGL) and to aid with
+  # cache locality.
+  #
+  # May be useful when subclassed as a stack to recreate now-drepcated OpenGL
+  # functionality, though perhaps less-so than a Mat4 stack.
+  #
   class Snow::Mat3Array
     class << self ; alias_method :[], :new ; end
 
@@ -15,6 +23,9 @@ if Snow.const_defined?(:Mat4Array)
   end
 end
 
+#
+# A 3x3 matrix class. Often useful for representation rotations.
+#
 class Snow::Mat3
 
   class << self ; alias_method :[], :new ; end

@@ -7,6 +7,11 @@ require 'snow-math/bindings'
 module Snow ; end
 
 if Snow.const_defined?(:QuatArray)
+  #
+  # A contiguous array of Quats. Allocated as a single block of memory so that
+  # it can easily be passed back to C libraries (like OpenGL) and to aid with
+  # cache locality.
+  #
   class Snow::QuatArray
     class << self ; alias_method :[], :new ; end
 
@@ -15,6 +20,9 @@ if Snow.const_defined?(:QuatArray)
   end
 end
 
+#
+# A simple quaternion class for representation rotations.
+#
 class Snow::Quat
 
   class << self ; alias_method :[], :new ; end

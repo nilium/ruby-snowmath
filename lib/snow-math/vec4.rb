@@ -7,6 +7,13 @@ require 'snow-math/bindings'
 module Snow ; end
 
 if Snow.const_defined?(:Vec4Array)
+  #
+  # A contiguous array of Vec4s. Allocated as a single block of memory so that
+  # it can easily be passed back to C libraries (like OpenGL) and to aid with
+  # cache locality.
+  #
+  # Useful also to represent color buffers, vertices, and other miscellanea.
+  #
   class Snow::Vec4Array
     class << self ; alias_method :[], :new ; end
 
@@ -15,6 +22,9 @@ if Snow.const_defined?(:Vec4Array)
   end
 end
 
+#
+# A 4-component vector class.
+#
 class Snow::Vec4
 
   class << self ; alias_method :[], :new ; end

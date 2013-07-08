@@ -7,6 +7,14 @@ require 'snow-math/bindings'
 module Snow ; end
 
 if Snow.const_defined?(:Mat4Array)
+  #
+  # A contiguous array of Mat4s. Allocated as a single block of memory so that
+  # it can easily be passed back to C libraries (like OpenGL) and to aid with
+  # cache locality.
+  #
+  # May also be useful to subclass as a stack of Mat4s akin to now-deprecated
+  # functionality in OpenGL.
+  #
   class Snow::Mat4Array
     class << self ; alias_method :[], :new ; end
 
@@ -15,6 +23,10 @@ if Snow.const_defined?(:Mat4Array)
   end
 end
 
+#
+# A 4x4 matrix. Useful for anything from rotation to projection to almost any
+# other 3D transformation you might need.
+#
 class Snow::Mat4
 
   class << self ; alias_method :[], :new ; end
