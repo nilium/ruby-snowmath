@@ -602,12 +602,8 @@ static VALUE sm_vec3_divide(int argc, VALUE *argv, VALUE sm_self)
 
 static VALUE sm_vec3_equals(VALUE sm_self, VALUE sm_other)
 {
-  if (!RTEST(sm_other)) {
+  if (!RTEST(sm_other) || (!SM_IS_A(sm_other, vec3) && !SM_IS_A(sm_other, vec4) && !SM_IS_A(sm_other, quat))) {
     return Qfalse;
-  } else if (!SM_IS_A(sm_other, vec3) && !SM_IS_A(sm_other, vec4) && !SM_IS_A(sm_other, quat)) {
-    rb_raise(rb_eTypeError,
-      "Expected Vec3, Vec4, or Quat, got %s",
-      rb_obj_classname(sm_other));
   }
 
   return vec3_equals(*sm_unwrap_vec3(sm_self, NULL), *sm_unwrap_vec3(sm_other, NULL)) ? Qtrue : Qfalse;
@@ -805,12 +801,8 @@ static VALUE sm_vec4_divide(int argc, VALUE *argv, VALUE sm_self)
 
 static VALUE sm_vec4_equals(VALUE sm_self, VALUE sm_other)
 {
-  if (!RTEST(sm_other)) {
+  if (!RTEST(sm_other) || (!SM_IS_A(sm_other, vec4) && !SM_IS_A(sm_other, quat))) {
     return Qfalse;
-  } else if (!SM_IS_A(sm_other, vec4) && !SM_IS_A(sm_other, quat)) {
-    rb_raise(rb_eTypeError,
-      "Expected Vec4 or Quat, got %s",
-      rb_obj_classname(sm_other));
   }
 
   return vec4_equals(*sm_unwrap_vec4(sm_self, NULL), *sm_unwrap_vec4(sm_other, NULL)) ? Qtrue : Qfalse;
@@ -1983,10 +1975,8 @@ static VALUE sm_mat4_scale(int argc, VALUE *argv, VALUE sm_self)
 
 static VALUE sm_mat4_equals(VALUE sm_self, VALUE sm_other)
 {
-  if (!RTEST(sm_other)) {
+  if (!RTEST(sm_other) || !SM_IS_A(sm_other, mat4)) {
     return Qfalse;
-  } else {
-    SM_RAISE_IF_NOT_TYPE(sm_other, mat4);
   }
 
   return mat4_equals(*sm_unwrap_mat4(sm_self, NULL), *sm_unwrap_mat4(sm_other, NULL)) ? Qtrue : Qfalse;
@@ -2407,10 +2397,8 @@ static VALUE sm_mat3_scale(int argc, VALUE *argv, VALUE sm_self)
 
 static VALUE sm_mat3_equals(VALUE sm_self, VALUE sm_other)
 {
-  if (!RTEST(sm_other)) {
+  if (!RTEST(sm_other) || !SM_IS_A(sm_other, mat3)) {
     return Qfalse;
-  } else {
-    SM_RAISE_IF_NOT_TYPE(sm_other, mat3);
   }
 
   return mat3_equals(*sm_unwrap_mat3(sm_self, NULL), *sm_unwrap_mat3(sm_other, NULL)) ? Qtrue : Qfalse;
