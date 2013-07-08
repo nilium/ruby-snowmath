@@ -260,7 +260,7 @@ static VALUE sm_vec3_array_fetch(VALUE sm_self, VALUE sm_index)
   if (!RTEST(sm_inner)) {
     /* No cached value, create one. */
     Data_Get_Struct(sm_self, vec3_t, arr);
-    sm_inner = Data_Wrap_Struct(SM_KLASS(vec3), 0, 0, arr[index]);
+    sm_inner = Data_Wrap_Struct(s_sm_vec3_klass, 0, 0, arr[index]);
     rb_ivar_set(sm_inner, kRB_IVAR_MATHARRAY_SOURCE, sm_self);
     /* Store the Vec3 in the cache */
     rb_ary_store(sm_cache, (long)index, sm_inner);
@@ -292,7 +292,7 @@ static VALUE sm_vec3_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   } else if (!SM_IS_A(sm_value, vec3)) {
     rb_raise(rb_eTypeError,
       "Invalid value to store: expected %s, got %s",
-      rb_class2name(SM_KLASS(vec3)),
+      rb_class2name(s_sm_vec3_klass),
       rb_obj_classname(sm_value));
   }
 
@@ -451,7 +451,7 @@ static VALUE sm_vec4_array_fetch(VALUE sm_self, VALUE sm_index)
   if (!RTEST(sm_inner)) {
     /* No cached value, create one. */
     Data_Get_Struct(sm_self, vec4_t, arr);
-    sm_inner = Data_Wrap_Struct(SM_KLASS(vec4), 0, 0, arr[index]);
+    sm_inner = Data_Wrap_Struct(s_sm_vec4_klass, 0, 0, arr[index]);
     rb_ivar_set(sm_inner, kRB_IVAR_MATHARRAY_SOURCE, sm_self);
     /* Store the Vec4 in the cache */
     rb_ary_store(sm_cache, (long)index, sm_inner);
@@ -483,7 +483,7 @@ static VALUE sm_vec4_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   } else if (!SM_IS_A(sm_value, vec4)) {
     rb_raise(rb_eTypeError,
       "Invalid value to store: expected %s, got %s",
-      rb_class2name(SM_KLASS(vec4)),
+      rb_class2name(s_sm_vec4_klass),
       rb_obj_classname(sm_value));
   }
 
@@ -642,7 +642,7 @@ static VALUE sm_quat_array_fetch(VALUE sm_self, VALUE sm_index)
   if (!RTEST(sm_inner)) {
     /* No cached value, create one. */
     Data_Get_Struct(sm_self, quat_t, arr);
-    sm_inner = Data_Wrap_Struct(SM_KLASS(quat), 0, 0, arr[index]);
+    sm_inner = Data_Wrap_Struct(s_sm_quat_klass, 0, 0, arr[index]);
     rb_ivar_set(sm_inner, kRB_IVAR_MATHARRAY_SOURCE, sm_self);
     /* Store the Quat in the cache */
     rb_ary_store(sm_cache, (long)index, sm_inner);
@@ -674,7 +674,7 @@ static VALUE sm_quat_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   } else if (!SM_IS_A(sm_value, quat)) {
     rb_raise(rb_eTypeError,
       "Invalid value to store: expected %s, got %s",
-      rb_class2name(SM_KLASS(quat)),
+      rb_class2name(s_sm_quat_klass),
       rb_obj_classname(sm_value));
   }
 
@@ -833,7 +833,7 @@ static VALUE sm_mat3_array_fetch(VALUE sm_self, VALUE sm_index)
   if (!RTEST(sm_inner)) {
     /* No cached value, create one. */
     Data_Get_Struct(sm_self, mat3_t, arr);
-    sm_inner = Data_Wrap_Struct(SM_KLASS(mat3), 0, 0, arr[index]);
+    sm_inner = Data_Wrap_Struct(s_sm_mat3_klass, 0, 0, arr[index]);
     rb_ivar_set(sm_inner, kRB_IVAR_MATHARRAY_SOURCE, sm_self);
     /* Store the Mat3 in the cache */
     rb_ary_store(sm_cache, (long)index, sm_inner);
@@ -865,7 +865,7 @@ static VALUE sm_mat3_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   } else if (!SM_IS_A(sm_value, mat3)) {
     rb_raise(rb_eTypeError,
       "Invalid value to store: expected %s, got %s",
-      rb_class2name(SM_KLASS(mat3)),
+      rb_class2name(s_sm_mat3_klass),
       rb_obj_classname(sm_value));
   }
 
@@ -1024,7 +1024,7 @@ static VALUE sm_mat4_array_fetch(VALUE sm_self, VALUE sm_index)
   if (!RTEST(sm_inner)) {
     /* No cached value, create one. */
     Data_Get_Struct(sm_self, mat4_t, arr);
-    sm_inner = Data_Wrap_Struct(SM_KLASS(mat4), 0, 0, arr[index]);
+    sm_inner = Data_Wrap_Struct(s_sm_mat4_klass, 0, 0, arr[index]);
     rb_ivar_set(sm_inner, kRB_IVAR_MATHARRAY_SOURCE, sm_self);
     /* Store the Mat4 in the cache */
     rb_ary_store(sm_cache, (long)index, sm_inner);
@@ -1056,7 +1056,7 @@ static VALUE sm_mat4_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   } else if (!SM_IS_A(sm_value, mat4)) {
     rb_raise(rb_eTypeError,
       "Invalid value to store: expected %s, got %s",
-      rb_class2name(SM_KLASS(mat4)),
+      rb_class2name(s_sm_mat4_klass),
       rb_obj_classname(sm_value));
   }
 
@@ -1101,7 +1101,7 @@ static VALUE sm_wrap_vec3(const vec3_t value, VALUE klass)
   vec3_t *copy;
   VALUE sm_wrapped = Qnil;
   if (!RTEST(klass)) {
-    klass = SM_KLASS(vec3);
+    klass = s_sm_vec3_klass;
   }
   sm_wrapped = Data_Make_Struct(klass, vec3_t, 0, free, copy);
   if (value) {
@@ -1210,9 +1210,7 @@ static VALUE sm_vec3_length (VALUE self)
  SM_LABEL(skip_output): {
      vec3_t output;
      vec3_copy (*self, output);
-     sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(vec3)));
+     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to copy");
@@ -1246,9 +1244,7 @@ static VALUE sm_vec3_length (VALUE self)
  SM_LABEL(skip_output): {
      vec3_t output;
      vec3_normalize (*self, output);
-     sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(vec3)));
+     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to normalize");
@@ -1282,9 +1278,7 @@ static VALUE sm_vec3_length (VALUE self)
  SM_LABEL(skip_output): {
      vec3_t output;
      vec3_inverse (*self, output);
-     sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(vec3)));
+     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
@@ -1317,9 +1311,7 @@ static VALUE sm_vec3_length (VALUE self)
  SM_LABEL(skip_output): {
      vec3_t output;
      vec3_negate (*self, output);
-     sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(vec3)));
+     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to negate");
@@ -1356,11 +1348,7 @@ static VALUE sm_vec3_project(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     vec3_project(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -1397,11 +1385,7 @@ static VALUE sm_vec3_reflect(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     vec3_reflect(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -1438,11 +1422,7 @@ static VALUE sm_vec3_cross_product(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     vec3_cross_product(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -1480,11 +1460,7 @@ static VALUE sm_vec3_multiply(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     vec3_multiply(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -1521,11 +1497,7 @@ static VALUE sm_vec3_add(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     vec3_add(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -1563,11 +1535,7 @@ static VALUE sm_vec3_subtract(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     vec3_subtract(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(vec3) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -1832,7 +1800,7 @@ static VALUE sm_wrap_vec4(const vec4_t value, VALUE klass)
   vec4_t *copy;
   VALUE sm_wrapped = Qnil;
   if (!RTEST(klass)) {
-    klass = SM_KLASS(vec4);
+    klass = s_sm_vec4_klass;
   }
   sm_wrapped = Data_Make_Struct(klass, vec4_t, 0, free, copy);
   if (value) {
@@ -1941,9 +1909,7 @@ static VALUE sm_vec4_length (VALUE self)
  SM_LABEL(skip_output): {
      vec4_t output;
      vec4_copy (*self, output);
-     sm_out = sm_wrap_vec4(output, (SM_KLASS(vec4) == SM_KLASS(vec4)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(vec4)));
+     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to copy");
@@ -1976,9 +1942,7 @@ static VALUE sm_vec4_length (VALUE self)
  SM_LABEL(skip_output): {
      vec4_t output;
      vec4_normalize (*self, output);
-     sm_out = sm_wrap_vec4(output, (SM_KLASS(vec4) == SM_KLASS(vec4)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(vec4)));
+     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to normalize");
@@ -2012,9 +1976,7 @@ static VALUE sm_vec4_length (VALUE self)
  SM_LABEL(skip_output): {
      vec4_t output;
      vec4_inverse (*self, output);
-     sm_out = sm_wrap_vec4(output, (SM_KLASS(vec4) == SM_KLASS(vec4)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(vec4)));
+     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
@@ -2047,9 +2009,7 @@ static VALUE sm_vec4_length (VALUE self)
  SM_LABEL(skip_output): {
      vec4_t output;
      vec4_negate (*self, output);
-     sm_out = sm_wrap_vec4(output, (SM_KLASS(vec4) == SM_KLASS(vec4)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(vec4)));
+     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to negate");
@@ -2086,11 +2046,7 @@ static VALUE sm_vec4_project(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec4_t output;
     vec4_project(*self, *rhs, output);
-    sm_out = sm_wrap_vec4(output, (SM_KLASS(vec4) == SM_KLASS(vec4)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec4) == SM_KLASS(vec4)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec4))));
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
@@ -2127,11 +2083,7 @@ static VALUE sm_vec4_reflect(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec4_t output;
     vec4_reflect(*self, *rhs, output);
-    sm_out = sm_wrap_vec4(output, (SM_KLASS(vec4) == SM_KLASS(vec4)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec4) == SM_KLASS(vec4)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec4))));
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
@@ -2169,11 +2121,7 @@ static VALUE sm_vec4_multiply(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec4_t output;
     vec4_multiply(*self, *rhs, output);
-    sm_out = sm_wrap_vec4(output, (SM_KLASS(vec4) == SM_KLASS(vec4)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec4) == SM_KLASS(vec4)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec4))));
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
@@ -2210,11 +2158,7 @@ static VALUE sm_vec4_add(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec4_t output;
     vec4_add(*self, *rhs, output);
-    sm_out = sm_wrap_vec4(output, (SM_KLASS(vec4) == SM_KLASS(vec4)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec4) == SM_KLASS(vec4)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec4))));
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
@@ -2252,11 +2196,7 @@ static VALUE sm_vec4_subtract(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec4_t output;
     vec4_subtract(*self, *rhs, output);
-    sm_out = sm_wrap_vec4(output, (SM_KLASS(vec4) == SM_KLASS(vec4)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec4) == SM_KLASS(vec4)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec4))));
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
@@ -2524,7 +2464,7 @@ static VALUE sm_wrap_quat(const quat_t value, VALUE klass)
   quat_t *copy;
   VALUE sm_wrapped = Qnil;
   if (!RTEST(klass)) {
-    klass = SM_KLASS(quat);
+    klass = s_sm_quat_klass;
   }
   sm_wrapped = Data_Make_Struct(klass, quat_t, 0, free, copy);
   if (value) {
@@ -2633,9 +2573,7 @@ static VALUE sm_quat_length (VALUE self)
  SM_LABEL(skip_output): {
      quat_t output;
      quat_copy (*self, output);
-     sm_out = sm_wrap_quat(output, (SM_KLASS(quat) == SM_KLASS(quat)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(quat)));
+     sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to copy");
@@ -2669,9 +2607,7 @@ static VALUE sm_quat_length (VALUE self)
  SM_LABEL(skip_output): {
      quat_t output;
      quat_inverse (*self, output);
-     sm_out = sm_wrap_quat(output, (SM_KLASS(quat) == SM_KLASS(quat)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(quat)));
+     sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
@@ -2704,9 +2640,7 @@ static VALUE sm_quat_length (VALUE self)
  SM_LABEL(skip_output): {
      quat_t output;
      quat_negate (*self, output);
-     sm_out = sm_wrap_quat(output, (SM_KLASS(quat) == SM_KLASS(quat)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(quat)));
+     sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to negate");
@@ -2743,11 +2677,7 @@ static VALUE sm_quat_multiply(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     quat_t output;
     quat_multiply(*self, *rhs, output);
-    sm_out = sm_wrap_quat(output, (SM_KLASS(quat) == SM_KLASS(quat)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(quat) == SM_KLASS(quat)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(quat))));
+    sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to quat");
@@ -2784,11 +2714,7 @@ static VALUE sm_quat_multiply_vec3(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     quat_t output;
     quat_multiply_vec3(*self, *rhs, output);
-    sm_out = sm_wrap_quat(output, (SM_KLASS(quat) == SM_KLASS(quat)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(quat) == SM_KLASS(quat)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(quat))));
+    sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to quat");
@@ -3197,7 +3123,7 @@ static VALUE sm_wrap_mat4(const mat4_t value, VALUE klass)
   mat4_t *copy;
   VALUE sm_wrapped = Qnil;
   if (!RTEST(klass)) {
-    klass = SM_KLASS(mat4);
+    klass = s_sm_mat4_klass;
   }
   sm_wrapped = Data_Make_Struct(klass, mat4_t, 0, free, copy);
   if (value) {
@@ -3306,9 +3232,7 @@ static VALUE sm_mat4_length (VALUE self)
  SM_LABEL(skip_output): {
      mat4_t output;
      mat4_copy (*self, output);
-     sm_out = sm_wrap_mat4(output, (SM_KLASS(mat4) == SM_KLASS(mat4)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat4)));
+     sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to copy");
@@ -3341,9 +3265,7 @@ static VALUE sm_mat4_length (VALUE self)
  SM_LABEL(skip_output): {
      mat3_t output;
      mat4_to_mat3 (*self, output);
-     sm_out = sm_wrap_mat3(output, (SM_KLASS(mat3) == SM_KLASS(mat4)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat3)));
+     sm_out = sm_wrap_mat3(output, s_sm_mat4_klass);
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to to_mat3");
@@ -3376,9 +3298,7 @@ static VALUE sm_mat4_length (VALUE self)
  SM_LABEL(skip_output): {
      mat4_t output;
      mat4_transpose (*self, output);
-     sm_out = sm_wrap_mat4(output, (SM_KLASS(mat4) == SM_KLASS(mat4)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat4)));
+     sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to transpose");
@@ -3411,9 +3331,7 @@ static VALUE sm_mat4_length (VALUE self)
  SM_LABEL(skip_output): {
      mat4_t output;
      mat4_inverse_orthogonal (*self, output);
-     sm_out = sm_wrap_mat4(output, (SM_KLASS(mat4) == SM_KLASS(mat4)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat4)));
+     sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to inverse_orthogonal");
@@ -3446,9 +3364,7 @@ static VALUE sm_mat4_length (VALUE self)
  SM_LABEL(skip_output): {
      mat4_t output;
      mat4_adjoint (*self, output);
-     sm_out = sm_wrap_mat4(output, (SM_KLASS(mat4) == SM_KLASS(mat4)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat4)));
+     sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to adjoint");
@@ -3485,11 +3401,7 @@ static VALUE sm_mat4_multiply(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     mat4_t output;
     mat4_multiply(*self, *rhs, output);
-    sm_out = sm_wrap_mat4(output, (SM_KLASS(mat4) == SM_KLASS(mat4)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(mat4) == SM_KLASS(mat4)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(mat4))));
+    sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to mat4");
@@ -3526,11 +3438,7 @@ static VALUE sm_mat4_multiply_vec4(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec4_t output;
     mat4_multiply_vec4(*self, *rhs, output);
-    sm_out = sm_wrap_vec4(output, (SM_KLASS(mat4) == SM_KLASS(vec4)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec4) == SM_KLASS(vec4)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec4))));
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
@@ -3567,11 +3475,7 @@ static VALUE sm_mat4_transform_vec3(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     mat4_transform_vec3(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(mat4) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -3609,11 +3513,7 @@ static VALUE sm_mat4_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     mat4_rotate_vec3(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(mat4) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -3651,11 +3551,7 @@ static VALUE sm_mat4_inv_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     mat4_inv_rotate_vec3(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(mat4) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -3689,7 +3585,7 @@ static VALUE sm_mat4_inverse_affine(int argc, VALUE *argv, VALUE sm_self)
     if (!SM_IS_A(sm_out, mat4)) {
       rb_raise(rb_eTypeError,
         "Invalid argument to output of inverse_affine: expected %s, got %s",
-        rb_class2name(SM_KLASS(mat4)),
+        rb_class2name(s_sm_mat4_klass),
         rb_obj_classname(sm_out));
       return Qnil;
     }
@@ -3742,7 +3638,7 @@ static VALUE sm_mat4_inverse_general(int argc, VALUE *argv, VALUE sm_self)
     if (!SM_IS_A(sm_out, mat4)) {
       rb_raise(rb_eTypeError,
         "Invalid argument to output of inverse_general: expected %s, got %s",
-        rb_class2name(SM_KLASS(mat4)),
+        rb_class2name(s_sm_mat4_klass),
         rb_obj_classname(sm_out));
       return Qnil;
     }
@@ -4673,7 +4569,7 @@ static VALUE sm_wrap_mat3(const mat3_t value, VALUE klass)
   mat3_t *copy;
   VALUE sm_wrapped = Qnil;
   if (!RTEST(klass)) {
-    klass = SM_KLASS(mat3);
+    klass = s_sm_mat3_klass;
   }
   sm_wrapped = Data_Make_Struct(klass, mat3_t, 0, free, copy);
   if (value) {
@@ -4782,9 +4678,7 @@ static VALUE sm_mat3_length (VALUE self)
  SM_LABEL(skip_output): {
      mat3_t output;
      mat3_copy (*self, output);
-     sm_out = sm_wrap_mat3(output, (SM_KLASS(mat3) == SM_KLASS(mat3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat3)));
+     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to copy");
@@ -4817,9 +4711,7 @@ static VALUE sm_mat3_length (VALUE self)
  SM_LABEL(skip_output): {
      mat4_t output;
      mat3_to_mat4 (*self, output);
-     sm_out = sm_wrap_mat4(output, (SM_KLASS(mat4) == SM_KLASS(mat3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat4)));
+     sm_out = sm_wrap_mat4(output, s_sm_mat3_klass);
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to to_mat4");
@@ -4852,9 +4744,7 @@ static VALUE sm_mat3_length (VALUE self)
  SM_LABEL(skip_output): {
      mat3_t output;
      mat3_transpose (*self, output);
-     sm_out = sm_wrap_mat3(output, (SM_KLASS(mat3) == SM_KLASS(mat3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat3)));
+     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to transpose");
@@ -4887,9 +4777,7 @@ static VALUE sm_mat3_length (VALUE self)
  SM_LABEL(skip_output): {
      mat3_t output;
      mat3_adjoint (*self, output);
-     sm_out = sm_wrap_mat3(output, (SM_KLASS(mat3) == SM_KLASS(mat3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat3)));
+     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to adjoint");
@@ -4922,9 +4810,7 @@ static VALUE sm_mat3_length (VALUE self)
  SM_LABEL(skip_output): {
      mat3_t output;
      mat3_orthogonal (*self, output);
-     sm_out = sm_wrap_mat3(output, (SM_KLASS(mat3) == SM_KLASS(mat3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat3)));
+     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to orthogonal");
@@ -4957,9 +4843,7 @@ static VALUE sm_mat3_length (VALUE self)
  SM_LABEL(skip_output): {
      mat3_t output;
      mat3_cofactor (*self, output);
-     sm_out = sm_wrap_mat3(output, (SM_KLASS(mat3) == SM_KLASS(mat3)
-           ? rb_obj_class(sm_self)
-           : SM_KLASS(mat3)));
+     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to cofactor");
@@ -4996,11 +4880,7 @@ static VALUE sm_mat3_multiply(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     mat3_t output;
     mat3_multiply(*self, *rhs, output);
-    sm_out = sm_wrap_mat3(output, (SM_KLASS(mat3) == SM_KLASS(mat3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(mat3) == SM_KLASS(mat3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(mat3))));
+    sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to mat3");
@@ -5037,11 +4917,7 @@ static VALUE sm_mat3_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     mat3_rotate_vec3(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(mat3) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -5079,11 +4955,7 @@ static VALUE sm_mat3_inv_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     vec3_t output;
     mat3_inv_rotate_vec3(*self, *rhs, output);
-    sm_out = sm_wrap_vec3(output, (SM_KLASS(mat3) == SM_KLASS(vec3)
-          ? rb_obj_class(sm_self)
-          : (SM_KLASS(vec3) == SM_KLASS(vec3)
-            ? rb_obj_class(sm_rhs)
-            : SM_KLASS(vec3))));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
@@ -5130,7 +5002,7 @@ static VALUE sm_mat3_inverse(int argc, VALUE *argv, VALUE sm_self)
     if (!SM_IS_A(sm_out, mat3)) {
       rb_raise(rb_eTypeError,
         "Invalid argument to output of inverse_general: expected %s, got %s",
-        rb_class2name(SM_KLASS(mat3)),
+        rb_class2name(s_sm_mat3_klass),
         rb_obj_classname(sm_out));
       return Qnil;
     }
