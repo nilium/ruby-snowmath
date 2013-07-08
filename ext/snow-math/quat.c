@@ -178,7 +178,7 @@ void quat_from_mat3(const mat3_t mat, quat_t out)
     default:
     case 0:
       r = out[0] = s_sqrt(mat[0] - (mat[4] + mat[8]) + s_float_lit(1.0)) * s_float_lit(0.5);
-      if (r != s_float_lit(0.0) && r != s_float_lit(-0.0)) {
+      if (!float_is_zero(r)) {
         r = s_float_lit(0.5) / r;
       }
       out[1] = (m10 + m01) * r;
@@ -188,7 +188,7 @@ void quat_from_mat3(const mat3_t mat, quat_t out)
 
     case 1:
       r = out[1] = s_sqrt(mat[4] - (mat[8] + mat[0]) + s_float_lit(1.0)) * s_float_lit(0.5);
-      if (r != s_float_lit(0.0) && r != s_float_lit(-0.0)) {
+      if (!float_is_zero(r)) {
         r = s_float_lit(0.5) / r;
       }
       out[0] = (m10 + m01) * r;
@@ -198,7 +198,7 @@ void quat_from_mat3(const mat3_t mat, quat_t out)
 
     case 2:
       r = out[2] = s_sqrt(mat[4] - (mat[0] + mat[4]) + s_float_lit(1.0)) * s_float_lit(0.5);
-      if (r != s_float_lit(0.0) && r != s_float_lit(-0.0)) {
+      if (!float_is_zero(r)) {
         r = s_float_lit(0.5) / r;
       }
       out[0] = (m20 + m02) * r;

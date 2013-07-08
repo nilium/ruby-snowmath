@@ -95,10 +95,10 @@ void vec4_negate(const vec4_t v, vec4_t out)
 
 void vec4_inverse(const vec4_t v, vec4_t out)
 {
-  out[3] = (v[3] != s_float_lit(0.0) && v[3] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[3]) : v[3];
-  out[2] = (v[2] != s_float_lit(0.0) && v[2] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[2]) : v[2];
-  out[1] = (v[1] != s_float_lit(0.0) && v[1] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[1]) : v[1];
-  out[0] = (v[0] != s_float_lit(0.0) && v[0] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[0]) : v[0];
+  out[3] = (!float_is_zero(v[3])) ? (s_float_lit(1.0) / v[3]) : v[3];
+  out[2] = (!float_is_zero(v[2])) ? (s_float_lit(1.0) / v[2]) : v[2];
+  out[1] = (!float_is_zero(v[1])) ? (s_float_lit(1.0) / v[1]) : v[1];
+  out[0] = (!float_is_zero(v[0])) ? (s_float_lit(1.0) / v[0]) : v[0];
 }
 
 void vec4_project(const vec4_t in, const vec4_t normal, vec4_t out)

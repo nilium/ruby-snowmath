@@ -87,9 +87,9 @@ void vec3_negate(const vec3_t v, vec3_t out)
 
 void vec3_inverse(const vec3_t v, vec3_t out)
 {
-  out[2] = (v[2] != s_float_lit(0.0) && v[2] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[2]) : v[2];
-  out[1] = (v[1] != s_float_lit(0.0) && v[1] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[1]) : v[1];
-  out[0] = (v[0] != s_float_lit(0.0) && v[0] != s_float_lit(-0.0)) ? (s_float_lit(1.0) / v[0]) : v[0];
+  out[2] = (!float_is_zero(v[2])) ? (s_float_lit(1.0) / v[2]) : v[2];
+  out[1] = (!float_is_zero(v[1])) ? (s_float_lit(1.0) / v[1]) : v[1];
+  out[0] = (!float_is_zero(v[0])) ? (s_float_lit(1.0) / v[0]) : v[0];
 }
 
 void vec3_project(const vec3_t in, const vec3_t normal, vec3_t out)

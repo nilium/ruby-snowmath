@@ -353,7 +353,7 @@ void mat3_adjoint(const mat3_t in, mat3_t out)
 int mat3_inverse(const mat3_t in, mat3_t out)
 {
   s_float_t determinant = mat3_determinant(in);
-  if (determinant != s_float_lit(0.0) && determinant != s_float_lit(-0.0)) {
+  if (!float_is_zero(determinant)) {
     determinant = s_float_lit(1.0) / determinant;
   } else {
     return 0;
