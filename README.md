@@ -43,20 +43,21 @@ using it.
 
 #### Outputs
 
-Also, keep in mind that for any function provides an output argument, that
-argument is optional. If output is non-nil, the function will must write its
-the result of its operation to the output object.
+Keep in mind that for any function provides an output argument, that argument
+is optional. If output is non-nil, the function must write the result of its
+operation to the output object, assuming the object is a compatible output.
 
-When nil, the function will always return a new object. Providing an output
-argument can be helpful when you want to avoid some unnecessary allocations.
+When nil, functions will always return a new object. Providing an output
+argument can be helpful when you want to avoid some unnecessary allocations
+and know that's a performance bottleneck (use a profiler before doing this).
 
-Combined with the array types, you can either maintain a pool of 3D math objects
-or use it to avoid cache misses (though right now the array objects are not the
-most-optimized as they allocate a wrapper object per `fetch` -- something to
-keep in mind).
+Combined with the array types, you can either maintain a pool of 3D math
+objects or use it to avoid cache misses.
 
 In all cases where an output is provided, output may be the the object the
 function is called on. So, for example, `vec.negate(vec)` is perfectly valid.
+The SnowPalm code is designed to handle this and will not accidentally trash
+itself because the input and output refer to the same location in memory.
 
 
 #### Shared by All Types
