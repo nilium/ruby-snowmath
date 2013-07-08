@@ -35,6 +35,7 @@ class Snow::Mat3
   alias_method :dup, :copy
   alias_method :clone, :copy
 
+
   #
   # Calls #transpose(self)
   #
@@ -126,6 +127,7 @@ class Snow::Mat3
   def scale!(x, y, z)
     scale x, y, z, self
   end
+
 
   alias_method :*, :multiply
   alias_method :**, :scale

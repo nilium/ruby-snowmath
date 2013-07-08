@@ -34,54 +34,96 @@ class Snow::Vec4
   alias_method :dup, :copy
   alias_method :clone, :copy
 
+
+  # Returns the X component of the vector.
+  #
+  # call-seq: x -> float
   def x
     self[0]
   end
 
+  # Sets the X component of the vector.
+  #
+  # call-seq: x = value -> value
   def x=(value)
     self[0] = value
   end
 
+  # Returns the Y component of the vector.
+  #
+  # call-seq: y -> float
   def y
     self[1]
   end
 
+  # Sets the Y component of the vector.
+  #
+  # call-seq: y = value -> value
   def y=(value)
     self[1] = value
   end
 
+  # Returns the Z component of the vector.
+  #
+  # call-seq: z -> float
   def z
     self[2]
   end
 
+  # Sets the Z component of the vector.
+  #
+  # call-seq: z = value -> value
   def z=(value)
     self[2] = value
   end
 
+  # Returns the W component of the vector.
+  #
+  # call-seq: w -> float
   def w
     self[3]
   end
 
+  # Sets the W component of the vector.
+  #
+  # call-seq: w = value -> value
   def w=(value)
     self[3] = value
   end
 
+  # Calls #normalize(self)
+  #
+  # call-seq: normalize! -> self
   def normalize!
     normalize self
   end
 
+  # Calls #inverse(self)
+  #
+  # call-seq: inverse! -> self
   def inverse!
     inverse self
   end
 
+  # Calls #negate(self)
+  #
+  # call-seq: negate! -> self
   def negate!
     negate self
   end
 
+  # Calls #multiply_vec4(rhs, self)
+  #
+  # call-seq: multiply_vec4!(rhs) -> self
   def multiply_vec4!(rhs)
     multiply_vec4 rhs, self
   end
 
+  # Calls #multiply_vec4 and #scale, respectively.
+  #
+  # call-seq:
+  #     multiply(vec4, output = nil) -> output or new vec4
+  #     multiply(scalar, output = nil) -> output or new vec4
   def multiply(rhs, output = nil)
     case rhs
     when ::Snow::Vec4 then multiply_vec4(rhs, output)
@@ -90,25 +132,41 @@ class Snow::Vec4
     end
   end
 
+  # Calls #multiply(rhs, self)
+  #
+  # call-seq: multiply!(rhs) -> self
   def multiply!(rhs)
     multiply rhs, self
   end
 
+  # Calls #add(rhs, self)
+  #
+  # call-seq: add!(rhs) -> self
   def add!(rhs)
     add rhs, self
   end
 
+  # Calls #subtract(rhs, self)
+  #
+  # call-seq: subtract!(rhs) -> self
   def subtract!(rhs)
     subtract rhs, self
   end
 
+  # Calls #scale(rhs, self)
+  #
+  # call-seq: scale!(rhs) -> self
   def scale!(rhs)
     scale rhs, self
   end
 
+  # Calls #divide(rhs, self)
+  #
+  # call-seq: divide!(rhs) -> self
   def divide!(rhs)
     divide rhs, self
   end
+
 
   alias_method :-, :subtract
   alias_method :+, :add

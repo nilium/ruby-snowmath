@@ -36,22 +36,74 @@ class Snow::Mat4
   alias_method :dup, :copy
   alias_method :clone, :copy
 
+
+  # Calls #transpose(self)
+  #
+  # call-seq: transpose! -> self
   def transpose!
     transpose self
   end
 
+  # Calls #inverse_orthogonal(self)
+  #
+  # call-seq: inverse_orthogonal! -> self
   def inverse_orthogonal!
     inverse_orthogonal self
   end
 
+  # Calls #adjoint(self)
+  #
+  # call-seq: adjoint! -> self
   def adjoint!
     adjoint self
   end
 
+  # Calls #multiply_mat4(rhs, self)
+  #
+  # call-seq: multiply_mat4!(rhs) -> self
   def multiply_mat4!(rhs)
     multiply_mat4 rhs, self
   end
 
+  # Calls #multiply_vec4(rhs, rhs)
+  #
+  # call-seq: multiply_vec4!(rhs) -> rhs
+  def multiply_vec4!(rhs)
+    multiply_vec4 rhs, rhs
+  end
+
+  # Calls #transform_vec3(rhs, rhs)
+  #
+  # call-seq: transform_vec3!(rhs) -> rhs
+  def transform_vec3!(rhs)
+    transform_vec3 rhs, rhs
+  end
+
+  # Calls #inverse_transform_vec3(rhs, rhs)
+  #
+  # call-seq: inverse_transform_vec3!(rhs) -> rhs
+  def rotate_vec3!(rhs)
+    inverse_transform_vec3 rhs, rhs
+  end
+
+  # Calls #inverse_rotate_vec3(rhs, rhs)
+  #
+  # call-seq: inverse_rotate_vec3!(rhs) -> rhs
+  def inverse_rotate_vec3!(rhs)
+    inverse_rotate_vec3 rhs, rhs
+  end
+
+  # Calls #multiply_mat4, #multiply_vec4, #transform_vec3, and #scale,
+  # respectively.
+  #
+  # When calling multiply with scalar as rhs, scalar is passed as the value to
+  # scale all columns by.
+  #
+  # call-seq:
+  #     multiply(mat4, output = nil) -> output or new mat4
+  #     multiply(vec4, output = nil) -> output or new vec4
+  #     multiply(vec3, output = nil) -> output or new vec3
+  #     multiply(scalar, output = nil) -> output or new mat4
   def multiply(rhs, out = nil)
     raise "Invalid type for output, must be the same as RHS" if !out.nil? && !out.kind_of?(rhs.class)
     case rhs
@@ -63,6 +115,8 @@ class Snow::Mat4
     end
   end
 
+  # Calls #multiply(rhs, self) when rhs is a scalar or Mat4, otherwise calls
+  # #multiply(rhs, rhs).
   def multiply!(rhs)
     multiply rhs, case rhs
       when Mat4, Numeric then self
@@ -71,21 +125,35 @@ class Snow::Mat4
       end
   end
 
+  # Calls #scale(x, y, z, self)
+  #
+  # call-seq: scale!(x, y, z) -> self
   def scale!(x, y, z)
     scale x, y, z, self
   end
 
+  # Calls #translate(*args, self)
+  #
+  # call-seq: translate!(vec3) -> self
+  # call-seq: translate!(x, y, z) -> self
   def translate!(*args)
     translate *args, self
   end
 
+  # Calls #inverse_affine(self)
+  #
+  # call-seq: inverse_affine! -> self
   def inverse_affine!
     inverse_affine self
   end
 
+  # Calls #inverse_general(self)
+  #
+  # call-seq: inverse_general! -> self
   def inverse_general!
     inverse_general self
   end
+
 
   alias_method :*, :multiply
   alias_method :**, :scale

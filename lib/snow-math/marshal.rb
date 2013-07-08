@@ -2,8 +2,9 @@ require 'snow-math/bindings'
 
 module Snow ; end
 
-module Snow::BaseMarshalSupport
+module Snow::BaseMarshalSupport # :nodoc: all
 
+  #
   def _dump(level)
     # level ignored because it's not applicable
     Marshal.dump(self.to_a)
@@ -21,7 +22,7 @@ module Snow::BaseMarshalSupport
 
 end
 
-module Snow::ArrayMarshalSupport
+module Snow::ArrayMarshalSupport # :nodoc: all
 
   def _dump(level)
     to_dump = [self.length, *self.to_a.map { |elem| elem.copy }]

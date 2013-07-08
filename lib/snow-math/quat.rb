@@ -32,54 +32,104 @@ class Snow::Quat
   alias_method :dup, :copy
   alias_method :clone, :copy
 
+
+  # Returns the X component of the quaternion.
+  #
+  # call-seq: x -> float
   def x
     self[0]
   end
 
+  # Sets the X component of the quaternion.
+  #
+  # call-seq: x = value -> value
   def x=(value)
     self[0] = value
   end
 
+  # Returns the Y component of the quaternion.
+  #
+  # call-seq: y -> float
   def y
     self[1]
   end
 
+  # Sets the Y component of the quaternion.
+  #
+  # call-seq: y = value -> value
   def y=(value)
     self[1] = value
   end
 
+  # Returns the Z component of the quaternion.
+  #
+  # call-seq: z -> float
   def z
     self[2]
   end
 
+  # Sets the Z component of the quaternion.
+  #
+  # call-seq: z = value -> value
   def z=(value)
     self[2] = value
   end
 
+  # Returns the W component of the quaternion.
+  #
+  # call-seq: w -> float
   def w
     self[3]
   end
 
+  # Sets the W component of the quaternion.
+  #
+  # call-seq: w = value -> value
   def w=(value)
     self[3] = value
   end
 
+  # Calls #normalize(self)
+  #
+  # call-seq: normalize! -> self
   def normalize!
     normalize self
   end
 
+  # Calls #inverse(self)
+  #
+  # call-seq: inverse! -> self
   def inverse!
     inverse self
   end
 
+  # Calls #negate(self)
+  #
+  # call-seq: negate! -> self
   def negate!
     negate self
   end
 
+  # Calls #multiply_quat(rhs, self)
+  #
+  # call-seq: multiply_quat!(rhs) -> self
   def multiply_quat!(rhs)
     multiply_quat rhs, self
   end
 
+  # Calls #multiply_vec3(rhs, rhs)
+  #
+  # call-seq: multiply_vec3!(rhs) -> rhs
+  def multiply_vec3!(rhs)
+    multiply_vec3 rhs, rhs
+  end
+
+  # Wrapper around #multiply_quat, #multiply_vec3, and #scale respectively.
+  #
+  # call-seq:
+  #     multiply(quat, output = nil) -> output or new quat
+  #     multiply(scalar, output = nil) -> output or new quat
+  #     multiply(vec3, output = nil) -> output or new vec3
   def multiply(rhs, output = nil)
     case rhs
     when ::Snow::Quat then multiply_quat(rhs, output)
@@ -89,25 +139,55 @@ class Snow::Quat
     end
   end
 
+  # Calls #multiply(rhs, self) for scaling and Quat multiplication, otherwise
+  # #multiply(rhs, rhs) for Vec3 multiplication.
+  #
+  # call-seq:
+  #     multiply!(quat) -> self
+  #     multiply!(scalar) -> self
+  #     multiply!(vec3) -> vec3
   def multiply!(rhs)
-    multiply_quat! rhs
+    case rhs
+    when ::Snow::Vec3 then multiply(rhs, rhs)
+    else multiply(rhs, self)
+    end
   end
 
+  # Calls #add(rhs, self)
+  #
+  # call-seq: add!(rhs) -> self
   def add!(rhs)
     add rhs, self
   end
 
+  # Calls #subtract(rhs, self)
+  #
+  # call-seq: subtract!(rhs) -> self
   def subtract!(rhs)
     subtract rhs, self
   end
 
+  # Calls #scale(rhs, self)
+  #
+  # call-seq: scale!(rhs) -> self
   def scale!(rhs)
     scale rhs, self
   end
 
+  # Calls #divide(rhs, self)
+  #
+  # call-seq: divide!(rhs) -> self
   def divide!(rhs)
     divide rhs, self
   end
+
+  # Calls #slerp(destination, alpha, self)
+  #
+  # call-seq: slerp!(destination, alpha) -> self
+  def slerp!(destination, alpha)
+    slerp(destination, alpha, self)
+  end
+
 
   alias_method :-, :subtract
   alias_method :+, :add
