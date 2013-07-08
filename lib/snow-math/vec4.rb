@@ -21,6 +21,8 @@ class Snow::Vec4
 
   alias_method :[], :fetch
   alias_method :[]=, :store
+  alias_method :dup, :copy
+  alias_method :clone, :copy
 
   def x
     self[0]
@@ -52,10 +54,6 @@ class Snow::Vec4
 
   def w=(value)
     self[3] = value
-  end
-
-  def dup
-    self.class.new(self)
   end
 
   def normalize!

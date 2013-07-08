@@ -21,6 +21,8 @@ class Snow::Mat3
 
   alias_method :[], :fetch
   alias_method :[]=, :store
+  alias_method :dup, :copy
+  alias_method :clone, :copy
 
   def transpose!
     transpose self
