@@ -1920,7 +1920,8 @@ static VALUE sm_vec4_length (VALUE self)
 
 
 /*
- * Returns a normalized vector.
+ * Returns a normalized Vec4 or Quat, depending on the type of the receiver and
+ * output.
  *
  * call-seq:
  *    normalize(output = nil) -> output or new vec4
@@ -1935,7 +1936,11 @@ static VALUE sm_vec4_length (VALUE self)
      if (!RTEST(sm_out)) {
        goto SM_LABEL(skip_output);
      }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        "Expected Vec4 or Quat for output argument, got %s",
+        rb_obj_classname(sm_out));
+     }
      vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
      vec4_normalize (*self, *output);
    }} else if (argc == 0) {
@@ -3001,36 +3006,6 @@ static VALUE sm_quat_slerp(int argc, VALUE *argv, VALUE sm_self)
   } else {
     quat_t out;
     quat_slerp(*self, *destination, alpha, out);
-    sm_out = sm_wrap_quat(out, rb_obj_class(sm_self));
-    rb_obj_call_init(sm_out, 0, 0);
-  }
-
-  return sm_out;
-}
-
-
-
-/*
- * Normalizes the quaternion.
- *
- * call-seq:
- *    normalize(output = nil) -> output or new qual
- */
-static VALUE sm_quat_normalize(int argc, VALUE *argv, VALUE sm_self)
-{
-  VALUE sm_out;
-  VALUE sm_scalar;
-  s_float_t scalar;
-  vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
-
-  rb_scan_args(argc, argv, "01", &sm_scalar, &sm_out);
-  scalar = rb_num2dbl(sm_scalar);
-
-  if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
-    vec4_normalize(*self, *sm_unwrap_vec4(sm_out, NULL));
-  } else {
-    vec4_t out;
-    vec4_normalize(*self, out);
     sm_out = sm_wrap_quat(out, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }
@@ -5556,7 +5531,7 @@ void Init_bindings()
   rb_define_method(s_sm_quat_klass, "negate", sm_quat_negate, -1);
   rb_define_method(s_sm_quat_klass, "multiply_quat", sm_quat_multiply, -1);
   rb_define_method(s_sm_quat_klass, "multiply_vec3", sm_quat_multiply_vec3, -1);
-  rb_define_method(s_sm_quat_klass, "normalize", sm_quat_normalize, -1);
+  rb_define_method(s_sm_quat_klass, "normalize", sm_vec4_normalize, -1);
   rb_define_method(s_sm_quat_klass, "scale", sm_quat_scale, -1);
   rb_define_method(s_sm_quat_klass, "divide", sm_quat_divide, -1);
   rb_define_method(s_sm_quat_klass, "add", sm_quat_add, -1);
