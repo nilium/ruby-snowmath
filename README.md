@@ -1,6 +1,6 @@
 # snow-math
 
-    $ gem install snow-math [-- [--use-float | -F]]
+    $ gem install snow-math [-- [--use-float | -F] [--use-fast-math | -FM] [--debug | -D]]
 
 
 
