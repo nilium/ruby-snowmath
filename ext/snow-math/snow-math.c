@@ -8,6 +8,9 @@ See COPYING for license information
 #include "maths_local.h"
 #include "ruby.h"
 
+#define kSM_WANT_THREE_OR_FOUR_FORMAT_LIT ("Expected a Vec3, Vec4, or Quat, got %s")
+#define kSM_WANT_FOUR_FORMAT_LIT ("Expected a Vec4 or Quat, got %s")
+
 /*
   Generates a label within the current function with the given name. Should be
   as unique as anyone needs.
@@ -289,10 +292,9 @@ static VALUE sm_vec3_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
     rb_raise(rb_eRangeError,
       "Index %zu out of bounds for array with length %zu",
       index, length);
-  } else if (!SM_IS_A(sm_value, vec3)) {
+  } else if (!SM_IS_A(sm_value, vec3) && !SM_IS_A(sm_value, vec4) && !SM_IS_A(sm_value, quat)) {
     rb_raise(rb_eTypeError,
-      "Invalid value to store: expected %s, got %s",
-      rb_class2name(s_sm_vec3_klass),
+      "Invalid value to store: expected Vec3, Vec4, or Quat, got %s",
       rb_obj_classname(sm_value));
   }
 
@@ -480,10 +482,9 @@ static VALUE sm_vec4_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
     rb_raise(rb_eRangeError,
       "Index %zu out of bounds for array with length %zu",
       index, length);
-  } else if (!SM_IS_A(sm_value, vec4)) {
+  } else if (!SM_IS_A(sm_value, vec4) || !(SM_IS_A(sm_value, quat))) {
     rb_raise(rb_eTypeError,
-      "Invalid value to store: expected %s, got %s",
-      rb_class2name(s_sm_vec4_klass),
+      "Invalid value to store: expected Quat or Vec4, got %s",
       rb_obj_classname(sm_value));
   }
 
@@ -671,10 +672,9 @@ static VALUE sm_quat_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
     rb_raise(rb_eRangeError,
       "Index %zu out of bounds for array with length %zu",
       index, length);
-  } else if (!SM_IS_A(sm_value, quat)) {
+  } else if (!SM_IS_A(sm_value, vec4) || !(SM_IS_A(sm_value, quat))) {
     rb_raise(rb_eTypeError,
-      "Invalid value to store: expected %s, got %s",
-      rb_class2name(s_sm_quat_klass),
+      "Invalid value to store: expected Quat or Vec4, got %s",
       rb_obj_classname(sm_value));
   }
 
@@ -849,35 +849,40 @@ static VALUE sm_mat3_array_fetch(VALUE sm_self, VALUE sm_index)
  * array and stored at the index, then no copy is done, otherwise the Mat3 is
  * copied to the array.
  *
+ * If the value stored is a Mat4, it will be converted to a Mat3 for storage,
+ * though this will not modify the value directly.
+ *
  * call-seq: store(index, value) -> value
  */
 static VALUE sm_mat3_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
 {
   mat3_t *arr;
-  mat3_t *value;
   size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   size_t index = NUM2SIZET(sm_index);
+  int is_mat3 = 0;
 
   if (index >= length) {
     rb_raise(rb_eRangeError,
       "Index %zu out of bounds for array with length %zu",
       index, length);
-  } else if (!SM_IS_A(sm_value, mat3)) {
+  } else if (!(is_mat3 = SM_IS_A(sm_value, mat3)) && !SM_IS_A(sm_value, mat4)) {
     rb_raise(rb_eTypeError,
-      "Invalid value to store: expected %s, got %s",
-      rb_class2name(s_sm_mat3_klass),
+      "Invalid value to store: expected Mat3 or Mat4, got %s",
       rb_obj_classname(sm_value));
   }
 
   Data_Get_Struct(sm_self, mat3_t, arr);
-  value = sm_unwrap_mat3(sm_value, NULL);
 
-  if (value == &arr[index]) {
-    /* The object's part of the array, don't bother copying */
-    return sm_value;
+  if (is_mat3) {
+    mat3_t *value = sm_unwrap_mat3(sm_value, NULL);
+    if (value == &arr[index]) {
+      /* The object's part of the array, don't bother copying */
+      return sm_value;
+    }
+    mat3_copy(*value, arr[index]);
+  } else {
+    mat4_to_mat3(*sm_unwrap_mat4(sm_value, NULL), arr[index]);
   }
-
-  mat3_copy(*value, arr[index]);
   return sm_value;
 }
 
@@ -1040,35 +1045,40 @@ static VALUE sm_mat4_array_fetch(VALUE sm_self, VALUE sm_index)
  * array and stored at the index, then no copy is done, otherwise the Mat4 is
  * copied to the array.
  *
+ * If the value stored is a Mat3, it will be converted to a Mat4 for storage,
+ * though this will not modify the value directly.
+ *
  * call-seq: store(index, value) -> value
  */
 static VALUE sm_mat4_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
 {
   mat4_t *arr;
-  mat4_t *value;
   size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   size_t index = NUM2SIZET(sm_index);
+  int is_mat4 = 0;
 
   if (index >= length) {
     rb_raise(rb_eRangeError,
       "Index %zu out of bounds for array with length %zu",
       index, length);
-  } else if (!SM_IS_A(sm_value, mat4)) {
+  } else if (!(is_mat4 = SM_IS_A(sm_value, mat4)) && !SM_IS_A(sm_value, mat3)) {
     rb_raise(rb_eTypeError,
-      "Invalid value to store: expected %s, got %s",
-      rb_class2name(s_sm_mat4_klass),
+      "Invalid value to store: expected Mat3 or Mat4, got %s",
       rb_obj_classname(sm_value));
   }
 
   Data_Get_Struct(sm_self, mat4_t, arr);
-  value = sm_unwrap_mat4(sm_value, NULL);
 
-  if (value == &arr[index]) {
-    /* The object's part of the array, don't bother copying */
-    return sm_value;
+  if (is_mat4) {
+    mat4_t *value = sm_unwrap_mat4(sm_value, NULL);
+    if (value == &arr[index]) {
+      /* The object's part of the array, don't bother copying */
+      return sm_value;
+    }
+    mat4_copy(*value, arr[index]);
+  } else {
+    mat3_to_mat4(*sm_unwrap_mat3(sm_value, NULL), arr[index]);
   }
-
-  mat4_copy(*value, arr[index]);
   return sm_value;
 }
 
@@ -1203,7 +1213,12 @@ static VALUE sm_vec3_length (VALUE self)
      if (!RTEST(sm_out)) {
        goto SM_LABEL(skip_output);
      }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
      vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
      vec3_copy (*self, *output);
    }} else if (argc == 0) {
@@ -1237,7 +1252,12 @@ static VALUE sm_vec3_length (VALUE self)
      if (!RTEST(sm_out)) {
        goto SM_LABEL(skip_output);
      }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
      vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
      vec3_normalize (*self, *output);
    }} else if (argc == 0) {
@@ -1271,7 +1291,12 @@ static VALUE sm_vec3_length (VALUE self)
      if (!RTEST(sm_out)) {
        goto SM_LABEL(skip_output);
      }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
      vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
      vec3_inverse (*self, *output);
    }} else if (argc == 0) {
@@ -1304,7 +1329,12 @@ static VALUE sm_vec3_length (VALUE self)
      if (!RTEST(sm_out)) {
        goto SM_LABEL(skip_output);
      }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
      vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
      vec3_negate (*self, *output);
    }} else if (argc == 0) {
@@ -1335,13 +1365,23 @@ static VALUE sm_vec3_project(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec3(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     vec3_project(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -1372,13 +1412,23 @@ static VALUE sm_vec3_reflect(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec3(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     vec3_reflect(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -1409,13 +1459,23 @@ static VALUE sm_vec3_cross_product(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec3(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     vec3_cross_product(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -1447,13 +1507,23 @@ static VALUE sm_vec3_multiply(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec3(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     vec3_multiply(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -1484,13 +1554,23 @@ static VALUE sm_vec3_add(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec3(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     vec3_add(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -1522,13 +1602,23 @@ static VALUE sm_vec3_subtract(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec3(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     vec3_subtract(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -1890,7 +1980,7 @@ static VALUE sm_vec4_length (VALUE self)
  * Returns a copy of self.
  *
  * call-seq:
- *    copy(output = nil) -> output or new vec4
+ *    copy(output = nil) -> output or new vec4 / quat
  */
  static VALUE sm_vec4_copy(int argc, VALUE *argv, VALUE sm_self)
  {
@@ -1902,7 +1992,12 @@ static VALUE sm_vec4_length (VALUE self)
      if (!RTEST(sm_out)) {
        goto SM_LABEL(skip_output);
      }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
      vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
      vec4_copy (*self, *output);
    }} else if (argc == 0) {
@@ -1924,7 +2019,7 @@ static VALUE sm_vec4_length (VALUE self)
  * output.
  *
  * call-seq:
- *    normalize(output = nil) -> output or new vec4
+ *    normalize(output = nil) -> output or new vec4 / quat
  */
  static VALUE sm_vec4_normalize(int argc, VALUE *argv, VALUE sm_self)
  {
@@ -1938,7 +2033,7 @@ static VALUE sm_vec4_length (VALUE self)
      }{
      if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
-        "Expected Vec4 or Quat for output argument, got %s",
+        kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
      }
      vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
@@ -1974,7 +2069,12 @@ static VALUE sm_vec4_length (VALUE self)
      if (!RTEST(sm_out)) {
        goto SM_LABEL(skip_output);
      }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
      vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
      vec4_inverse (*self, *output);
    }} else if (argc == 0) {
@@ -1992,10 +2092,10 @@ static VALUE sm_vec4_length (VALUE self)
 
 
 /*
- * Negates this vector's components and returns the result.
+ * Negates this vector or quaternions's components and returns the result.
  *
  * call-seq:
- *    negate(output = nil) -> output or new vec4
+ *    negate(output = nil) -> output or new vec4 or quat
  */
  static VALUE sm_vec4_negate(int argc, VALUE *argv, VALUE sm_self)
  {
@@ -2007,7 +2107,12 @@ static VALUE sm_vec4_length (VALUE self)
      if (!RTEST(sm_out)) {
        goto SM_LABEL(skip_output);
      }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
      vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
      vec4_negate (*self, *output);
    }} else if (argc == 0) {
@@ -2038,13 +2143,23 @@ static VALUE sm_vec4_project(int argc, VALUE *argv, VALUE sm_self)
   vec4_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec4(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec4);
+  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec4(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+    if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
     vec4_project(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -2075,13 +2190,23 @@ static VALUE sm_vec4_reflect(int argc, VALUE *argv, VALUE sm_self)
   vec4_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec4(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec4);
+  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec4(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+    if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
     vec4_reflect(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -2113,13 +2238,23 @@ static VALUE sm_vec4_multiply(int argc, VALUE *argv, VALUE sm_self)
   vec4_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec4(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec4);
+  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec4(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+    if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
     vec4_multiply(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -2137,10 +2272,11 @@ SM_LABEL(skip_output): {
 
 
 /*
- * Adds this and another vector's components together and returns the result.
+ * Adds this and another vector or quaternion's components together and returns
+ * the result. The result type is that of the receiver.
  *
  * call-seq:
- *    add(vec4, output = nil) -> output or new vec4
+ *    add(vec4, output = nil) -> output or new vec4 or quat
  */
 static VALUE sm_vec4_add(int argc, VALUE *argv, VALUE sm_self)
 {
@@ -2150,13 +2286,23 @@ static VALUE sm_vec4_add(int argc, VALUE *argv, VALUE sm_self)
   vec4_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec4(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec4);
+  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec4(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+    if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_rhs));
+      return Qnil;
+    }
     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
     vec4_add(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -2174,8 +2320,8 @@ SM_LABEL(skip_output): {
 
 
 /*
- * Subtracts another vector's components from this vector's and returns the
- * result.
+ * Subtracts another vector or quaternion's components from this vector's and
+ * returns the result. The return type is that of the receiver.
  *
  * call-seq:
  *    subtract(vec4, output = nil) -> output or new vec4
@@ -2188,13 +2334,23 @@ static VALUE sm_vec4_subtract(int argc, VALUE *argv, VALUE sm_self)
   vec4_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_vec4(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec4);
+  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec4(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+    if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_rhs));
+      return Qnil;
+    }
     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
     vec4_subtract(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -2224,7 +2380,7 @@ static VALUE sm_vec4_dot_product(VALUE sm_self, VALUE sm_other)
   if (!SM_IS_A(sm_other, vec4) &&
       !SM_IS_A(sm_other, quat)) {
     rb_raise(rb_eArgError,
-      "Expected a Quat or Vec4, got %s",
+      kSM_WANT_FOUR_FORMAT_LIT,
       rb_obj_classname(sm_other));
     return Qnil;
   }
@@ -2379,7 +2535,8 @@ static VALUE sm_vec4_magnitude(VALUE sm_self)
 
 
 /*
- * Scales this vector's components by a scalar value and returns the result.
+ * Scales this vector or quaternion's components by a scalar value and returns
+ * the result. The return type is that of the receiver.
  *
  * call-seq:
  *    scale(scalar, output = nil) -> output or new vec4
@@ -2409,7 +2566,8 @@ static VALUE sm_vec4_scale(int argc, VALUE *argv, VALUE sm_self)
 
 
 /*
- * Divides this vector's components by a scalar value and returns the result.
+ * Divides this vector or quaternion's components by a scalar value and returns
+ * the result. The return type is that of the receiver.
  *
  * call-seq:
  *    divide(scalar, output = nil) -> output or new vec4
@@ -2556,39 +2714,6 @@ static VALUE sm_quat_length (VALUE self)
 
 
 /*
- * Returns a copy of self.
- *
- * call-seq:
- *    copy(output = nil) -> output or new quat
- */
- static VALUE sm_quat_copy(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   quat_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_quat(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, quat);
-     quat_t *output = sm_unwrap_quat(sm_out, NULL);
-     quat_copy (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     quat_t output;
-     quat_copy (*self, output);
-     sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to copy");
-   }
-   return sm_out;
- }
-
-
-
-/*
  * Returns the inverse of this Quat. Note that this is not the same as the
  * inverse of, for example, a Vec4.
  *
@@ -2605,7 +2730,12 @@ static VALUE sm_quat_length (VALUE self)
      if (!RTEST(sm_out)) {
        goto SM_LABEL(skip_output);
      }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, quat);
+     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
      quat_t *output = sm_unwrap_quat(sm_out, NULL);
      quat_inverse (*self, *output);
    }} else if (argc == 0) {
@@ -2616,39 +2746,6 @@ static VALUE sm_quat_length (VALUE self)
      rb_obj_call_init(sm_out, 0, 0);
    }} else {
      rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
-   }
-   return sm_out;
- }
-
-
-
-/*
- * Negates all components of this quaternion and returns the result.
- *
- * call-seq:
- *    negate(output = nil) -> output or new quat
- */
- static VALUE sm_quat_negate(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   quat_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_quat(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, quat);
-     quat_t *output = sm_unwrap_quat(sm_out, NULL);
-     quat_negate (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     quat_t output;
-     quat_negate (*self, output);
-     sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to negate");
    }
    return sm_out;
  }
@@ -2669,13 +2766,23 @@ static VALUE sm_quat_multiply(int argc, VALUE *argv, VALUE sm_self)
   quat_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_quat(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, quat);
+  if (!!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_quat(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, quat);
+    if (!!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     quat_t *output = sm_unwrap_quat(sm_out, NULL);
     quat_multiply(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -2706,13 +2813,23 @@ static VALUE sm_quat_multiply_vec3(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_quat(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, quat);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     quat_multiply_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -2876,7 +2993,12 @@ static VALUE sm_quat_angle_axis(int argc, VALUE *argv, VALUE self)
   const vec3_t *axis;
 
   rb_scan_args(argc, argv, "21", &sm_angle, &sm_axis, &sm_out);
-  SM_RAISE_IF_NOT_TYPE(sm_axis, vec3);
+  if (!SM_IS_A(sm_axis, vec3) && !SM_IS_A(sm_axis, vec4) && !SM_IS_A(sm_axis, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_axis));
+    return Qnil;
+  }
 
   angle = (s_float_t)rb_num2dbl(sm_angle);
   axis = sm_unwrap_vec3(sm_axis, NULL);
@@ -2912,67 +3034,6 @@ static VALUE sm_quat_identity(VALUE sm_self)
 
 
 /*
- * Scales this quaternion's components by a scalar value and returns the result.
- *
- * call-seq:
- *    scale(scalar, output = nil) -> output or new quat
- */
-static VALUE sm_quat_scale(int argc, VALUE *argv, VALUE sm_self)
-{
-  VALUE sm_out;
-  VALUE sm_scalar;
-  s_float_t scalar;
-  vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
-
-  rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
-  scalar = rb_num2dbl(sm_scalar);
-
-  if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
-    vec4_scale(*self, scalar, *sm_unwrap_vec4(sm_out, NULL));
-  } else {
-    vec4_t out;
-    vec4_scale(*self, scalar, out);
-    sm_out = sm_wrap_quat(out, rb_obj_class(sm_self));
-    rb_obj_call_init(sm_out, 0, 0);
-  }
-
-  return sm_out;
-}
-
-
-
-/*
- * Divides this quaternion's components by a scalar value and returns the
- * result.
- *
- * call-seq:
- *    divide(scalar, output = nil) -> output or new quat
- */
-static VALUE sm_quat_divide(int argc, VALUE *argv, VALUE sm_self)
-{
-  VALUE sm_out;
-  VALUE sm_scalar;
-  s_float_t scalar;
-  vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
-
-  rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
-  scalar = rb_num2dbl(sm_scalar);
-
-  if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
-    vec4_divide(*self, scalar, *sm_unwrap_vec4(sm_out, NULL));
-  } else {
-    vec4_t out;
-    vec4_divide(*self, scalar, out);
-    sm_out = sm_wrap_quat(out, rb_obj_class(sm_self));
-    rb_obj_call_init(sm_out, 0, 0);
-  }
-
-  return sm_out;
-}
-
-
-
-/*
  * Returns a quaternion interpolated between self and destination using
  * spherical linear interpolation. Alpha is the interpolation value and must be
  * clamped from 0 to 1.
@@ -2994,7 +3055,7 @@ static VALUE sm_quat_slerp(int argc, VALUE *argv, VALUE sm_self)
 
   if (!SM_IS_A(sm_destination, vec4) && !SM_IS_A(sm_destination, quat)) {
     rb_raise(rb_eTypeError,
-      "Expected either Vec4 or Quat, got %s",
+      kSM_WANT_FOUR_FORMAT_LIT,
       rb_obj_classname(sm_destination));
     return Qnil;
   }
@@ -3006,78 +3067,6 @@ static VALUE sm_quat_slerp(int argc, VALUE *argv, VALUE sm_self)
   } else {
     quat_t out;
     quat_slerp(*self, *destination, alpha, out);
-    sm_out = sm_wrap_quat(out, rb_obj_class(sm_self));
-    rb_obj_call_init(sm_out, 0, 0);
-  }
-
-  return sm_out;
-}
-
-
-
-/*
- * Adds the components of this and another quaternion together and returns the
- * result.
- *
- * call-seq:
- *    add(quat, output = nil) -> output or new quat
- */
-static VALUE sm_quat_add(int argc, VALUE *argv, VALUE sm_self)
-{
-  VALUE sm_out;
-  VALUE sm_rhs;
-  vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
-
-  rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
-
-  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
-    rb_raise(rb_eTypeError,
-      "Expected either Vec4 or Quat, got %s",
-      rb_obj_classname(sm_rhs));
-    return Qnil;
-  }
-
-  if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
-    vec4_add(*self, *sm_unwrap_vec4(sm_rhs, NULL), *sm_unwrap_vec4(sm_out, NULL));
-  } else {
-    vec4_t out;
-    vec4_add(*self, *sm_unwrap_vec4(sm_rhs, NULL), out);
-    sm_out = sm_wrap_quat(out, rb_obj_class(sm_self));
-    rb_obj_call_init(sm_out, 0, 0);
-  }
-
-  return sm_out;
-}
-
-
-
-/*
- * Subtract's another quaternion's components from this quaternion and returns
- * the result.
- *
- * call-seq:
- *    subtract(quat, output = nil) -> output or new quat
- */
-static VALUE sm_quat_subtract(int argc, VALUE *argv, VALUE sm_self)
-{
-  VALUE sm_out;
-  VALUE sm_rhs;
-  vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
-
-  rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
-
-  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
-    rb_raise(rb_eTypeError,
-      "Expected either Vec4 or Quat, got %s",
-      rb_obj_classname(sm_rhs));
-    return Qnil;
-  }
-
-  if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
-    vec4_subtract(*self, *sm_unwrap_vec4(sm_rhs, NULL), *sm_unwrap_vec4(sm_out, NULL));
-  } else {
-    vec4_t out;
-    vec4_subtract(*self, *sm_unwrap_vec4(sm_rhs, NULL), out);
     sm_out = sm_wrap_quat(out, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }
@@ -3400,13 +3389,23 @@ static VALUE sm_mat4_multiply_vec4(int argc, VALUE *argv, VALUE sm_self)
   vec4_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_mat4(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec4);
+  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec4(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+    if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
     mat4_multiply_vec4(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -3437,13 +3436,23 @@ static VALUE sm_mat4_transform_vec3(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_mat4(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     mat4_transform_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -3475,13 +3484,23 @@ static VALUE sm_mat4_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_mat4(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     mat4_rotate_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -3513,13 +3532,23 @@ static VALUE sm_mat4_inv_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_mat4(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     mat4_inv_rotate_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -3852,7 +3881,7 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
       if (!SM_IS_A(argv[arg_index], vec4) && !SM_IS_A(argv[arg_index], quat)) {
         rb_raise(
           rb_eArgError,
-          "Argument %d must be a Vec4 or Quat when supplying four arguments to Mat4.initialize",
+          "Argument %d must be a Vec4 or Quat when supplying four arguments to Mat4.initialize/set",
           (int)(arg_index + 1));
       }
 
@@ -3927,7 +3956,12 @@ static VALUE sm_mat4_angle_axis(int argc, VALUE *argv, VALUE self)
   const vec3_t *axis;
 
   rb_scan_args(argc, argv, "21", &sm_angle, &sm_axis, &sm_out);
-  SM_RAISE_IF_NOT_TYPE(sm_axis, vec3);
+  if (!SM_IS_A(sm_axis, vec3) && !SM_IS_A(sm_axis, vec4) && !SM_IS_A(sm_axis, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_axis));
+    return Qnil;
+  }
 
   angle = (s_float_t)rb_num2dbl(sm_angle);
   axis = sm_unwrap_vec3(sm_axis, NULL);
@@ -3975,7 +4009,12 @@ static VALUE sm_mat4_get_row3(int argc, VALUE *argv, VALUE sm_self)
     sm_out = argv[1];
 
     if (RTEST(sm_out)) {
-      SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+      if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+        rb_raise(rb_eTypeError,
+          kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+          rb_obj_classname(sm_out));
+        return Qnil;
+      }
     } else {
       goto SM_LABEL(no_output);
     }
@@ -4033,7 +4072,12 @@ static VALUE sm_mat4_get_row4(int argc, VALUE *argv, VALUE sm_self)
     sm_out = argv[1];
 
     if (RTEST(sm_out)) {
-      SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+      if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+        rb_raise(rb_eTypeError,
+          kSM_WANT_FOUR_FORMAT_LIT,
+          rb_obj_classname(sm_out));
+        return Qnil;
+      }
     } else {
       goto SM_LABEL(no_output);
     }
@@ -4091,7 +4135,12 @@ static VALUE sm_mat4_get_column3(int argc, VALUE *argv, VALUE sm_self)
     sm_out = argv[1];
 
     if (RTEST(sm_out)) {
-      SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+      if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+        rb_raise(rb_eTypeError,
+          kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+          rb_obj_classname(sm_out));
+        return Qnil;
+      }
     } else {
       goto SM_LABEL(no_output);
     }
@@ -4149,7 +4198,12 @@ static VALUE sm_mat4_get_column4(int argc, VALUE *argv, VALUE sm_self)
     sm_out = argv[1];
 
     if (RTEST(sm_out)) {
-      SM_RAISE_IF_NOT_TYPE(sm_out, vec4);
+      if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+        rb_raise(rb_eTypeError,
+          kSM_WANT_FOUR_FORMAT_LIT,
+          rb_obj_classname(sm_out));
+        return Qnil;
+      }
     } else {
       goto SM_LABEL(no_output);
     }
@@ -4191,7 +4245,12 @@ static VALUE sm_mat4_set_row3(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   int index;
   mat4_t *self;
 
-  SM_RAISE_IF_NOT_TYPE(sm_value, vec3);
+  if (!SM_IS_A(sm_value, vec3) && !SM_IS_A(sm_value, vec4) && !SM_IS_A(sm_value, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_value));
+    return Qnil;
+  }
 
   self = sm_unwrap_mat4(sm_self, NULL);
   value = sm_unwrap_vec3(sm_value, NULL);
@@ -4221,7 +4280,12 @@ static VALUE sm_mat4_set_column3(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   int index;
   mat4_t *self;
 
-  SM_RAISE_IF_NOT_TYPE(sm_value, vec3);
+  if (!SM_IS_A(sm_value, vec3) && !SM_IS_A(sm_value, vec4) && !SM_IS_A(sm_value, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_value));
+    return Qnil;
+  }
 
   self = sm_unwrap_mat4(sm_self, NULL);
   value = sm_unwrap_vec3(sm_value, NULL);
@@ -4251,7 +4315,12 @@ static VALUE sm_mat4_set_row4(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   int index;
   mat4_t *self;
 
-  SM_RAISE_IF_NOT_TYPE(sm_value, vec4);
+  if (!SM_IS_A(sm_value, vec4) && !SM_IS_A(sm_value, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_value));
+    return Qnil;
+  }
 
   self = sm_unwrap_mat4(sm_self, NULL);
   value = sm_unwrap_vec4(sm_value, NULL);
@@ -4281,7 +4350,12 @@ static VALUE sm_mat4_set_column4(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   int index;
   mat4_t *self;
 
-  SM_RAISE_IF_NOT_TYPE(sm_value, vec4);
+  if (!SM_IS_A(sm_value, vec4) && !SM_IS_A(sm_value, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_value));
+      return Qnil;
+    }
 
   self = sm_unwrap_mat4(sm_self, NULL);
   value = sm_unwrap_vec4(sm_value, NULL);
@@ -4879,13 +4953,23 @@ static VALUE sm_mat3_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_mat3(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     mat3_rotate_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -4917,13 +5001,23 @@ static VALUE sm_mat3_inv_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_mat3(sm_self, NULL);
-  SM_RAISE_IF_NOT_TYPE(sm_rhs, vec3);
+  if (!SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
   rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     mat3_inv_rotate_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
@@ -5171,7 +5265,12 @@ static VALUE sm_mat3_angle_axis(int argc, VALUE *argv, VALUE self)
   const vec3_t *axis;
 
   rb_scan_args(argc, argv, "21", &sm_angle, &sm_axis, &sm_out);
-  SM_RAISE_IF_NOT_TYPE(sm_axis, vec3);
+  if (!SM_IS_A(sm_axis, vec3) && !SM_IS_A(sm_axis, vec4) && !SM_IS_A(sm_axis, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_axis));
+    return Qnil;
+  }
 
   angle = (s_float_t)rb_num2dbl(sm_angle);
   axis = sm_unwrap_vec3(sm_axis, NULL);
@@ -5219,7 +5318,12 @@ static VALUE sm_mat3_get_row3(int argc, VALUE *argv, VALUE sm_self)
     sm_out = argv[1];
 
     if (RTEST(sm_out)) {
-      SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+      if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+        rb_raise(rb_eTypeError,
+          kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+          rb_obj_classname(sm_out));
+        return Qnil;
+      }
     } else {
       goto SM_LABEL(no_output);
     }
@@ -5277,7 +5381,12 @@ static VALUE sm_mat3_get_column3(int argc, VALUE *argv, VALUE sm_self)
     sm_out = argv[1];
 
     if (RTEST(sm_out)) {
-      SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+      if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+        rb_raise(rb_eTypeError,
+          kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+          rb_obj_classname(sm_out));
+        return Qnil;
+      }
     } else {
       goto SM_LABEL(no_output);
     }
@@ -5319,7 +5428,12 @@ static VALUE sm_mat3_set_row3(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   int index;
   mat3_t *self;
 
-  SM_RAISE_IF_NOT_TYPE(sm_value, vec3);
+  if (!SM_IS_A(sm_value, vec3) && !SM_IS_A(sm_value, vec4) && !SM_IS_A(sm_value, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_value));
+    return Qnil;
+  }
 
   self = sm_unwrap_mat3(sm_self, NULL);
   value = sm_unwrap_vec3(sm_value, NULL);
@@ -5349,7 +5463,12 @@ static VALUE sm_mat3_set_column3(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   int index;
   mat3_t *self;
 
-  SM_RAISE_IF_NOT_TYPE(sm_value, vec3);
+  if (!SM_IS_A(sm_value, vec3) && !SM_IS_A(sm_value, vec4) && !SM_IS_A(sm_value, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_value));
+    return Qnil;
+  }
 
   self = sm_unwrap_mat3(sm_self, NULL);
   value = sm_unwrap_vec3(sm_value, NULL);
@@ -5526,18 +5645,18 @@ void Init_bindings()
   rb_define_method(s_sm_quat_klass, "length", sm_quat_length, 0);
   rb_define_method(s_sm_quat_klass, "to_s", sm_quat_to_s, 0);
   rb_define_method(s_sm_quat_klass, "address", sm_get_address, 0);
-  rb_define_method(s_sm_quat_klass, "copy", sm_quat_copy, -1);
   rb_define_method(s_sm_quat_klass, "inverse", sm_quat_inverse, -1);
-  rb_define_method(s_sm_quat_klass, "negate", sm_quat_negate, -1);
   rb_define_method(s_sm_quat_klass, "multiply_quat", sm_quat_multiply, -1);
   rb_define_method(s_sm_quat_klass, "multiply_vec3", sm_quat_multiply_vec3, -1);
-  rb_define_method(s_sm_quat_klass, "normalize", sm_vec4_normalize, -1);
-  rb_define_method(s_sm_quat_klass, "scale", sm_quat_scale, -1);
-  rb_define_method(s_sm_quat_klass, "divide", sm_quat_divide, -1);
-  rb_define_method(s_sm_quat_klass, "add", sm_quat_add, -1);
-  rb_define_method(s_sm_quat_klass, "subtract", sm_quat_subtract, -1);
   rb_define_method(s_sm_quat_klass, "slerp", sm_quat_slerp, -1);
   // Borrow some functions from vec4
+  rb_define_method(s_sm_quat_klass, "copy", sm_vec4_copy, -1);
+  rb_define_method(s_sm_quat_klass, "negate", sm_vec4_negate, -1);
+  rb_define_method(s_sm_quat_klass, "normalize", sm_vec4_normalize, -1);
+  rb_define_method(s_sm_quat_klass, "scale", sm_vec4_scale, -1);
+  rb_define_method(s_sm_quat_klass, "divide", sm_vec4_divide, -1);
+  rb_define_method(s_sm_quat_klass, "add", sm_vec4_add, -1);
+  rb_define_method(s_sm_quat_klass, "subtract", sm_vec4_subtract, -1);
   rb_define_method(s_sm_quat_klass, "dot_product", sm_vec4_dot_product, 1);
   rb_define_method(s_sm_quat_klass, "magnitude_squared", sm_vec4_magnitude_squared, 0);
   rb_define_method(s_sm_quat_klass, "magnitude", sm_vec4_magnitude, 0);
