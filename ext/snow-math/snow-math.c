@@ -3025,23 +3025,23 @@ static VALUE sm_quat_slerp(int argc, VALUE *argv, VALUE sm_self)
 static VALUE sm_quat_add(int argc, VALUE *argv, VALUE sm_self)
 {
   VALUE sm_out;
-  VALUE sm_left;
+  VALUE sm_rhs;
   vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
 
-  rb_scan_args(argc, argv, "11", &sm_left, &sm_out);
+  rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
 
-  if (!SM_IS_A(sm_left, vec4) && !SM_IS_A(sm_left, quat)) {
+  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
     rb_raise(rb_eTypeError,
       "Expected either Vec4 or Quat, got %s",
-      rb_obj_classname(sm_left));
+      rb_obj_classname(sm_rhs));
     return Qnil;
   }
 
   if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
-    vec4_add(*self, *sm_unwrap_vec4(sm_left, NULL), *sm_unwrap_vec4(sm_out, NULL));
+    vec4_add(*self, *sm_unwrap_vec4(sm_rhs, NULL), *sm_unwrap_vec4(sm_out, NULL));
   } else {
     vec4_t out;
-    vec4_add(*self, *sm_unwrap_vec4(sm_left, NULL), out);
+    vec4_add(*self, *sm_unwrap_vec4(sm_rhs, NULL), out);
     sm_out = sm_wrap_quat(out, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }
@@ -3061,23 +3061,23 @@ static VALUE sm_quat_add(int argc, VALUE *argv, VALUE sm_self)
 static VALUE sm_quat_subtract(int argc, VALUE *argv, VALUE sm_self)
 {
   VALUE sm_out;
-  VALUE sm_left;
+  VALUE sm_rhs;
   vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
 
-  rb_scan_args(argc, argv, "11", &sm_left, &sm_out);
+  rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
 
-  if (!SM_IS_A(sm_left, vec4) && !SM_IS_A(sm_left, quat)) {
+  if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
     rb_raise(rb_eTypeError,
       "Expected either Vec4 or Quat, got %s",
-      rb_obj_classname(sm_left));
+      rb_obj_classname(sm_rhs));
     return Qnil;
   }
 
   if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
-    vec4_subtract(*self, *sm_unwrap_vec4(sm_left, NULL), *sm_unwrap_vec4(sm_out, NULL));
+    vec4_subtract(*self, *sm_unwrap_vec4(sm_rhs, NULL), *sm_unwrap_vec4(sm_out, NULL));
   } else {
     vec4_t out;
-    vec4_subtract(*self, *sm_unwrap_vec4(sm_left, NULL), out);
+    vec4_subtract(*self, *sm_unwrap_vec4(sm_rhs, NULL), out);
     sm_out = sm_wrap_quat(out, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }
