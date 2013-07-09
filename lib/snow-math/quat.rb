@@ -140,7 +140,7 @@ class Snow::Quat
   end
 
   # Calls #multiply(rhs, self) for scaling and Quat multiplication, otherwise
-  # #multiply(rhs, rhs) for Vec3 multiplication.
+  # calls #multiply(rhs, rhs) for Vec3 multiplication.
   #
   # call-seq:
   #     multiply!(quat) -> self
