@@ -2703,23 +2703,23 @@ static VALUE sm_quat_multiply_vec3(int argc, VALUE *argv, VALUE sm_self)
   VALUE sm_rhs;
   VALUE sm_out;
   quat_t *self;
-  quat_t *rhs;
+  vec3_t *rhs;
   rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
   self = sm_unwrap_quat(sm_self, NULL);
   SM_RAISE_IF_NOT_TYPE(sm_rhs, quat);
-  rhs = sm_unwrap_quat(sm_rhs, NULL);
+  rhs = sm_unwrap_vec3(sm_rhs, NULL);
   if (argc == 2) {
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
-    SM_RAISE_IF_NOT_TYPE(sm_out, quat);
-    quat_t *output = sm_unwrap_quat(sm_out, NULL);
+    SM_RAISE_IF_NOT_TYPE(sm_out, vec3);
+    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
     quat_multiply_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
-    quat_t output;
+    vec3_t output;
     quat_multiply_vec3(*self, *rhs, output);
-    sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to quat");
