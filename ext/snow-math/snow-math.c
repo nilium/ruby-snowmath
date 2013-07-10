@@ -1834,7 +1834,7 @@ static VALUE sm_vec2_new(int argc, VALUE *argv, VALUE self)
 
 
 /*
- * Sets the Vec3's components.
+ * Sets the Vec2's components.
  *
  * call-seq:
  *    set(x, y)      -> vec2 with components [x, y]
