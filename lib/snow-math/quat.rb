@@ -33,6 +33,30 @@ class Snow::Quat
   alias_method :clone, :copy
 
 
+  def to_vec2
+    Vec2.new(self)
+  end
+
+  def to_vec3
+    Vec3.new(self)
+  end
+
+  def to_vec4
+    Vec4.new(self)
+  end
+
+  def to_quat
+    Quat.new(self)
+  end
+
+  def to_mat3
+    Mat3.new(self)
+  end
+
+  def to_mat4
+    Mat4.new(self)
+  end
+
   # Returns the X component of the quaternion.
   #
   # call-seq: x -> float
