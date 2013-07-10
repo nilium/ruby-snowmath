@@ -126,6 +126,8 @@ module Snow
       def dup
         self.class.new(self)
       end
+
+      alias_method :clone, :dup
     end
   end
 
@@ -141,6 +143,8 @@ module Snow
       def dup
         self.class.new(self)
       end
+
+      alias_method :clone, :dup
     end
   end
 
@@ -156,6 +160,8 @@ module Snow
       def dup
         self.class.new(self)
       end
+
+      alias_method :clone, :dup
     end
   end
 
@@ -171,6 +177,8 @@ module Snow
       def dup
         self.class.new(self)
       end
+
+      alias_method :clone, :dup
     end
   end
 
@@ -186,6 +194,8 @@ module Snow
       def dup
         self.class.new(self)
       end
+
+      alias_method :clone, :dup
     end
   end
 
@@ -201,6 +211,8 @@ module Snow
       def dup
         self.class.new(self)
       end
+
+      alias_method :clone, :dup
     end
   end
 
