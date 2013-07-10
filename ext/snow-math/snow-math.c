@@ -1837,12 +1837,12 @@ static VALUE sm_vec2_new(int argc, VALUE *argv, VALUE self)
  * Sets the Vec3's components.
  *
  * call-seq:
- *    set(x, y)      -> vec with components [x, y]
- *    set([x, y])    -> vec with components [x, y]
+ *    set(x, y)      -> vec2 with components [x, y]
+ *    set([x, y])    -> vec2 with components [x, y]
  *    set(vec2)      -> copy of vec2
- *    set(vec3)      -> vec2 of vec3's x and y components
- *    set(vec4)      -> vec2 of vec4's x and y components
- *    set(quat)      -> vec2 of quat's x and y components
+ *    set(vec3)      -> vec2 with components [vec3.xy]
+ *    set(vec4)      -> vec2 with components [vec4.xy]
+ *    set(quat)      -> vec2 with components [quat.xy]
  */
 static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
 {
@@ -2613,9 +2613,10 @@ static VALUE sm_vec3_new(int argc, VALUE *argv, VALUE self)
  * call-seq:
  *    set(x, y, z)   -> vec3 with components [x, y, z]
  *    set([x, y, z]) -> vec3 with components [x, y, z]
+ *    set(vec2)      -> vec3 with components [vec2.xy, 0]
  *    set(vec3)      -> copy of vec3
- *    set(vec4)      -> vec3 of vec4's x, y, and z components
- *    set(quat)      -> vec3 of quat's x, y, and z components
+ *    set(vec4)      -> vec3 with components [vec4.xyz]
+ *    set(quat)      -> vec3 with components [quat.xyz]
  */
 static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
 {
@@ -2633,6 +2634,12 @@ static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
         SM_IS_A(argv[0], vec4) ||
         SM_IS_A(argv[0], quat)) {
       sm_unwrap_vec3(argv[0], *self);
+      break;
+    }
+
+    if (SM_IS_A(argv[0], vec2)) {
+      sm_unwrap_vec2(argv[0], *self);
+      self[0][2] = s_float_lit(0.0);
       break;
     }
 
@@ -3343,8 +3350,9 @@ static VALUE sm_vec4_new(int argc, VALUE *argv, VALUE self)
  * call-seq:
  *    set(x, y, z, w = 1) -> new vec4 with components [x, y, z, w]
  *    set([x, y, z, w])   -> new vec4 with components [x, y, z, w]
+ *    set(vec3)           -> vec4 with components [vec3.xyz, 1]
+ *    set(vec2)           -> vec4 with components [vec2.xy, 0, 1]
  *    set(vec4)           -> copy of vec4
- *    set(vec3)           -> copy of vec3 with w component of 1
  *    set(quat)           -> copy of quat as vec4
  */
 static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
@@ -3367,6 +3375,14 @@ static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
 
     if (SM_IS_A(argv[0], vec3)) {
       sm_unwrap_vec3(argv[0], *self);
+      self[0][3] = s_float_lit(1.0);
+      break;
+    }
+
+    if (SM_IS_A(argv[0], vec2)) {
+      sm_unwrap_vec2(argv[0], *self);
+      self[0][2] = s_float_lit(0.0);
+      self[0][3] = s_float_lit(1.0);
       break;
     }
 
@@ -3800,6 +3816,7 @@ static VALUE sm_quat_new(int argc, VALUE *argv, VALUE self)
  *    set(x, y, z, w = 1) -> new quaternion with components [x, y, z, w]
  *    set([x, y, z, w])   -> new quaternion with components [x, y, z, w]
  *    set(quat)           -> copy of quat
+ *    set(vec2)           -> new quaternion with the components [vec2.xy, 0, 1]
  *    set(vec3)           -> new quaternion with the components [vec3.xyz, 1]
  *    set(vec4)           -> new quaternion with the components of vec4
  *    set(mat3)           -> new quaternion from mat3
@@ -3817,14 +3834,22 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
 
   // Copy or by-array
   case 1: {
-    if (SM_IS_A(argv[0], vec3)) {
-      sm_unwrap_vec3(argv[0], *self);
-      break;
-    }
-
     if (SM_IS_A(argv[0], quat) ||
         SM_IS_A(argv[0], vec4)) {
       sm_unwrap_quat(argv[0], *self);
+      break;
+    }
+
+    if (SM_IS_A(argv[0], vec2)) {
+      sm_unwrap_vec2(argv[0], *self);
+      self[0][2] = s_float_lit(0.0);
+      self[0][3] = s_float_lit(1.0);
+      break;
+    }
+
+    if (SM_IS_A(argv[0], vec3)) {
+      sm_unwrap_vec3(argv[0], *self);
+      self[0][3] = s_float_lit(1.0);
       break;
     }
 
