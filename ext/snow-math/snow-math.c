@@ -6140,10 +6140,10 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
     size_t arg_index;
     s_float_t *mat_elem = *self;
     for (arg_index = 0; arg_index < 3; ++arg_index, mat_elem += 3) {
-      if (!SM_IS_A(argv[arg_index], vec3)) {
+      if (!SM_IS_A(argv[arg_index], vec3) && !SM_IS_A(argv[arg_index], vec4) && !SM_IS_A(argv[arg_index], quat)) {
         rb_raise(
           rb_eArgError,
-          "Argument %d must be a Vec3 when supplying three arguments to initialize/set",
+          "Argument %d must be a Vec3, Vec4, or Quat when supplying three arguments to initialize/set",
           (int)(arg_index + 1));
       }
 
