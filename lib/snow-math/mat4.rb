@@ -140,7 +140,7 @@ class Snow::Mat4
   # call-seq: translate!(vec3) -> self
   # call-seq: translate!(x, y, z) -> self
   def translate!(*args)
-    translate *args, self
+    translate(*args, self)
   end
 
   # Calls #inverse_affine(self)
