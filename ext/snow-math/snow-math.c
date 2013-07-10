@@ -1886,7 +1886,7 @@ static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
   }
 
   default: {
-    rb_raise(rb_eArgError, "Invalid arguments to Vec2.initialize");
+    rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
   } // switch (argc)
@@ -2673,7 +2673,7 @@ static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
   }
 
   default: {
-    rb_raise(rb_eArgError, "Invalid arguments to Vec3.initialize");
+    rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
   } // switch (argc)
@@ -3418,7 +3418,7 @@ static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
   }
 
   default: {
-    rb_raise(rb_eArgError, "Invalid arguments to Vec4.initialize");
+    rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
   } // switch (argc)
@@ -3897,7 +3897,7 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
   }
 
   default: {
-    rb_raise(rb_eArgError, "Invalid arguments to Quat.initialize");
+    rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
   } // switch (argc)
@@ -4831,7 +4831,7 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
       if (!SM_IS_A(argv[arg_index], vec4) && !SM_IS_A(argv[arg_index], quat)) {
         rb_raise(
           rb_eArgError,
-          "Argument %d must be a Vec4 or Quat when supplying four arguments to Mat4.initialize/set",
+          "Argument %d must be a Vec4 or Quat when supplying four arguments to initialize/set",
           (int)(arg_index + 1));
       }
 
@@ -4851,7 +4851,7 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
   }
 
   default: {
-    rb_raise(rb_eArgError, "Invalid arguments to Mat4.initialize");
+    rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
   } // swtich (argc)
@@ -6143,7 +6143,7 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
       if (!SM_IS_A(argv[arg_index], vec3)) {
         rb_raise(
           rb_eArgError,
-          "Argument %d must be a Vec3 when supplying three arguments to Mat3.initialize",
+          "Argument %d must be a Vec3 when supplying three arguments to initialize/set",
           (int)(arg_index + 1));
       }
 
@@ -6163,7 +6163,7 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
   }
 
   default: {
-    rb_raise(rb_eArgError, "Invalid arguments to Mat3.initialize");
+    rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
   } // swtich (argc)
