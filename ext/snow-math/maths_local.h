@@ -89,6 +89,45 @@ S_INLINE int  float_equals(const s_float_t x, const s_float_t y)
 }
 
 
+/*==============================================================================
+
+  2-Component Vector (vec2_t)
+
+==============================================================================*/
+
+extern const vec2_t g_vec2_zero;
+extern const vec2_t g_vec2_one;
+
+void          vec2_copy(const vec2_t in, vec2_t out);
+void          vec2_set(s_float_t x, s_float_t y, vec2_t v);
+
+/*!
+ * Gets the squared length of a vector.  Useful for approximations and when
+ * you don't need the actual magnitude.
+ */
+s_float_t     vec2_length_squared(const vec2_t v);
+/*!
+ * Gets the length/magnitude of a vector.
+ */
+s_float_t     vec2_length(const vec2_t v);
+void          vec2_normalize(const vec2_t in, vec2_t out);
+
+void          vec2_subtract(const vec2_t left, const vec2_t right, vec2_t out);
+void          vec2_add(const vec2_t left, const vec2_t right, vec2_t out);
+void          vec2_multiply(const vec2_t left, const vec2_t right, vec2_t out);
+void          vec2_negate(const vec2_t v, vec2_t out);
+void          vec2_inverse(const vec2_t v, vec2_t out);
+
+void          vec2_project(const vec2_t in, const vec2_t normal, vec2_t out);
+void          vec2_reflect(const vec2_t in, const vec2_t normal, vec2_t out);
+s_float_t     vec2_dot_product(const vec2_t left, const vec2_t right);
+
+void          vec2_scale(const vec2_t v, s_float_t scalar, vec2_t out);
+int           vec2_divide(const vec2_t v, s_float_t divisor, vec2_t out);
+
+int           vec2_equals(const vec2_t left, const vec2_t right);
+
+
 
 /*==============================================================================
 
