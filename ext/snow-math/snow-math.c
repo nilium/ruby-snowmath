@@ -1497,7 +1497,7 @@ SM_LABEL(skip_output): {
  * result.
  *
  * call-seq:
- *    multiply(vec3, output = nil) -> output or new vec3
+ *    multiply_vec3(vec3, output = nil) -> output or new vec3
  */
 static VALUE sm_vec3_multiply(int argc, VALUE *argv, VALUE sm_self)
 {
@@ -2228,7 +2228,7 @@ SM_LABEL(skip_output): {
  * result.
  *
  * call-seq:
- *    multiply(vec4, output = nil) -> output or new vec4
+ *    multiply_vec4(vec4, output = nil) -> output or new vec4
  */
 static VALUE sm_vec4_multiply(int argc, VALUE *argv, VALUE sm_self)
 {
