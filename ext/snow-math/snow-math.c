@@ -8,6 +8,7 @@ See COPYING for license information
 #include "maths_local.h"
 #include "ruby.h"
 
+#define kSM_WANT_TWO_TO_FOUR_FORMAT_LIT ("Expected a Vec2, Vec3, Vec4, or Quat, got %s")
 #define kSM_WANT_THREE_OR_FOUR_FORMAT_LIT ("Expected a Vec3, Vec4, or Quat, got %s")
 #define kSM_WANT_FOUR_FORMAT_LIT ("Expected a Vec4 or Quat, got %s")
 
@@ -95,6 +96,7 @@ static VALUE sm_mathtype_array_length(VALUE sm_self)
 ==============================================================================*/
 
 static VALUE s_sm_snowmath_mod = Qnil;
+static VALUE s_sm_vec2_klass = Qnil;
 static VALUE s_sm_vec3_klass = Qnil;
 static VALUE s_sm_vec4_klass = Qnil;
 static VALUE s_sm_quat_klass = Qnil;
@@ -114,6 +116,8 @@ static VALUE s_sm_mat4_klass = Qnil;
   pass one to another's function. The conversion is easy enough, so it's not a
   huge deal.
 */
+static VALUE    sm_wrap_vec2(const vec2_t value, VALUE klass);
+static vec2_t * sm_unwrap_vec2(VALUE sm_value, vec2_t store);
 static VALUE    sm_wrap_vec3(const vec3_t value, VALUE klass);
 static vec3_t * sm_unwrap_vec3(VALUE sm_value, vec3_t store);
 static VALUE    sm_wrap_vec4(const vec4_t value, VALUE klass);
@@ -1097,6 +1101,736 @@ static VALUE sm_mat4_array_size(VALUE sm_self)
 
 
 #endif /* BUILD_ARRAY_TYPE */
+
+
+
+/*==============================================================================
+
+  vec2_t functions
+
+==============================================================================*/
+
+static VALUE sm_wrap_vec2(const vec2_t value, VALUE klass)
+{
+  vec2_t *copy;
+  VALUE sm_wrapped = Qnil;
+  if (!RTEST(klass)) {
+    klass = s_sm_vec2_klass;
+  }
+  sm_wrapped = Data_Make_Struct(klass, vec2_t, 0, free, copy);
+  if (value) {
+    vec2_copy(value, *copy);
+  }
+  return sm_wrapped;
+}
+
+
+
+static vec2_t *sm_unwrap_vec2(VALUE sm_value, vec2_t store)
+{
+  vec2_t *value;
+  Data_Get_Struct(sm_value, vec2_t, value);
+  if(store) vec2_copy(*value, store);
+  return value;
+}
+
+
+
+/*
+ * Gets the component of the Vec2 at the given index.
+ *
+ * call-seq: fetch(index) -> float
+ */
+static VALUE sm_vec2_fetch (VALUE sm_self, VALUE sm_index)
+{
+  static const int max_index = sizeof(vec2_t) / sizeof(s_float_t);
+  const vec2_t *self = sm_unwrap_vec2(sm_self, NULL);
+  int index = NUM2INT(sm_index);
+  if (index < 0 || index >= max_index) {
+    rb_raise(rb_eRangeError,
+      "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
+  }
+  return rb_float_new(self[0][NUM2INT(sm_index)]);
+}
+
+
+
+/*
+ * Sets the Vec2's component at the index to the value.
+ *
+ * call-seq: store(index, value) -> value
+ */
+static VALUE sm_vec2_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
+{
+  static const int max_index = sizeof(vec2_t) / sizeof(s_float_t);
+  vec2_t *self = sm_unwrap_vec2(sm_self, NULL);
+  int index = NUM2INT(sm_index);
+  if (index < 0 || index >= max_index) {
+    rb_raise(rb_eRangeError,
+      "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
+  }
+  self[0][index] = (s_float_t)rb_num2dbl(sm_value);
+  return sm_value;
+}
+
+
+
+/*
+ * Returns the length in bytes of the Vec2. When compiled to use doubles as the
+ * base type, this is always 16. Otherwise, when compiled to use floats, it's
+ * always 8.
+ *
+ * call-seq: size -> fixnum
+ */
+static VALUE sm_vec2_size (VALUE self)
+{
+  return SIZET2NUM(sizeof(vec2_t));
+}
+
+
+
+/*
+ * Returns the length of the Vec2 in components. Result is always 2.
+ *
+ * call-seq: length -> fixnum
+ */
+static VALUE sm_vec2_length (VALUE self)
+{
+  return SIZET2NUM(sizeof(vec2_t) / sizeof(s_float_t));
+}
+
+
+
+/*
+ * Returns a copy of self.
+ *
+ * call-seq:
+ *    copy(output = nil) -> output or new vec2
+ */
+ static VALUE sm_vec2_copy(int argc, VALUE *argv, VALUE sm_self)
+ {
+   VALUE sm_out;
+   vec2_t *self;
+   rb_scan_args(argc, argv, "01", &sm_out);
+   self = sm_unwrap_vec2(sm_self, NULL);
+   if (argc == 1) {
+     if (!RTEST(sm_out)) {
+       goto SM_LABEL(skip_output);
+     }{
+     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
+     vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+     vec2_copy (*self, *output);
+   }} else if (argc == 0) {
+ SM_LABEL(skip_output): {
+     vec2_t output;
+     vec2_copy (*self, output);
+     sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+     rb_obj_call_init(sm_out, 0, 0);
+   }} else {
+     rb_raise(rb_eArgError, "Invalid number of arguments to copy");
+   }
+   return sm_out;
+ }
+
+
+
+/*
+ * Returns a vector whose components are the multiplicative inverse of this
+ * vector's.
+ *
+ * call-seq:
+ *    normalize(output = nil) -> output or new vec2
+ */
+ static VALUE sm_vec2_normalize(int argc, VALUE *argv, VALUE sm_self)
+ {
+   VALUE sm_out;
+   vec2_t *self;
+   rb_scan_args(argc, argv, "01", &sm_out);
+   self = sm_unwrap_vec2(sm_self, NULL);
+   if (argc == 1) {
+     if (!RTEST(sm_out)) {
+       goto SM_LABEL(skip_output);
+     }{
+     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
+     vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+     vec2_normalize (*self, *output);
+   }} else if (argc == 0) {
+ SM_LABEL(skip_output): {
+     vec2_t output;
+     vec2_normalize (*self, output);
+     sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+     rb_obj_call_init(sm_out, 0, 0);
+   }} else {
+     rb_raise(rb_eArgError, "Invalid number of arguments to normalize");
+   }
+   return sm_out;
+ }
+
+
+
+/*
+ * Returns a vector whose components are the multiplicative inverse of this
+ * vector's.
+ *
+ * call-seq:
+ *    inverse(output = nil) -> output or new vec2
+ */
+ static VALUE sm_vec2_inverse(int argc, VALUE *argv, VALUE sm_self)
+ {
+   VALUE sm_out;
+   vec2_t *self;
+   rb_scan_args(argc, argv, "01", &sm_out);
+   self = sm_unwrap_vec2(sm_self, NULL);
+   if (argc == 1) {
+     if (!RTEST(sm_out)) {
+       goto SM_LABEL(skip_output);
+     }{
+     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
+     vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+     vec2_inverse (*self, *output);
+   }} else if (argc == 0) {
+ SM_LABEL(skip_output): {
+     vec2_t output;
+     vec2_inverse (*self, output);
+     sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+     rb_obj_call_init(sm_out, 0, 0);
+   }} else {
+     rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
+   }
+   return sm_out;
+ }
+
+
+
+/*
+ * Negates this vector's components and returns the result.
+ *
+ * call-seq:
+ *    negate(output = nil) -> output or new vec2
+ */
+ static VALUE sm_vec2_negate(int argc, VALUE *argv, VALUE sm_self)
+ {
+   VALUE sm_out;
+   vec2_t *self;
+   rb_scan_args(argc, argv, "01", &sm_out);
+   self = sm_unwrap_vec2(sm_self, NULL);
+   if (argc == 1) {
+     if (!RTEST(sm_out)) {
+       goto SM_LABEL(skip_output);
+     }{
+     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+       rb_raise(rb_eTypeError,
+         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+         rb_obj_classname(sm_out));
+       return Qnil;
+     }
+     vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+     vec2_negate (*self, *output);
+   }} else if (argc == 0) {
+ SM_LABEL(skip_output): {
+     vec2_t output;
+     vec2_negate (*self, output);
+     sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+     rb_obj_call_init(sm_out, 0, 0);
+   }} else {
+     rb_raise(rb_eArgError, "Invalid number of arguments to negate");
+   }
+   return sm_out;
+ }
+
+
+
+/*
+ * Projects this vector onto a normal vector and returns the result.
+ *
+ * call-seq:
+ *    project(normal, output = nil) -> output or new vec2
+ */
+static VALUE sm_vec2_project(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_rhs;
+  VALUE sm_out;
+  vec2_t *self;
+  vec2_t *rhs;
+  rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
+  self = sm_unwrap_vec2(sm_self, NULL);
+  if (!SM_IS_A(sm_rhs, vec2) && !SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
+  rhs = sm_unwrap_vec2(sm_rhs, NULL);
+  if (argc == 2) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    vec2_project(*self, *rhs, *output);
+  }} else if (argc == 1) {
+SM_LABEL(skip_output): {
+    vec2_t output;
+    vec2_project(*self, *rhs, output);
+    sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to project");
+  }
+  return sm_out;
+}
+
+
+
+/*
+ * Reflects this vector against a normal vector and returns the result.
+ *
+ * call-seq:
+ *    reflect(normal, output = nil) -> output or new vec2
+ */
+static VALUE sm_vec2_reflect(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_rhs;
+  VALUE sm_out;
+  vec2_t *self;
+  vec2_t *rhs;
+  rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
+  self = sm_unwrap_vec2(sm_self, NULL);
+  if (!SM_IS_A(sm_rhs, vec2) && !SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
+  rhs = sm_unwrap_vec2(sm_rhs, NULL);
+  if (argc == 2) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    vec2_reflect(*self, *rhs, *output);
+  }} else if (argc == 1) {
+SM_LABEL(skip_output): {
+    vec2_t output;
+    vec2_reflect(*self, *rhs, output);
+    sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to reflect");
+  }
+  return sm_out;
+}
+
+
+
+/*
+ * Multiplies this and another vector's components together and returns the
+ * result.
+ *
+ * call-seq:
+ *    multiply_vec2(vec2, output = nil) -> output or new vec2
+ */
+static VALUE sm_vec2_multiply(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_rhs;
+  VALUE sm_out;
+  vec2_t *self;
+  vec2_t *rhs;
+  rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
+  self = sm_unwrap_vec2(sm_self, NULL);
+  if (!SM_IS_A(sm_rhs, vec2) && !SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
+  rhs = sm_unwrap_vec2(sm_rhs, NULL);
+  if (argc == 2) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    vec2_multiply(*self, *rhs, *output);
+  }} else if (argc == 1) {
+SM_LABEL(skip_output): {
+    vec2_t output;
+    vec2_multiply(*self, *rhs, output);
+    sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to multiply");
+  }
+  return sm_out;
+}
+
+
+
+/*
+ * Adds this and another vector's components together and returns the result.
+ *
+ * call-seq:
+ *    add(vec2, output = nil) -> output or new vec2
+ */
+static VALUE sm_vec2_add(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_rhs;
+  VALUE sm_out;
+  vec2_t *self;
+  vec2_t *rhs;
+  rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
+  self = sm_unwrap_vec2(sm_self, NULL);
+  if (!SM_IS_A(sm_rhs, vec2) && !SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
+  rhs = sm_unwrap_vec2(sm_rhs, NULL);
+  if (argc == 2) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    vec2_add(*self, *rhs, *output);
+  }} else if (argc == 1) {
+SM_LABEL(skip_output): {
+    vec2_t output;
+    vec2_add(*self, *rhs, output);
+    sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to add");
+  }
+  return sm_out;
+}
+
+
+
+/*
+ * Subtracts another vector's components from this vector's and returns the
+ * result.
+ *
+ * call-seq:
+ *    subtract(vec2, output = nil) -> output or new vec2
+ */
+static VALUE sm_vec2_subtract(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_rhs;
+  VALUE sm_out;
+  vec2_t *self;
+  vec2_t *rhs;
+  rb_scan_args(argc, argv, "11", &sm_rhs, &sm_out);
+  self = sm_unwrap_vec2(sm_self, NULL);
+  if (!SM_IS_A(sm_rhs, vec2) && !SM_IS_A(sm_rhs, vec3) && !SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
+    rb_raise(rb_eTypeError,
+      kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+      rb_obj_classname(sm_rhs));
+    return Qnil;
+  }
+  rhs = sm_unwrap_vec2(sm_rhs, NULL);
+  if (argc == 2) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    vec2_subtract(*self, *rhs, *output);
+  }} else if (argc == 1) {
+SM_LABEL(skip_output): {
+    vec2_t output;
+    vec2_subtract(*self, *rhs, output);
+    sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to subtract");
+  }
+  return sm_out;
+}
+
+
+
+/*
+ * Returns the dot product of this and another Vec2 or the XY components of a
+ * Vec3, Vec4, or Quat.
+ *
+ * call-seq:
+ *    dot_product(vec2) -> float
+ *    dot_product(vec3) -> float
+ *    dot_product(vec4) -> float
+ *    dot_product(quat) -> float
+ */
+static VALUE sm_vec2_dot_product(VALUE sm_self, VALUE sm_other)
+{
+  if (!SM_IS_A(sm_other, vec2) &&
+      !SM_IS_A(sm_other, vec3) &&
+      !SM_IS_A(sm_other, vec4) &&
+      !SM_IS_A(sm_other, quat)) {
+    rb_raise(rb_eArgError,
+      "Expected a Vec2, Vec3, Vec4, or Quat, got %s",
+      rb_obj_classname(sm_other));
+    return Qnil;
+  }
+  return rb_float_new(
+    vec2_dot_product(
+      *sm_unwrap_vec2(sm_self, NULL),
+      *sm_unwrap_vec2(sm_other, NULL)));
+}
+
+
+
+/*
+ * Allocates a Vec2.
+ *
+ * call-seq:
+ *    new()          -> vec2 with components [0, 0]
+ *    new(x, y)      -> vec2 with components [x, y]
+ *    new([x, y])    -> vec2 with components [x, y]
+ *    new(vec2)      -> copy of vec3
+ *    new(vec3)      -> vec2 of vec3's x and y components
+ *    new(vec4)      -> vec2 of vec4's x and y components
+ *    new(quat)      -> vec2 of quat's x and y components
+ */
+static VALUE sm_vec2_new(int argc, VALUE *argv, VALUE self)
+{
+  VALUE sm_vec = sm_wrap_vec2(g_vec2_zero, self);
+  rb_obj_call_init(sm_vec, argc, argv);
+  return sm_vec;
+}
+
+
+
+/*
+ * Sets the Vec3's components.
+ *
+ * call-seq:
+ *    set(x, y)      -> vec with components [x, y]
+ *    set([x, y])    -> vec with components [x, y]
+ *    set(vec2)      -> copy of vec2
+ *    set(vec3)      -> vec2 of vec3's x and y components
+ *    set(vec4)      -> vec2 of vec4's x and y components
+ *    set(quat)      -> vec2 of quat's x and y components
+ */
+static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
+{
+  vec2_t *self = sm_unwrap_vec2(sm_self, NULL);
+  size_t arr_index = 0;
+
+  switch(argc) {
+
+  // Default value
+  case 0: { break; }
+
+  // Copy or by-array
+  case 1: {
+    if (SM_IS_A(argv[0], vec2) ||
+        SM_IS_A(argv[0], vec3) ||
+        SM_IS_A(argv[0], vec4) ||
+        SM_IS_A(argv[0], quat)) {
+      sm_unwrap_vec2(argv[0], *self);
+      break;
+    }
+
+    // Optional offset into array provided
+    if (0) {
+      case 2:
+      if (!SM_RB_IS_A(argv[0], rb_cArray)) {
+        self[0][0] = (s_float_t)rb_num2dbl(argv[0]);
+        self[0][1] = (s_float_t)rb_num2dbl(argv[1]);
+        break;
+      }
+      arr_index = NUM2SIZET(argv[1]);
+    }
+
+    // Array of values
+    VALUE arrdata = argv[0];
+    const size_t arr_end = arr_index + 2;
+    s_float_t *vec_elem = *self;
+    for (; arr_index < arr_end; ++arr_index, ++vec_elem) {
+      *vec_elem = (s_float_t)rb_num2dbl(rb_ary_entry(arrdata, (long)arr_index));
+    }
+    break;
+  }
+
+  default: {
+    rb_raise(rb_eArgError, "Invalid arguments to Vec2.initialize");
+    break;
+  }
+  } // switch (argc)
+
+  return sm_self;
+}
+
+
+
+/*
+ * Returns a string representation of self.
+ *
+ *    Vec2[].to_s     # => "{ 0.0, 0.0 }"
+ *
+ * call-seq:
+ *    to_s -> string
+ */
+static VALUE sm_vec2_to_s(VALUE self)
+{
+  const s_float_t *v;
+  v = (const s_float_t *)*sm_unwrap_vec2(self, NULL);
+  return rb_sprintf(
+    "{ "
+    "%f, %f"
+    " }",
+    v[0], v[1]);
+}
+
+
+
+/*
+ * Returns the squared magnitude of self.
+ *
+ * call-seq:
+ *    magnitude_squared -> float
+ */
+static VALUE sm_vec2_magnitude_squared(VALUE sm_self)
+{
+  return rb_float_new(vec2_length_squared(*sm_unwrap_vec2(sm_self, NULL)));
+}
+
+
+
+/*
+ * Returns the magnitude of self.
+ *
+ * call-seq:
+ *    magnitude -> float
+ */
+static VALUE sm_vec2_magnitude(VALUE sm_self)
+{
+  return rb_float_new(vec2_length(*sm_unwrap_vec2(sm_self, NULL)));
+}
+
+
+
+/*
+ * Scales this vector's components by a scalar value and returns the result.
+ *
+ * call-seq:
+ *    scale(scalar, output = nil) -> output or new vec2
+ */
+static VALUE sm_vec2_scale(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  VALUE sm_scalar;
+  s_float_t scalar;
+  vec2_t *self = sm_unwrap_vec2(sm_self, NULL);
+
+  rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
+  scalar = rb_num2dbl(sm_scalar);
+
+  if (SM_IS_A(sm_out, vec2) || SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
+    vec2_scale(*self, scalar, *sm_unwrap_vec2(sm_out, NULL));
+  } else {
+    vec2_t out;
+    vec2_scale(*self, scalar, out);
+    sm_out = sm_wrap_vec2(out, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }
+
+  return sm_out;
+}
+
+
+
+/*
+ * Divides this vector's components by a scalar value and returns the result.
+ *
+ * call-seq:
+ *    divide(scalar, output = nil) -> output or new vec2
+ */
+static VALUE sm_vec2_divide(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  VALUE sm_scalar;
+  s_float_t scalar;
+  vec2_t *self = sm_unwrap_vec2(sm_self, NULL);
+
+  rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
+  scalar = rb_num2dbl(sm_scalar);
+
+  if (SM_IS_A(sm_out, vec2) || SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
+    vec2_divide(*self, scalar, *sm_unwrap_vec2(sm_out, NULL));
+  } else {
+    vec2_t out;
+    vec2_divide(*self, scalar, out);
+    sm_out = sm_wrap_vec2(out, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }
+
+  return sm_out;
+}
+
+
+
+/*
+ * Tests whether a Vec2 is equivalent to another Vec2, a Vec3, Vec4, or a Quat.
+ * When testing for equivalency against 4-component objects, only the first two
+ * components are compared.
+ *
+ * call-seq:
+ *    vec2 == other_vec2 -> bool
+ *    vec2 == vec3       -> bool
+ *    vec2 == vec4       -> bool
+ *    vec2 == quat       -> bool
+ */
+static VALUE sm_vec2_equals(VALUE sm_self, VALUE sm_other)
+{
+  if (!RTEST(sm_other) || (!SM_IS_A(sm_other, vec2) && !SM_IS_A(sm_other, vec3) && !SM_IS_A(sm_other, vec4) && !SM_IS_A(sm_other, quat))) {
+    return Qfalse;
+  }
+
+  return vec2_equals(*sm_unwrap_vec2(sm_self, NULL), *sm_unwrap_vec2(sm_other, NULL)) ? Qtrue : Qfalse;
+}
 
 
 
@@ -5588,6 +6322,7 @@ void Init_bindings()
    */
 
   s_sm_snowmath_mod = rb_define_module("Snow");
+  s_sm_vec2_klass   = rb_define_class_under(s_sm_snowmath_mod, "Vec2", rb_cObject);
   s_sm_vec3_klass   = rb_define_class_under(s_sm_snowmath_mod, "Vec3", rb_cObject);
   s_sm_vec4_klass   = rb_define_class_under(s_sm_snowmath_mod, "Vec4", rb_cObject);
   s_sm_quat_klass   = rb_define_class_under(s_sm_snowmath_mod, "Quat", rb_cObject);
@@ -5595,16 +6330,43 @@ void Init_bindings()
   s_sm_mat4_klass   = rb_define_class_under(s_sm_snowmath_mod, "Mat4", rb_cObject);
 
   rb_const_set(s_sm_snowmath_mod, kRB_CONST_FLOAT_SIZE, INT2FIX(sizeof(s_float_t)));
+  rb_const_set(s_sm_vec2_klass, kRB_CONST_SIZE, INT2FIX(sizeof(vec2_t)));
   rb_const_set(s_sm_vec3_klass, kRB_CONST_SIZE, INT2FIX(sizeof(vec3_t)));
   rb_const_set(s_sm_vec4_klass, kRB_CONST_SIZE, INT2FIX(sizeof(vec4_t)));
   rb_const_set(s_sm_quat_klass, kRB_CONST_SIZE, INT2FIX(sizeof(quat_t)));
   rb_const_set(s_sm_mat3_klass, kRB_CONST_SIZE, INT2FIX(sizeof(mat3_t)));
   rb_const_set(s_sm_mat4_klass, kRB_CONST_SIZE, INT2FIX(sizeof(mat4_t)));
+  rb_const_set(s_sm_vec2_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(vec2_t) / sizeof(s_float_t)));
   rb_const_set(s_sm_vec3_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(vec3_t) / sizeof(s_float_t)));
   rb_const_set(s_sm_vec4_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(vec4_t) / sizeof(s_float_t)));
   rb_const_set(s_sm_quat_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(quat_t) / sizeof(s_float_t)));
   rb_const_set(s_sm_mat3_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(mat3_t) / sizeof(s_float_t)));
   rb_const_set(s_sm_mat4_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(mat4_t) / sizeof(s_float_t)));
+
+  rb_define_singleton_method(s_sm_vec2_klass, "new", sm_vec2_new, -1);
+  rb_define_method(s_sm_vec2_klass, "initialize", sm_vec2_init, -1);
+  rb_define_method(s_sm_vec2_klass, "set", sm_vec2_init, -1);
+  rb_define_method(s_sm_vec2_klass, "fetch", sm_vec2_fetch, 1);
+  rb_define_method(s_sm_vec2_klass, "store", sm_vec2_store, 2);
+  rb_define_method(s_sm_vec2_klass, "size", sm_vec2_size, 0);
+  rb_define_method(s_sm_vec2_klass, "length", sm_vec2_length, 0);
+  rb_define_method(s_sm_vec2_klass, "to_s", sm_vec2_to_s, 0);
+  rb_define_method(s_sm_vec2_klass, "address", sm_get_address, 0);
+  rb_define_method(s_sm_vec2_klass, "copy", sm_vec2_copy, -1);
+  rb_define_method(s_sm_vec2_klass, "normalize", sm_vec2_normalize, -1);
+  rb_define_method(s_sm_vec2_klass, "inverse", sm_vec2_inverse, -1);
+  rb_define_method(s_sm_vec2_klass, "negate", sm_vec2_negate, -1);
+  rb_define_method(s_sm_vec2_klass, "multiply_vec2", sm_vec2_multiply, -1);
+  rb_define_method(s_sm_vec2_klass, "add", sm_vec2_add, -1);
+  rb_define_method(s_sm_vec2_klass, "subtract", sm_vec2_subtract, -1);
+  rb_define_method(s_sm_vec2_klass, "reflect", sm_vec2_reflect, -1);
+  rb_define_method(s_sm_vec2_klass, "project", sm_vec2_project, -1);
+  rb_define_method(s_sm_vec2_klass, "dot_product", sm_vec2_dot_product, 1);
+  rb_define_method(s_sm_vec2_klass, "magnitude_squared", sm_vec2_magnitude_squared, 0);
+  rb_define_method(s_sm_vec2_klass, "magnitude", sm_vec2_magnitude, 0);
+  rb_define_method(s_sm_vec2_klass, "scale", sm_vec2_scale, -1);
+  rb_define_method(s_sm_vec2_klass, "divide", sm_vec2_divide, -1);
+  rb_define_method(s_sm_vec2_klass, "==", sm_vec2_equals, 1);
 
   rb_define_singleton_method(s_sm_vec3_klass, "new", sm_vec3_new, -1);
   rb_define_method(s_sm_vec3_klass, "initialize", sm_vec3_init, -1);
