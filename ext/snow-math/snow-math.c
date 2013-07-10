@@ -1391,7 +1391,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to project");
   }
   return sm_out;
 }
@@ -1438,7 +1438,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to reflect");
   }
   return sm_out;
 }
@@ -1485,7 +1485,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to cross_product");
   }
   return sm_out;
 }
@@ -1533,7 +1533,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to multiply_vec3");
   }
   return sm_out;
 }
@@ -1580,7 +1580,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to add");
   }
   return sm_out;
 }
@@ -1628,7 +1628,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to subtract");
   }
   return sm_out;
 }
@@ -2169,7 +2169,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
+    rb_raise(rb_eArgError, "Invalid number of arguments to project");
   }
   return sm_out;
 }
@@ -2216,7 +2216,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
+    rb_raise(rb_eArgError, "Invalid number of arguments to reflect");
   }
   return sm_out;
 }
@@ -2264,7 +2264,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
+    rb_raise(rb_eArgError, "Invalid number of arguments to multiply_vec4");
   }
   return sm_out;
 }
@@ -2312,7 +2312,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
+    rb_raise(rb_eArgError, "Invalid number of arguments to add");
   }
   return sm_out;
 }
@@ -2360,7 +2360,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
+    rb_raise(rb_eArgError, "Invalid number of arguments to subtract");
   }
   return sm_out;
 }
@@ -2792,7 +2792,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to quat");
+    rb_raise(rb_eArgError, "Invalid number of arguments to multiply_quat");
   }
   return sm_out;
 }
@@ -2839,7 +2839,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to quat");
+    rb_raise(rb_eArgError, "Invalid number of arguments to multiply_vec3");
   }
   return sm_out;
 }
@@ -3368,7 +3368,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to mat4");
+    rb_raise(rb_eArgError, "Invalid number of arguments to multiply_mat4");
   }
   return sm_out;
 }
@@ -3415,7 +3415,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec4");
+    rb_raise(rb_eArgError, "Invalid number of arguments to multiply_vec4");
   }
   return sm_out;
 }
@@ -3462,7 +3462,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to transform_vec3");
   }
   return sm_out;
 }
@@ -3510,7 +3510,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to rotate_vec3");
   }
   return sm_out;
 }
@@ -3558,7 +3558,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to inverse_rotate_vec3");
   }
   return sm_out;
 }
@@ -4932,7 +4932,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to mat3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to multiply_mat3");
   }
   return sm_out;
 }
@@ -4979,7 +4979,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to rotate_vec3");
   }
   return sm_out;
 }
@@ -5027,7 +5027,7 @@ SM_LABEL(skip_output): {
     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_rhs));
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
-    rb_raise(rb_eArgError, "Invalid number of arguments to vec3");
+    rb_raise(rb_eArgError, "Invalid number of arguments to inverse_rotate_vec3");
   }
   return sm_out;
 }
