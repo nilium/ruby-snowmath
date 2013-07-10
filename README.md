@@ -123,7 +123,9 @@ make use of that where it's practical and smart to do so.)
 #### Shared by All Types
 
 All types share the following functions. These are not included in the class
-bodies below except where their behaviour is notably different.
+bodies below except where their behaviour is notably different. Documentation
+for these can be found under the InspectSupport, ArraySupport, SwizzleSupport,
+and FiddlePointerSupport.
 
 
 - `fetch(index)` and `store(index, value)` - To get and set values at the given
