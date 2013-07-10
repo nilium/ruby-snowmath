@@ -30,6 +30,28 @@ Like so:
 
 If you prefer shorter command-line options, `-F` is a synonym for `--use-float`.
 
+All options:
+
+- `--use-float` or `-F` -- Compiles the extension using 32-bit floats instead
+    of 64-bit doubles. This is only really useful if you're concerned about
+    reducing memory usage by math types or don't want the additional precision.
+    You can specify you want doubles by passing `--use-double` or `-NF`, which
+    is essentially a no-op unless it follows a previous argument specifying
+    enabling the use of floats. It is not possible to compile the gem for both
+    types.
+
+- `--debug` or `-D` -- Compiles the extension with debugging symbols. If you
+    want to explicitly indicate that you want a release built (meaning
+    optimization and such), you can pass `--release` or `-ND`
+
+- `--use-fast-math` or `-FM` -- When not compiled for debugging, the extension
+    is built with `-ffast-math` enabled. This may mean that the math code is
+    not entirely IEEE-compliant but may produce slightly faster code. That
+    said, this is generally not a huge benefit and IEEE-compliance is often
+    better than negligible performance improvements in areas that aren't a
+    bottleneck. If you would like to explicitly disable it, you may also pass
+    `--no-fast-math` or `-NFM`.
+
 
 ## Usage
 
