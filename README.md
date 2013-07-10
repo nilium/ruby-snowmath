@@ -123,9 +123,7 @@ make use of that where it's practical and smart to do so.)
 #### Shared by All Types
 
 All types share the following functions. These are not included in the class
-bodies below except where their behaviour is notably different. Documentation
-for these can be found under the InspectSupport, ArraySupport, SwizzleSupport,
-and FiddlePointerSupport.
+bodies below except where their behaviour is notably different.
 
 
 - `fetch(index)` and `store(index, value)` - To get and set values at the given
@@ -151,19 +149,32 @@ and FiddlePointerSupport.
     object to the block and returns an object of the same type with the results.
     In the second form, returns an Enumerator.
 
+    Provided by the Snow::ArraySupport module.
+
 - `map!(&block)` and `map!` - Same as the above, but operates on self rather
     than creating a new object.
+
+    Provided by the Snow::ArraySupport module.
 
 - `each(&object)` and `each` - Does what you think it does. Second form returns
     an Enumerator.
 
+    Provided by the Snow::ArraySupport module.
+
 - `to_a` - Returns an array of all components in the given object.
+
+    Provided by the Snow::ArraySupport module.
 
 - `to_ptr` - You have to `require 'snow-math/ptr'` for this. Returns a new
     `Fiddle::Pointer` pointing to the object's address.
 
+    Provided by the Snow::FiddlePointerSupport module.
+
 - `to_s` - Converts the object to a string that looks more or less like
     `"{ fetch(0), fetch(1), ..., fetch(length - 1) }"`.
+
+- `inspect` - does what you think it does. This is provided under the
+    Snow::InspectSupport module.
 
 
 #### Swizzling
