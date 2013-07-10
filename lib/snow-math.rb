@@ -3,6 +3,7 @@
 # See COPYING for license details.
 
 require 'snow-math/bindings'
+require 'snow-math/vec2'
 require 'snow-math/vec3'
 require 'snow-math/vec4'
 require 'snow-math/mat3'

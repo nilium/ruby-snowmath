@@ -46,11 +46,16 @@ module Snow::ArrayMarshalSupport # :nodoc: all
 end
 
 module Snow
+  class Vec2 ; include ::Snow::BaseMarshalSupport ; end
   class Vec3 ; include ::Snow::BaseMarshalSupport ; end
   class Vec4 ; include ::Snow::BaseMarshalSupport ; end
   class Quat ; include ::Snow::BaseMarshalSupport ; end
   class Mat3 ; include ::Snow::BaseMarshalSupport ; end
   class Mat4 ; include ::Snow::BaseMarshalSupport ; end
+
+  if const_defined?(:Vec2Array)
+    class Vec2Array ; include ::Snow::ArrayMarshalSupport ; end
+  end
 
   if const_defined?(:Vec3Array)
     class Vec3Array ; include ::Snow::ArrayMarshalSupport ; end

@@ -27,6 +27,10 @@ module Snow
     end
   end
 
+  class Vec2
+    include ::Snow::FiddlePointerSupport
+  end
+
   class Vec3
     include ::Snow::FiddlePointerSupport
   end
@@ -45,6 +49,12 @@ module Snow
 
   class Mat4
     include ::Snow::FiddlePointerSupport
+  end
+
+  if const_defined?(:Vec2Array)
+    class Vec2Array
+      include ::Snow::FiddlePointerSupport
+    end
   end
 
   if const_defined?(:Vec3Array)

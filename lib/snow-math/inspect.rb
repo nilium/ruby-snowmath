@@ -34,11 +34,16 @@ module Snow
 
   end
 
+  class Vec2 ; include ::Snow::InspectSupport ; end
   class Vec3 ; include ::Snow::InspectSupport ; end
   class Vec4 ; include ::Snow::InspectSupport ; end
   class Quat ; include ::Snow::InspectSupport ; end
   class Mat3 ; include ::Snow::InspectSupport ; end
   class Mat4 ; include ::Snow::InspectSupport ; end
+
+  if const_defined?(:Vec2Array)
+    class Vec2Array ; include ::Snow::InspectSupport ; end
+  end
 
   if const_defined?(:Vec3Array)
     class Vec3Array ; include ::Snow::InspectSupport ; end

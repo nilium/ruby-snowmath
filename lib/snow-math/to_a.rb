@@ -107,11 +107,27 @@ module Snow
 
   end
 
+  class Vec2 ; include ::Snow::ArraySupport ; end
   class Vec3 ; include ::Snow::ArraySupport ; end
   class Vec4 ; include ::Snow::ArraySupport ; end
   class Quat ; include ::Snow::ArraySupport ; end
   class Mat3 ; include ::Snow::ArraySupport ; end
   class Mat4 ; include ::Snow::ArraySupport ; end
+
+  if const_defined?(:Vec2Array)
+    class Vec2Array
+      include ::Snow::ArraySupport
+
+      #
+      # Duplicates the Vec2Array and returns it.
+      #
+      # call-seq: dup -> new vec3_array
+      #
+      def dup
+        self.class.new(self)
+      end
+    end
+  end
 
   if const_defined?(:Vec3Array)
     class Vec3Array

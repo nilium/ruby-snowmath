@@ -80,20 +80,26 @@ module Snow
 
 end
 
+class Snow::Vec2
+  @@SWIZZLE_CHARS = /^[xy]{2,4}$/
+  @@SWIZZLE_MAPPING = { 2 => self, 3 => ::Snow::Vec3, 4 => ::Snow::Vec4, 'x' => 0, 'y' => 1 }
+  include ::Snow::SwizzleSupport
+end
+
 class Snow::Vec3
-  @@SWIZZLE_CHARS = /^[xyz]{3,4}$/
-  @@SWIZZLE_MAPPING = { 3 => self, 4 => ::Snow::Vec4, 'x' => 0, 'y' => 1, 'z' => 2 }
+  @@SWIZZLE_CHARS = /^[xyz]{2,4}$/
+  @@SWIZZLE_MAPPING = { 2 => ::Snow::Vec2, 3 => self, 4 => ::Snow::Vec4, 'x' => 0, 'y' => 1, 'z' => 2 }
   include ::Snow::SwizzleSupport
 end
 
 class Snow::Vec4
-  @@SWIZZLE_CHARS = /^[xyzw]{3,4}$/
-  @@SWIZZLE_MAPPING = { 3 => ::Snow::Vec3, 4 => self, 'x' => 0, 'y' => 1, 'z' => 2, 'w' => 3 }
+  @@SWIZZLE_CHARS = /^[xyzw]{2,4}$/
+  @@SWIZZLE_MAPPING = { 2 => ::Snow::Vec2, 3 => ::Snow::Vec3, 4 => self, 'x' => 0, 'y' => 1, 'z' => 2, 'w' => 3 }
   include ::Snow::SwizzleSupport
 end
 
 class Snow::Quat
-  @@SWIZZLE_CHARS = /^[xyzw]{3,4}$/
-  @@SWIZZLE_MAPPING = { 3 => ::Snow::Vec3, 4 => self, 'x' => 0, 'y' => 1, 'z' => 2, 'w' => 3 }
+  @@SWIZZLE_CHARS = /^[xyzw]{2,4}$/
+  @@SWIZZLE_MAPPING = { 2 => ::Snow::Vec2, 3 => ::Snow::Vec3, 4 => self, 'x' => 0, 'y' => 1, 'z' => 2, 'w' => 3 }
   include ::Snow::SwizzleSupport
 end
