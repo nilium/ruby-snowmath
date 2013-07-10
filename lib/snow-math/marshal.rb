@@ -1,4 +1,5 @@
 require 'snow-math/bindings'
+require 'snow-math/to_a'
 
 module Snow ; end
 

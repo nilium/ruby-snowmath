@@ -2,7 +2,8 @@
 # Copyright (c) 2013 Noel Raymond Cower. All rights reserved.
 # See COPYING for license details.
 
-require 'snow-math'
+require 'snow-math/bindings'
+require 'snow-math/to_a'
 
 module Snow ; end
 
