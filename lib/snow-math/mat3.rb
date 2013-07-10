@@ -36,6 +36,10 @@ class Snow::Mat3
   alias_method :clone, :copy
 
 
+  def to_quat
+    Quat.new(self)
+  end
+
   #
   # Calls #transpose(self)
   #
