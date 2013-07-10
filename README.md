@@ -185,21 +185,34 @@ that returns a new Vec3 with components Z, Y, and X of the original vector, in
 that order. The components you can use for swizzling on each type are fairly
 obvious but are as follows:
 
+- __Vec2__  
+    Components: X and Y.  
+    Swizzling two components returns a Vec2.  
+    Swizzling three components returns a Vec3.  
+    Swizzling four components returns a Vec4.
+
 - __Vec3__  
     Components: X, Y, and Z.  
+    Swizzling two components returns a Vec2.  
     Swizzling three components returns a Vec3.  
     Swizzling four components returns a Vec4.
 
 - __Vec4__  
     Components: X, Y, Z, and W.  
+    Swizzling two components returns a Vec2.  
     Swizzling three components returns a Vec3.  
     Swizzling four components returns a Vec4.
 
 - __Quat__  
     Components: X, Y, Z, and W.  
+    Swizzling two components returns a Vec2.  
     Swizzling three components returns a Vec3.  
     Swizzling four components returns a Quat.
 
+Swizzling is provided by the Snow::SwizzleSupport module. If you find yourself
+using swizzling heavily and the generated methods aren't peformant enough, it
+might be worth your time to explicitly define the ones you use the most to
+ensure they're not wasting too many cycles for you.
 
 
 ## License
