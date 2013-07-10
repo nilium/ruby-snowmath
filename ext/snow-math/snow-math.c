@@ -141,6 +141,197 @@ static mat4_t * sm_unwrap_mat4(VALUE sm_value, mat4_t store);
 
 /*==============================================================================
 
+  Snow::Vec2Array methods (s_sm_vec2_array_klass)
+
+==============================================================================*/
+
+static VALUE s_sm_vec2_array_klass = Qnil;
+
+/*
+ * In the first form, a new typed array of Vec2 elements is allocated and
+ * returned. In the second form, a copy of a typed array of Vec2 objects is
+ * made and returned. Copied arrays do not share data.
+ *
+ * call-seq:
+ *    new(size)       -> new vec2_array
+ *    new(vec2_array) -> copy of vec2_array
+ */
+static VALUE sm_vec2_array_new(VALUE sm_self, VALUE sm_length_or_copy)
+{
+  size_t length = 0;
+  vec2_t *arr;
+  VALUE sm_type_array;
+  int copy_array = 0;
+  if ((copy_array = SM_IS_A(sm_length_or_copy, vec2_array))) {
+    length = NUM2SIZET(sm_mathtype_array_length(sm_length_or_copy));
+  } else {
+    length = NUM2SIZET(sm_length_or_copy);
+  }
+  if (length <= 0) {
+    return Qnil;
+  }
+  arr = ALLOC_N(vec2_t, length);
+  if (copy_array) {
+    const vec2_t *source;
+    Data_Get_Struct(sm_length_or_copy, vec2_t, source);
+    MEMCPY(arr, source, vec2_t, length);
+    sm_length_or_copy = sm_mathtype_array_length(sm_length_or_copy);
+    sm_self = rb_obj_class(sm_length_or_copy);
+  }
+  sm_type_array = Data_Wrap_Struct(sm_self, 0, free, arr);
+  rb_ivar_set(sm_type_array, kRB_IVAR_MATHARRAY_LENGTH, sm_length_or_copy);
+  rb_ivar_set(sm_type_array, kRB_IVAR_MATHARRAY_CACHE, rb_ary_new2((long)length));
+  rb_obj_call_init(sm_type_array, 0, 0);
+  return sm_type_array;
+}
+
+
+
+/*
+ * Resizes the array to new_length and returns self.
+ *
+ * If resizing to a length smaller than the previous length, excess array
+ * elements are discarded and the array is truncated. Otherwise, when resizing
+ * the array to a greater length than previous, new elements in the array will
+ * contain garbage values.
+ *
+ * If new_length is equal to self.length, the call does nothing to the array.
+ *
+ * Attempting to resize an array to a new length of zero or less will raise a
+ * RangeError. Do not try to resize arrays to zero or less. Do not be that
+ * person.
+ *
+ * call-seq:
+ *    resize!(new_length) -> self
+ */
+static VALUE sm_vec2_array_resize(VALUE sm_self, VALUE sm_new_length)
+{
+  size_t new_length;
+  size_t old_length;
+
+  old_length = NUM2SIZET(sm_mathtype_array_length(sm_self));
+  new_length = NUM2SIZET(sm_new_length);
+
+  if (old_length == new_length) {
+    /* No change, done */
+    return sm_self;
+  } else if (new_length < 1) {
+    /* Someone decided to be that person. */
+    rb_raise(rb_eRangeError,
+      "Cannot resize array to length less than or equal to 0.");
+    return sm_self;
+  }
+
+  REALLOC_N(RDATA(sm_self)->data, vec2_t, new_length);
+  rb_ivar_set(sm_self, kRB_IVAR_MATHARRAY_LENGTH, sm_new_length);
+  rb_ary_clear(rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_CACHE));
+
+  return sm_self;
+}
+
+
+
+/*
+ * Fetches a Vec2 from the array at the index and returns it. The returned Vec2
+ * may be a cached object. In all cases, values returned from a typed array are
+ * associated with the memory of the array and not given their own memory. So,
+ * modifying a Vec2 fetched from an array modifies the array's data.
+ *
+ * As a result, objects returned by a Vec2Array should not be considered
+ * thread-safe, nor should manipulating a Vec2Array be considered thread-safe
+ * either. If you want to work with data returned from an array without altering
+ * the array data, you should call Vec2#dup or Vec2#copy to get a new Vec2 with a
+ * copy of the array object's data.
+ *
+ * call-seq: fetch(index) -> vec2
+ */
+static VALUE sm_vec2_array_fetch(VALUE sm_self, VALUE sm_index)
+{
+  vec2_t *arr;
+  size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
+  size_t index = NUM2SIZET(sm_index);
+  VALUE sm_inner;
+  VALUE sm_cache;
+  if (index >= length) {
+    rb_raise(rb_eRangeError,
+      "Index %zu out of bounds for array with length %zu",
+      index, length);
+  }
+
+  sm_cache = rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_CACHE);
+  if (!RTEST(sm_cache)) {
+    rb_raise(rb_eRuntimeError, "No cache available");
+  }
+  sm_inner = rb_ary_entry(sm_cache, (long)index);
+
+  if (!RTEST(sm_inner)) {
+    /* No cached value, create one. */
+    Data_Get_Struct(sm_self, vec2_t, arr);
+    sm_inner = Data_Wrap_Struct(s_sm_vec2_klass, 0, 0, arr[index]);
+    rb_ivar_set(sm_inner, kRB_IVAR_MATHARRAY_SOURCE, sm_self);
+    /* Store the Vec2 in the cache */
+    rb_ary_store(sm_cache, (long)index, sm_inner);
+  }
+
+  return sm_inner;
+}
+
+
+
+/*
+ * Stores a Vec2 at the given index. If the provided Vec2 is a member of the
+ * array and stored at the index, then no copy is done, otherwise the Vec2 is
+ * copied to the array.
+ *
+ * call-seq: store(index, value) -> value
+ */
+static VALUE sm_vec2_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
+{
+  vec2_t *arr;
+  vec2_t *value;
+  size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
+  size_t index = NUM2SIZET(sm_index);
+
+  if (index >= length) {
+    rb_raise(rb_eRangeError,
+      "Index %zu out of bounds for array with length %zu",
+      index, length);
+  } else if (!SM_IS_A(sm_value, vec2) && !SM_IS_A(sm_value, vec3) && !SM_IS_A(sm_value, vec4) && !SM_IS_A(sm_value, quat)) {
+    rb_raise(rb_eTypeError,
+      "Invalid value to store: expected Vec2, Vec3, Vec4, or Quat, got %s",
+      rb_obj_classname(sm_value));
+  }
+
+  Data_Get_Struct(sm_self, vec2_t, arr);
+  value = sm_unwrap_vec2(sm_value, NULL);
+
+  if (value == &arr[index]) {
+    /* The object's part of the array, don't bother copying */
+    return sm_value;
+  }
+
+  vec2_copy(*value, arr[index]);
+  return sm_value;
+}
+
+
+
+/*
+ * Returns the length of the array.
+ *
+ * call-seq: length -> fixnum
+ */
+static VALUE sm_vec2_array_size(VALUE sm_self)
+{
+  size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
+  return SIZET2NUM(length * sizeof(vec2_t));
+}
+
+
+
+
+/*==============================================================================
+
   Snow::Vec3Array methods (s_sm_vec3_array_klass)
 
 ==============================================================================*/
@@ -6518,6 +6709,16 @@ void Init_bindings()
   rb_define_method(s_sm_mat3_klass, "==", sm_mat3_equals, 1);
 
   #if BUILD_ARRAY_TYPE
+
+  s_sm_vec2_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Vec2Array", rb_cObject);
+  rb_const_set(s_sm_vec2_array_klass, kRB_CONST_TYPE, s_sm_vec2_klass);
+  rb_define_singleton_method(s_sm_vec2_array_klass, "new", sm_vec2_array_new, 1);
+  rb_define_method(s_sm_vec2_array_klass, "fetch", sm_vec2_array_fetch, 1);
+  rb_define_method(s_sm_vec2_array_klass, "store", sm_vec2_array_store, 2);
+  rb_define_method(s_sm_vec2_array_klass, "resize!", sm_vec2_array_resize, 1);
+  rb_define_method(s_sm_vec2_array_klass, "size", sm_vec2_array_size, 0);
+  rb_define_method(s_sm_vec2_array_klass, "length", sm_mathtype_array_length, 0);
+  rb_define_method(s_sm_vec2_array_klass, "address", sm_get_address, 0);
 
   s_sm_vec3_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Vec3Array", rb_cObject);
   rb_const_set(s_sm_vec3_array_klass, kRB_CONST_TYPE, s_sm_vec3_klass);
