@@ -2,9 +2,11 @@
 # Copyright (c) 2013 Noel Raymond Cower. All rights reserved.
 # See COPYING for license details.
 
+require File.expand_path('../lib/snow-math/version.rb', __FILE__)
+
 Gem::Specification.new { |s|
   s.name        = 'snow-math'
-  s.version     = '1.5.1'
+  s.version     = Snow::SNOW_MATH_VERSION
   s.date        = '2013-07-15'
   s.summary     = 'Snow Math Types'
   s.description = 'Math types built on the SnowPalm math code'
