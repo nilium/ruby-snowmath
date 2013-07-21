@@ -8,7 +8,7 @@
 
 snow-math is a small, fairly simple library of 3D math routines implemented in
 C with Ruby bindings. It's intended for use with OpenGL and such. Currently, it
-provides four 3D math types:
+provides six 3D math types:
 
     - Snow::Vec2
     - Snow::Vec3
