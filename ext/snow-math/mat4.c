@@ -269,16 +269,12 @@ void mat4_orthographic(s_float_t left, s_float_t right, s_float_t bottom, s_floa
 
 void mat4_perspective(s_float_t fov_y, s_float_t aspect, s_float_t near, s_float_t far, mat4_t out)
 {
-  const s_float_t r = s_tan(fov_y * s_float_lit(0.5) * S_DEG2RAD);
-  const s_float_t left = -r * aspect;
-  const s_float_t right = r * aspect;
-  const s_float_t bottom = -r;
-  const s_float_t top = r;
+  const s_float_t cotan = s_float_lit(1.0) / s_tan(fov_y * s_float_lit(0.5) * S_DEG2RAD);
   const s_float_t two_near = s_float_lit(2.0) * near;
   const s_float_t zdelta = s_float_lit(1.0) / (near - far);
 
-  out[0] = two_near * (right - left);
-  out[5] = two_near / (top - bottom);
+  out[0] = cotan / aspect;
+  out[5] = cotan;
   out[10] = (far + near) * zdelta;
   out[11] = s_float_lit(-1.0);
   out[14] = (two_near * far) * zdelta;
