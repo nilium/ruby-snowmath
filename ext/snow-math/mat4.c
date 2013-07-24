@@ -235,15 +235,15 @@ void mat4_frustum(s_float_t left, s_float_t right, s_float_t bottom, s_float_t t
   const s_float_t xdelta = right - left;
   const s_float_t ydelta = top - bottom;
   const s_float_t zdelta = far - near;
-  const s_float_t neardouble = s_float_lit(2.0) * near;
+  const s_float_t two_near = s_float_lit(2.0) * near;
 
-  out[0] = neardouble / xdelta;
+  out[0] = two_near / xdelta;
   out[2] = (right + left) / xdelta;
-  out[5] = neardouble / ydelta;
+  out[5] = two_near / ydelta;
   out[6] = (top + bottom) / ydelta;
   out[10] = -((far + near) / zdelta);
   out[11] = s_float_lit(-1.0);
-  out[14] = -((neardouble * far) / zdelta);
+  out[14] = -((two_near * far) / zdelta);
   out[1] = out[3] = out[4] =
   out[7] = out[8] = out[9] =
   out[12] = out[13] = out[15] = s_float_lit(0.0);
