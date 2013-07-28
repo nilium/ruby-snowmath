@@ -7,6 +7,6 @@ module Snow
   #
   # snow-math bindings version string.
   #
-  SNOW_MATH_VERSION = '1.6.0'
+  SNOW_MATH_VERSION = '1.6.1'
 
 end
