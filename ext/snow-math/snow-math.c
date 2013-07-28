@@ -87,6 +87,37 @@ static VALUE sm_mathtype_array_length(VALUE sm_self)
   return rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_LENGTH);
 }
 
+
+
+/*
+ * Freezes the array and its elements.
+ *
+ * call-seq: freeze -> self
+ */
+static VALUE sm_mathtype_array_freeze(VALUE sm_self)
+{
+  VALUE sm_cache;
+  VALUE sm_cached_entry;
+  long length;
+  long index;
+
+  if (OBJ_FROZEN(sm_self)) {
+    return sm_self;
+  }
+
+  sm_cache = rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_CACHE);
+  length = RARRAY_LEN(sm_cache);
+
+  for (index = 0; index < length; ++index) {
+    sm_cached_entry = rb_ary_entry(sm_cache, index);
+    if (RTEST(sm_cached_entry)) {
+      rb_funcall2(sm_cached_entry, kRB_NAME_FREEZE, 0, 0);
+    }
+  }
+
+  return rb_call_super(0, 0);
+}
+
 #endif
 
 
@@ -184,37 +215,6 @@ static VALUE sm_vec2_array_new(VALUE sm_self, VALUE sm_length_or_copy)
   rb_ivar_set(sm_type_array, kRB_IVAR_MATHARRAY_CACHE, rb_ary_new2((long)length));
   rb_obj_call_init(sm_type_array, 0, 0);
   return sm_type_array;
-}
-
-
-
-/*
- * Freezes the array and its elements.
- *
- * call-seq: freeze -> self
- */
-static VALUE sm_vec2_array_freeze(VALUE sm_self)
-{
-  VALUE sm_cache;
-  VALUE sm_cached_entry;
-  long length;
-  long index;
-
-  if (OBJ_FROZEN(sm_self)) {
-    return sm_self;
-  }
-
-  sm_cache = rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_CACHE);
-  length = RARRAY_LEN(sm_cache);
-
-  for (index = 0; index < length; ++index) {
-    sm_cached_entry = rb_ary_entry(sm_cache, index);
-    if (RTEST(sm_cached_entry) && !OBJ_FROZEN(sm_cached_entry)) {
-      rb_funcall2(sm_cached_entry, kRB_NAME_FREEZE, 0, 0);
-    }
-  }
-
-  return rb_call_super(0, 0);
 }
 
 
@@ -419,37 +419,6 @@ static VALUE sm_vec3_array_new(VALUE sm_self, VALUE sm_length_or_copy)
 
 
 /*
- * Freezes the array and its elements.
- *
- * call-seq: freeze -> self
- */
-static VALUE sm_vec3_array_freeze(VALUE sm_self)
-{
-  VALUE sm_cache;
-  VALUE sm_cached_entry;
-  long length;
-  long index;
-
-  if (OBJ_FROZEN(sm_self)) {
-    return sm_self;
-  }
-
-  sm_cache = rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_CACHE);
-  length = RARRAY_LEN(sm_cache);
-
-  for (index = 0; index < length; ++index) {
-    sm_cached_entry = rb_ary_entry(sm_cache, index);
-    if (RTEST(sm_cached_entry)) {
-      rb_funcall2(sm_cached_entry, kRB_NAME_FREEZE, 0, 0);
-    }
-  }
-
-  return rb_call_super(0, 0);
-}
-
-
-
-/*
  * Resizes the array to new_length and returns self.
  *
  * If resizing to a length smaller than the previous length, excess array
@@ -643,37 +612,6 @@ static VALUE sm_vec4_array_new(VALUE sm_self, VALUE sm_length_or_copy)
   rb_ivar_set(sm_type_array, kRB_IVAR_MATHARRAY_CACHE, rb_ary_new2((long)length));
   rb_obj_call_init(sm_type_array, 0, 0);
   return sm_type_array;
-}
-
-
-
-/*
- * Freezes the array and its elements.
- *
- * call-seq: freeze -> self
- */
-static VALUE sm_vec4_array_freeze(VALUE sm_self)
-{
-  VALUE sm_cache;
-  VALUE sm_cached_entry;
-  long length;
-  long index;
-
-  if (OBJ_FROZEN(sm_self)) {
-    return sm_self;
-  }
-
-  sm_cache = rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_CACHE);
-  length = RARRAY_LEN(sm_cache);
-
-  for (index = 0; index < length; ++index) {
-    sm_cached_entry = rb_ary_entry(sm_cache, index);
-    if (RTEST(sm_cached_entry)) {
-      rb_funcall2(sm_cached_entry, kRB_NAME_FREEZE, 0, 0);
-    }
-  }
-
-  return rb_call_super(0, 0);
 }
 
 
@@ -877,37 +815,6 @@ static VALUE sm_quat_array_new(VALUE sm_self, VALUE sm_length_or_copy)
 
 
 /*
- * Freezes the array and its elements.
- *
- * call-seq: freeze -> self
- */
-static VALUE sm_quat_array_freeze(VALUE sm_self)
-{
-  VALUE sm_cache;
-  VALUE sm_cached_entry;
-  long length;
-  long index;
-
-  if (OBJ_FROZEN(sm_self)) {
-    return sm_self;
-  }
-
-  sm_cache = rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_CACHE);
-  length = RARRAY_LEN(sm_cache);
-
-  for (index = 0; index < length; ++index) {
-    sm_cached_entry = rb_ary_entry(sm_cache, index);
-    if (RTEST(sm_cached_entry)) {
-      rb_funcall2(sm_cached_entry, kRB_NAME_FREEZE, 0, 0);
-    }
-  }
-
-  return rb_call_super(0, 0);
-}
-
-
-
-/*
  * Resizes the array to new_length and returns self.
  *
  * If resizing to a length smaller than the previous length, excess array
@@ -1101,37 +1008,6 @@ static VALUE sm_mat3_array_new(VALUE sm_self, VALUE sm_length_or_copy)
   rb_ivar_set(sm_type_array, kRB_IVAR_MATHARRAY_CACHE, rb_ary_new2((long)length));
   rb_obj_call_init(sm_type_array, 0, 0);
   return sm_type_array;
-}
-
-
-
-/*
- * Freezes the array and its elements.
- *
- * call-seq: freeze -> self
- */
-static VALUE sm_mat3_array_freeze(VALUE sm_self)
-{
-  VALUE sm_cache;
-  VALUE sm_cached_entry;
-  long length;
-  long index;
-
-  if (OBJ_FROZEN(sm_self)) {
-    return sm_self;
-  }
-
-  sm_cache = rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_CACHE);
-  length = RARRAY_LEN(sm_cache);
-
-  for (index = 0; index < length; ++index) {
-    sm_cached_entry = rb_ary_entry(sm_cache, index);
-    if (RTEST(sm_cached_entry)) {
-      rb_funcall2(sm_cached_entry, kRB_NAME_FREEZE, 0, 0);
-    }
-  }
-
-  return rb_call_super(0, 0);
 }
 
 
@@ -1336,37 +1212,6 @@ static VALUE sm_mat4_array_new(VALUE sm_self, VALUE sm_length_or_copy)
   rb_ivar_set(sm_type_array, kRB_IVAR_MATHARRAY_CACHE, rb_ary_new2((long)length));
   rb_obj_call_init(sm_type_array, 0, 0);
   return sm_type_array;
-}
-
-
-
-/*
- * Freezes the array and its elements.
- *
- * call-seq: freeze -> self
- */
-static VALUE sm_mat4_array_freeze(VALUE sm_self)
-{
-  VALUE sm_cache;
-  VALUE sm_cached_entry;
-  long length;
-  long index;
-
-  if (OBJ_FROZEN(sm_self)) {
-    return sm_self;
-  }
-
-  sm_cache = rb_ivar_get(sm_self, kRB_IVAR_MATHARRAY_CACHE);
-  length = RARRAY_LEN(sm_cache);
-
-  for (index = 0; index < length; ++index) {
-    sm_cached_entry = rb_ary_entry(sm_cache, index);
-    if (RTEST(sm_cached_entry)) {
-      rb_funcall2(sm_cached_entry, kRB_NAME_FREEZE, 0, 0);
-    }
-  }
-
-  return rb_call_super(0, 0);
 }
 
 
@@ -7128,7 +6973,7 @@ void Init_bindings()
   s_sm_vec2_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Vec2Array", rb_cData);
   rb_const_set(s_sm_vec2_array_klass, kRB_CONST_TYPE, s_sm_vec2_klass);
   rb_define_singleton_method(s_sm_vec2_array_klass, "new", sm_vec2_array_new, 1);
-  rb_define_method(s_sm_vec2_array_klass, "freeze", sm_vec2_array_freeze, 0);
+  rb_define_method(s_sm_vec2_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_vec2_array_klass, "fetch", sm_vec2_array_fetch, 1);
   rb_define_method(s_sm_vec2_array_klass, "store", sm_vec2_array_store, 2);
   rb_define_method(s_sm_vec2_array_klass, "resize!", sm_vec2_array_resize, 1);
@@ -7140,7 +6985,7 @@ void Init_bindings()
   s_sm_vec3_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Vec3Array", rb_cData);
   rb_const_set(s_sm_vec3_array_klass, kRB_CONST_TYPE, s_sm_vec3_klass);
   rb_define_singleton_method(s_sm_vec3_array_klass, "new", sm_vec3_array_new, 1);
-  rb_define_method(s_sm_vec3_array_klass, "freeze", sm_vec3_array_freeze, 0);
+  rb_define_method(s_sm_vec3_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_vec3_array_klass, "fetch", sm_vec3_array_fetch, 1);
   rb_define_method(s_sm_vec3_array_klass, "store", sm_vec3_array_store, 2);
   rb_define_method(s_sm_vec3_array_klass, "resize!", sm_vec3_array_resize, 1);
@@ -7152,7 +6997,7 @@ void Init_bindings()
   s_sm_vec4_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Vec4Array", rb_cData);
   rb_const_set(s_sm_vec4_array_klass, kRB_CONST_TYPE, s_sm_vec4_klass);
   rb_define_singleton_method(s_sm_vec4_array_klass, "new", sm_vec4_array_new, 1);
-  rb_define_method(s_sm_vec4_array_klass, "freeze", sm_vec4_array_freeze, 0);
+  rb_define_method(s_sm_vec4_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_vec4_array_klass, "fetch", sm_vec4_array_fetch, 1);
   rb_define_method(s_sm_vec4_array_klass, "store", sm_vec4_array_store, 2);
   rb_define_method(s_sm_vec4_array_klass, "resize!", sm_vec4_array_resize, 1);
@@ -7164,7 +7009,7 @@ void Init_bindings()
   s_sm_quat_array_klass = rb_define_class_under(s_sm_snowmath_mod, "QuatArray", rb_cData);
   rb_const_set(s_sm_quat_array_klass, kRB_CONST_TYPE, s_sm_quat_klass);
   rb_define_singleton_method(s_sm_quat_array_klass, "new", sm_quat_array_new, 1);
-  rb_define_method(s_sm_quat_array_klass, "freeze", sm_quat_array_freeze, 0);
+  rb_define_method(s_sm_quat_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_quat_array_klass, "fetch", sm_quat_array_fetch, 1);
   rb_define_method(s_sm_quat_array_klass, "store", sm_quat_array_store, 2);
   rb_define_method(s_sm_quat_array_klass, "resize!", sm_quat_array_resize, 1);
@@ -7176,7 +7021,7 @@ void Init_bindings()
   s_sm_mat3_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Mat3Array", rb_cData);
   rb_const_set(s_sm_mat3_array_klass, kRB_CONST_TYPE, s_sm_mat3_klass);
   rb_define_singleton_method(s_sm_mat3_array_klass, "new", sm_mat3_array_new, 1);
-  rb_define_method(s_sm_mat3_array_klass, "freeze", sm_mat3_array_freeze, 0);
+  rb_define_method(s_sm_mat3_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_mat3_array_klass, "fetch", sm_mat3_array_fetch, 1);
   rb_define_method(s_sm_mat3_array_klass, "store", sm_mat3_array_store, 2);
   rb_define_method(s_sm_mat3_array_klass, "resize!", sm_mat3_array_resize, 1);
@@ -7188,7 +7033,7 @@ void Init_bindings()
   s_sm_mat4_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Mat4Array", rb_cData);
   rb_const_set(s_sm_mat4_array_klass, kRB_CONST_TYPE, s_sm_mat4_klass);
   rb_define_singleton_method(s_sm_mat4_array_klass, "new", sm_mat4_array_new, 1);
-  rb_define_method(s_sm_mat4_array_klass, "freeze", sm_mat4_array_freeze, 0);
+  rb_define_method(s_sm_mat4_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_mat4_array_klass, "fetch", sm_mat4_array_fetch, 1);
   rb_define_method(s_sm_mat4_array_klass, "store", sm_mat4_array_store, 2);
   rb_define_method(s_sm_mat4_array_klass, "resize!", sm_mat4_array_resize, 1);
