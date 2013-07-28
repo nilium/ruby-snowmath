@@ -1398,35 +1398,36 @@ static VALUE sm_vec2_length (VALUE self)
  * call-seq:
  *    copy(output = nil) -> output or new vec2
  */
- static VALUE sm_vec2_copy(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec2_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec2(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
-     vec2_copy (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec2_t output;
-     vec2_copy (*self, output);
-     sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to copy");
-   }
-   return sm_out;
- }
+static VALUE sm_vec2_copy(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec2_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec2(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+   vec2_t *output;
+    if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    output = sm_unwrap_vec2(sm_out, NULL);
+    vec2_copy (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec2_t output;
+    vec2_copy (*self, output);
+    sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to copy");
+  }
+  return sm_out;
+}
 
 
 
@@ -1437,35 +1438,36 @@ static VALUE sm_vec2_length (VALUE self)
  * call-seq:
  *    normalize(output = nil) -> output or new vec2
  */
- static VALUE sm_vec2_normalize(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec2_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec2(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
-     vec2_normalize (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec2_t output;
-     vec2_normalize (*self, output);
-     sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to normalize");
-   }
-   return sm_out;
- }
+static VALUE sm_vec2_normalize(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec2_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec2(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    vec2_t *output;
+    if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    output = sm_unwrap_vec2(sm_out, NULL);
+    vec2_normalize (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec2_t output;
+    vec2_normalize (*self, output);
+    sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to normalize");
+  }
+  return sm_out;
+}
 
 
 
@@ -1476,35 +1478,36 @@ static VALUE sm_vec2_length (VALUE self)
  * call-seq:
  *    inverse(output = nil) -> output or new vec2
  */
- static VALUE sm_vec2_inverse(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec2_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec2(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
-     vec2_inverse (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec2_t output;
-     vec2_inverse (*self, output);
-     sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
-   }
-   return sm_out;
- }
+static VALUE sm_vec2_inverse(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec2_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec2(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    vec2_t *output;
+    if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    output = sm_unwrap_vec2(sm_out, NULL);
+    vec2_inverse (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec2_t output;
+    vec2_inverse (*self, output);
+    sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
+  }
+  return sm_out;
+}
 
 
 
@@ -1514,35 +1517,36 @@ static VALUE sm_vec2_length (VALUE self)
  * call-seq:
  *    negate(output = nil) -> output or new vec2
  */
- static VALUE sm_vec2_negate(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec2_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec2(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
-     vec2_negate (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec2_t output;
-     vec2_negate (*self, output);
-     sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to negate");
-   }
-   return sm_out;
- }
+static VALUE sm_vec2_negate(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec2_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec2(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    vec2_t *output;
+    if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    output = sm_unwrap_vec2(sm_out, NULL);
+    vec2_negate (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec2_t output;
+    vec2_negate (*self, output);
+    sm_out = sm_wrap_vec2(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to negate");
+  }
+  return sm_out;
+}
 
 
 
@@ -2128,35 +2132,35 @@ static VALUE sm_vec3_length (VALUE self)
  * call-seq:
  *    copy(output = nil) -> output or new vec3
  */
- static VALUE sm_vec3_copy(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
-     vec3_copy (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec3_t output;
-     vec3_copy (*self, output);
-     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to copy");
-   }
-   return sm_out;
- }
+static VALUE sm_vec3_copy(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    vec3_copy (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec3_t output;
+    vec3_copy (*self, output);
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to copy");
+  }
+  return sm_out;
+}
 
 
 
@@ -2167,35 +2171,35 @@ static VALUE sm_vec3_length (VALUE self)
  * call-seq:
  *    normalize(output = nil) -> output or new vec3
  */
- static VALUE sm_vec3_normalize(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
-     vec3_normalize (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec3_t output;
-     vec3_normalize (*self, output);
-     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to normalize");
-   }
-   return sm_out;
- }
+static VALUE sm_vec3_normalize(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    vec3_normalize (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec3_t output;
+    vec3_normalize (*self, output);
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to normalize");
+  }
+  return sm_out;
+}
 
 
 
@@ -2206,35 +2210,35 @@ static VALUE sm_vec3_length (VALUE self)
  * call-seq:
  *    inverse(output = nil) -> output or new vec3
  */
- static VALUE sm_vec3_inverse(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
-     vec3_inverse (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec3_t output;
-     vec3_inverse (*self, output);
-     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
-   }
-   return sm_out;
- }
+static VALUE sm_vec3_inverse(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    vec3_inverse (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec3_t output;
+    vec3_inverse (*self, output);
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
+  }
+  return sm_out;
+}
 
 
 
@@ -2244,35 +2248,35 @@ static VALUE sm_vec3_length (VALUE self)
  * call-seq:
  *    negate(output = nil) -> output or new vec3
  */
- static VALUE sm_vec3_negate(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
-     vec3_negate (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec3_t output;
-     vec3_negate (*self, output);
-     sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to negate");
-   }
-   return sm_out;
- }
+static VALUE sm_vec3_negate(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    vec3_negate (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec3_t output;
+    vec3_negate (*self, output);
+    sm_out = sm_wrap_vec3(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to negate");
+  }
+  return sm_out;
+}
 
 
 
@@ -2914,35 +2918,35 @@ static VALUE sm_vec4_length (VALUE self)
  * call-seq:
  *    copy(output = nil) -> output or new vec4 / quat
  */
- static VALUE sm_vec4_copy(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec4_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec4(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
-     vec4_copy (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec4_t output;
-     vec4_copy (*self, output);
-     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to copy");
-   }
-   return sm_out;
- }
+static VALUE sm_vec4_copy(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec4_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec4(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    vec4_copy (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec4_t output;
+    vec4_copy (*self, output);
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to copy");
+  }
+  return sm_out;
+}
 
 
 
@@ -2953,34 +2957,34 @@ static VALUE sm_vec4_length (VALUE self)
  * call-seq:
  *    normalize(output = nil) -> output or new vec4 / quat
  */
- static VALUE sm_vec4_normalize(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec4_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec4(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-      rb_raise(rb_eTypeError,
-        kSM_WANT_FOUR_FORMAT_LIT,
-        rb_obj_classname(sm_out));
-     }
-     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
-     vec4_normalize (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec4_t output;
-     vec4_normalize (*self, output);
-     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to normalize");
-   }
-   return sm_out;
- }
+static VALUE sm_vec4_normalize(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec4_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec4(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+     rb_raise(rb_eTypeError,
+       kSM_WANT_FOUR_FORMAT_LIT,
+       rb_obj_classname(sm_out));
+    }
+    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    vec4_normalize (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec4_t output;
+    vec4_normalize (*self, output);
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to normalize");
+  }
+  return sm_out;
+}
 
 
 
@@ -2991,35 +2995,35 @@ static VALUE sm_vec4_length (VALUE self)
  * call-seq:
  *    inverse(output = nil) -> output or new vec4
  */
- static VALUE sm_vec4_inverse(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec4_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec4(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
-     vec4_inverse (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec4_t output;
-     vec4_inverse (*self, output);
-     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
-   }
-   return sm_out;
- }
+static VALUE sm_vec4_inverse(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec4_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec4(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    vec4_inverse (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec4_t output;
+    vec4_inverse (*self, output);
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
+  }
+  return sm_out;
+}
 
 
 
@@ -3029,35 +3033,35 @@ static VALUE sm_vec4_length (VALUE self)
  * call-seq:
  *    negate(output = nil) -> output or new vec4 or quat
  */
- static VALUE sm_vec4_negate(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   vec4_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_vec4(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
-     vec4_negate (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     vec4_t output;
-     vec4_negate (*self, output);
-     sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to negate");
-   }
-   return sm_out;
- }
+static VALUE sm_vec4_negate(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  vec4_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_vec4(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    vec4_negate (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    vec4_t output;
+    vec4_negate (*self, output);
+    sm_out = sm_wrap_vec4(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to negate");
+  }
+  return sm_out;
+}
 
 
 
@@ -3661,35 +3665,35 @@ static VALUE sm_quat_length (VALUE self)
  * call-seq:
  *    inverse(output = nil) -> output or new quat
  */
- static VALUE sm_quat_inverse(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   quat_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_quat(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
-       rb_raise(rb_eTypeError,
-         kSM_WANT_FOUR_FORMAT_LIT,
-         rb_obj_classname(sm_out));
-       return Qnil;
-     }
-     quat_t *output = sm_unwrap_quat(sm_out, NULL);
-     quat_inverse (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     quat_t output;
-     quat_inverse (*self, output);
-     sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
-   }
-   return sm_out;
- }
+static VALUE sm_quat_inverse(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  quat_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_quat(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
+      rb_raise(rb_eTypeError,
+        kSM_WANT_FOUR_FORMAT_LIT,
+        rb_obj_classname(sm_out));
+      return Qnil;
+    }
+    quat_t *output = sm_unwrap_quat(sm_out, NULL);
+    quat_inverse (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    quat_t output;
+    quat_inverse (*self, output);
+    sm_out = sm_wrap_quat(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to inverse");
+  }
+  return sm_out;
+}
 
 
 
@@ -4129,30 +4133,30 @@ static VALUE sm_mat4_length (VALUE self)
  * call-seq:
  *    copy(output = nil) -> output or new mat4
  */
- static VALUE sm_mat4_copy(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat4_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat4(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-     mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
-     mat4_copy (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat4_t output;
-     mat4_copy (*self, output);
-     sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to copy");
-   }
-   return sm_out;
- }
+static VALUE sm_mat4_copy(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat4_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat4(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
+    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    mat4_copy (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat4_t output;
+    mat4_copy (*self, output);
+    sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to copy");
+  }
+  return sm_out;
+}
 
 
 
@@ -4162,30 +4166,30 @@ static VALUE sm_mat4_length (VALUE self)
  * call-seq:
  *    to_mat3(output = nil) -> output or new mat3
  */
- static VALUE sm_mat4_to_mat3(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat4_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat4(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-     mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
-     mat4_to_mat3 (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat3_t output;
-     mat4_to_mat3 (*self, output);
-     sm_out = sm_wrap_mat3(output, s_sm_mat4_klass);
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to to_mat3");
-   }
-   return sm_out;
- }
+static VALUE sm_mat4_to_mat3(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat4_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat4(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
+    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    mat4_to_mat3 (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat3_t output;
+    mat4_to_mat3 (*self, output);
+    sm_out = sm_wrap_mat3(output, s_sm_mat4_klass);
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to to_mat3");
+  }
+  return sm_out;
+}
 
 
 
@@ -4195,30 +4199,30 @@ static VALUE sm_mat4_length (VALUE self)
  * call-seq:
  *    transpose(output = nil) -> output or new mat4
  */
- static VALUE sm_mat4_transpose(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat4_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat4(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-     mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
-     mat4_transpose (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat4_t output;
-     mat4_transpose (*self, output);
-     sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to transpose");
-   }
-   return sm_out;
- }
+static VALUE sm_mat4_transpose(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat4_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat4(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
+    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    mat4_transpose (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat4_t output;
+    mat4_transpose (*self, output);
+    sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to transpose");
+  }
+  return sm_out;
+}
 
 
 
@@ -4228,30 +4232,30 @@ static VALUE sm_mat4_length (VALUE self)
  * call-seq:
  *    inverse_orthogonal(output = nil) -> output or new mat4
  */
- static VALUE sm_mat4_inverse_orthogonal(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat4_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat4(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-     mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
-     mat4_inverse_orthogonal (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat4_t output;
-     mat4_inverse_orthogonal (*self, output);
-     sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to inverse_orthogonal");
-   }
-   return sm_out;
- }
+static VALUE sm_mat4_inverse_orthogonal(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat4_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat4(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
+    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    mat4_inverse_orthogonal (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat4_t output;
+    mat4_inverse_orthogonal (*self, output);
+    sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to inverse_orthogonal");
+  }
+  return sm_out;
+}
 
 
 
@@ -4261,30 +4265,30 @@ static VALUE sm_mat4_length (VALUE self)
  * call-seq:
  *    adjoint(output = nil) -> output or new mat4
  */
- static VALUE sm_mat4_adjoint(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat4_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat4(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-     mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
-     mat4_adjoint (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat4_t output;
-     mat4_adjoint (*self, output);
-     sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to adjoint");
-   }
-   return sm_out;
- }
+static VALUE sm_mat4_adjoint(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat4_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat4(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
+    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    mat4_adjoint (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat4_t output;
+    mat4_adjoint (*self, output);
+    sm_out = sm_wrap_mat4(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to adjoint");
+  }
+  return sm_out;
+}
 
 
 
@@ -5660,30 +5664,30 @@ static VALUE sm_mat3_length (VALUE self)
  * call-seq:
  *    copy(output = nil) -> output or new mat3
  */
- static VALUE sm_mat3_copy(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-     mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
-     mat3_copy (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat3_t output;
-     mat3_copy (*self, output);
-     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to copy");
-   }
-   return sm_out;
- }
+static VALUE sm_mat3_copy(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
+    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    mat3_copy (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat3_t output;
+    mat3_copy (*self, output);
+    sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to copy");
+  }
+  return sm_out;
+}
 
 
 
@@ -5693,30 +5697,30 @@ static VALUE sm_mat3_length (VALUE self)
  * call-seq:
  *    to_mat4(output = nil) -> output or new mat4
  */
- static VALUE sm_mat3_to_mat4(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-     mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
-     mat3_to_mat4 (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat4_t output;
-     mat3_to_mat4 (*self, output);
-     sm_out = sm_wrap_mat4(output, s_sm_mat3_klass);
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to to_mat4");
-   }
-   return sm_out;
- }
+static VALUE sm_mat3_to_mat4(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
+    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    mat3_to_mat4 (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat4_t output;
+    mat3_to_mat4 (*self, output);
+    sm_out = sm_wrap_mat4(output, s_sm_mat3_klass);
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to to_mat4");
+  }
+  return sm_out;
+}
 
 
 
@@ -5726,30 +5730,30 @@ static VALUE sm_mat3_length (VALUE self)
  * call-seq:
  *    transpose(output = nil) -> output or new mat3
  */
- static VALUE sm_mat3_transpose(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-     mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
-     mat3_transpose (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat3_t output;
-     mat3_transpose (*self, output);
-     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to transpose");
-   }
-   return sm_out;
- }
+static VALUE sm_mat3_transpose(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
+    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    mat3_transpose (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat3_t output;
+    mat3_transpose (*self, output);
+    sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to transpose");
+  }
+  return sm_out;
+}
 
 
 
@@ -5759,30 +5763,30 @@ static VALUE sm_mat3_length (VALUE self)
  * call-seq:
  *    adjoint(output = nil) -> output or new mat3
  */
- static VALUE sm_mat3_adjoint(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-     mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
-     mat3_adjoint (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat3_t output;
-     mat3_adjoint (*self, output);
-     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to adjoint");
-   }
-   return sm_out;
- }
+static VALUE sm_mat3_adjoint(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
+    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    mat3_adjoint (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat3_t output;
+    mat3_adjoint (*self, output);
+    sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to adjoint");
+  }
+  return sm_out;
+}
 
 
 
@@ -5792,30 +5796,30 @@ static VALUE sm_mat3_length (VALUE self)
  * call-seq:
  *    orthogonal(output = nil) -> output or new mat3
  */
- static VALUE sm_mat3_orthogonal(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-     mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
-     mat3_orthogonal (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat3_t output;
-     mat3_orthogonal (*self, output);
-     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to orthogonal");
-   }
-   return sm_out;
- }
+static VALUE sm_mat3_orthogonal(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
+    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    mat3_orthogonal (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat3_t output;
+    mat3_orthogonal (*self, output);
+    sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to orthogonal");
+  }
+  return sm_out;
+}
 
 
 
@@ -5825,30 +5829,30 @@ static VALUE sm_mat3_length (VALUE self)
  * call-seq:
  *    cofactor(output = nil) -> output or new mat3
  */
- static VALUE sm_mat3_cofactor(int argc, VALUE *argv, VALUE sm_self)
- {
-   VALUE sm_out;
-   mat3_t *self;
-   rb_scan_args(argc, argv, "01", &sm_out);
-   self = sm_unwrap_mat3(sm_self, NULL);
-   if (argc == 1) {
-     if (!RTEST(sm_out)) {
-       goto SM_LABEL(skip_output);
-     }{
-     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-     mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
-     mat3_cofactor (*self, *output);
-   }} else if (argc == 0) {
- SM_LABEL(skip_output): {
-     mat3_t output;
-     mat3_cofactor (*self, output);
-     sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
-     rb_obj_call_init(sm_out, 0, 0);
-   }} else {
-     rb_raise(rb_eArgError, "Invalid number of arguments to cofactor");
-   }
-   return sm_out;
- }
+static VALUE sm_mat3_cofactor(int argc, VALUE *argv, VALUE sm_self)
+{
+  VALUE sm_out;
+  mat3_t *self;
+  rb_scan_args(argc, argv, "01", &sm_out);
+  self = sm_unwrap_mat3(sm_self, NULL);
+  if (argc == 1) {
+    if (!RTEST(sm_out)) {
+      goto SM_LABEL(skip_output);
+    }{
+    SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
+    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    mat3_cofactor (*self, *output);
+  }} else if (argc == 0) {
+SM_LABEL(skip_output): {
+    mat3_t output;
+    mat3_cofactor (*self, output);
+    sm_out = sm_wrap_mat3(output, rb_obj_class(sm_self));
+    rb_obj_call_init(sm_out, 0, 0);
+  }} else {
+    rb_raise(rb_eArgError, "Invalid number of arguments to cofactor");
+  }
+  return sm_out;
+}
 
 
 
