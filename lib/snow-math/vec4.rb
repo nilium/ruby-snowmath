@@ -27,6 +27,16 @@ end
 #
 class Snow::Vec4
 
+  POS_X    = self.new(1, 0, 0, 1).freeze
+  POS_Y    = self.new(0, 1, 0, 1).freeze
+  POS_Z    = self.new(0, 0, 1, 1).freeze
+  NEG_X    = self.new(-1, 0, 0, 1).freeze
+  NEG_Y    = self.new(0, -1, 0, 1).freeze
+  NEG_Z    = self.new(0, 0, -1, 1).freeze
+  ONE      = self.new(1, 1, 1, 1).freeze
+  ZERO     = self.new(0, 0, 0, 0).freeze
+  IDENTITY = self.new(0, 0, 0, 1).freeze
+
   class << self ; alias_method :[], :new ; end
 
   alias_method :[], :fetch

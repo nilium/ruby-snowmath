@@ -29,6 +29,10 @@ end
 #
 class Snow::Mat4
 
+  IDENTITY = self.new.freeze
+  ONE      = self.new(Array.new(16, 1)).freeze
+  ZERO     = self.new(Array.new(16, 0)).freeze
+
   class << self ; alias_method :[], :new ; end
 
   alias_method :[], :fetch
