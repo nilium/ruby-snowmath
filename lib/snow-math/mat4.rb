@@ -141,8 +141,9 @@ class Snow::Mat4
 
   # Calls #translate(*args, self)
   #
-  # call-seq: translate!(vec3) -> self
-  # call-seq: translate!(x, y, z) -> self
+  # call-seq:
+  #     translate!(vec3) -> self
+  #     translate!(x, y, z) -> self
   def translate!(*args)
     translate(*args, self)
   end

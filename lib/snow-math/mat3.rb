@@ -114,9 +114,10 @@ class Snow::Mat3
   #
   # Calls #multiply(rhs, self).
   #
-  # call-seq: multiply!(mat3) -> self
-  # call-seq: multiply!(vec3) -> vec3
-  # call-seq: multiply!(scalar) -> self
+  # call-seq:
+  #     multiply!(mat3) -> self
+  #     multiply!(vec3) -> vec3
+  #     multiply!(scalar) -> self
   #
   def multiply!(rhs)
     multiply rhs, case rhs
