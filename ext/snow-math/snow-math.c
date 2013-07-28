@@ -209,6 +209,8 @@ static VALUE sm_vec2_array_resize(VALUE sm_self, VALUE sm_new_length)
   size_t new_length;
   size_t old_length;
 
+  rb_check_frozen(sm_self);
+
   old_length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   new_length = NUM2SIZET(sm_new_length);
 
@@ -291,6 +293,8 @@ static VALUE sm_vec2_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   vec2_t *value;
   size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   size_t index = NUM2SIZET(sm_index);
+
+  rb_check_frozen(sm_self);
 
   if (index >= length) {
     rb_raise(rb_eRangeError,
@@ -400,6 +404,8 @@ static VALUE sm_vec3_array_resize(VALUE sm_self, VALUE sm_new_length)
   size_t new_length;
   size_t old_length;
 
+  rb_check_frozen(sm_self);
+
   old_length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   new_length = NUM2SIZET(sm_new_length);
 
@@ -482,6 +488,8 @@ static VALUE sm_vec3_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   vec3_t *value;
   size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   size_t index = NUM2SIZET(sm_index);
+
+  rb_check_frozen(sm_self);
 
   if (index >= length) {
     rb_raise(rb_eRangeError,
@@ -590,6 +598,8 @@ static VALUE sm_vec4_array_resize(VALUE sm_self, VALUE sm_new_length)
   size_t new_length;
   size_t old_length;
 
+  rb_check_frozen(sm_self);
+
   old_length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   new_length = NUM2SIZET(sm_new_length);
 
@@ -672,6 +682,8 @@ static VALUE sm_vec4_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   vec4_t *value;
   size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   size_t index = NUM2SIZET(sm_index);
+
+  rb_check_frozen(sm_self);
 
   if (index >= length) {
     rb_raise(rb_eRangeError,
@@ -780,6 +792,8 @@ static VALUE sm_quat_array_resize(VALUE sm_self, VALUE sm_new_length)
   size_t new_length;
   size_t old_length;
 
+  rb_check_frozen(sm_self);
+
   old_length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   new_length = NUM2SIZET(sm_new_length);
 
@@ -862,6 +876,8 @@ static VALUE sm_quat_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   quat_t *value;
   size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   size_t index = NUM2SIZET(sm_index);
+
+  rb_check_frozen(sm_self);
 
   if (index >= length) {
     rb_raise(rb_eRangeError,
@@ -970,6 +986,8 @@ static VALUE sm_mat3_array_resize(VALUE sm_self, VALUE sm_new_length)
   size_t new_length;
   size_t old_length;
 
+  rb_check_frozen(sm_self);
+
   old_length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   new_length = NUM2SIZET(sm_new_length);
 
@@ -1055,6 +1073,8 @@ static VALUE sm_mat3_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   size_t index = NUM2SIZET(sm_index);
   int is_mat3 = 0;
+
+  rb_check_frozen(sm_self);
 
   if (index >= length) {
     rb_raise(rb_eRangeError,
@@ -1166,6 +1186,8 @@ static VALUE sm_mat4_array_resize(VALUE sm_self, VALUE sm_new_length)
   size_t new_length;
   size_t old_length;
 
+  rb_check_frozen(sm_self);
+
   old_length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   new_length = NUM2SIZET(sm_new_length);
 
@@ -1251,6 +1273,8 @@ static VALUE sm_mat4_array_store(VALUE sm_self, VALUE sm_index, VALUE sm_value)
   size_t length = NUM2SIZET(sm_mathtype_array_length(sm_self));
   size_t index = NUM2SIZET(sm_index);
   int is_mat4 = 0;
+
+  rb_check_frozen(sm_self);
 
   if (index >= length) {
     rb_raise(rb_eRangeError,
@@ -1356,6 +1380,7 @@ static VALUE sm_vec2_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
   static const int max_index = sizeof(vec2_t) / sizeof(s_float_t);
   vec2_t *self = sm_unwrap_vec2(sm_self, NULL);
   int index = NUM2INT(sm_index);
+  rb_check_frozen(sm_self);
   if (index < 0 || index >= max_index) {
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
@@ -1415,6 +1440,7 @@ static VALUE sm_vec2_copy(int argc, VALUE *argv, VALUE sm_self)
         rb_obj_classname(sm_out));
       return Qnil;
     }
+    rb_check_frozen(sm_out);
     output = sm_unwrap_vec2(sm_out, NULL);
     vec2_copy (*self, *output);
   }} else if (argc == 0) {
@@ -1455,6 +1481,7 @@ static VALUE sm_vec2_normalize(int argc, VALUE *argv, VALUE sm_self)
         rb_obj_classname(sm_out));
       return Qnil;
     }
+    rb_check_frozen(sm_out);
     output = sm_unwrap_vec2(sm_out, NULL);
     vec2_normalize (*self, *output);
   }} else if (argc == 0) {
@@ -1495,6 +1522,7 @@ static VALUE sm_vec2_inverse(int argc, VALUE *argv, VALUE sm_self)
         rb_obj_classname(sm_out));
       return Qnil;
     }
+    rb_check_frozen(sm_out);
     output = sm_unwrap_vec2(sm_out, NULL);
     vec2_inverse (*self, *output);
   }} else if (argc == 0) {
@@ -1534,6 +1562,7 @@ static VALUE sm_vec2_negate(int argc, VALUE *argv, VALUE sm_self)
         rb_obj_classname(sm_out));
       return Qnil;
     }
+    rb_check_frozen(sm_out);
     output = sm_unwrap_vec2(sm_out, NULL);
     vec2_negate (*self, *output);
   }} else if (argc == 0) {
@@ -1575,13 +1604,15 @@ static VALUE sm_vec2_project(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec2_t *output;
     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec2(sm_out, NULL);
     vec2_project(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -1622,13 +1653,15 @@ static VALUE sm_vec2_reflect(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec2_t *output;
     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec2(sm_out, NULL);
     vec2_reflect(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -1670,13 +1703,15 @@ static VALUE sm_vec2_multiply(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec2_t *output;
     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec2(sm_out, NULL);
     vec2_multiply(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -1717,13 +1752,15 @@ static VALUE sm_vec2_add(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec2_t *output;
     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec2(sm_out, NULL);
     vec2_add(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -1765,13 +1802,15 @@ static VALUE sm_vec2_subtract(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec2_t *output;
     if (!SM_IS_A(sm_out, vec2) && !SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_TWO_TO_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec2_t *output = sm_unwrap_vec2(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec2(sm_out, NULL);
     vec2_subtract(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -1852,6 +1891,8 @@ static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
 {
   vec2_t *self = sm_unwrap_vec2(sm_self, NULL);
   size_t arr_index = 0;
+
+  rb_check_frozen(sm_self);
 
   switch(argc) {
 
@@ -1964,6 +2005,7 @@ static VALUE sm_vec2_scale(int argc, VALUE *argv, VALUE sm_self)
   scalar = rb_num2dbl(sm_scalar);
 
   if (SM_IS_A(sm_out, vec2) || SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
+    rb_check_frozen(sm_out);
     vec2_scale(*self, scalar, *sm_unwrap_vec2(sm_out, NULL));
   } else {
     vec2_t out;
@@ -1994,6 +2036,7 @@ static VALUE sm_vec2_divide(int argc, VALUE *argv, VALUE sm_self)
   scalar = rb_num2dbl(sm_scalar);
 
   if (SM_IS_A(sm_out, vec2) || SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
+    rb_check_frozen(sm_out);
     vec2_divide(*self, scalar, *sm_unwrap_vec2(sm_out, NULL));
   } else {
     vec2_t out;
@@ -2090,6 +2133,7 @@ static VALUE sm_vec3_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
   static const int max_index = sizeof(vec3_t) / sizeof(s_float_t);
   vec3_t *self = sm_unwrap_vec3(sm_self, NULL);
   int index = NUM2INT(sm_index);
+  rb_check_frozen(sm_self);
   if (index < 0 || index >= max_index) {
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
@@ -2142,13 +2186,15 @@ static VALUE sm_vec3_copy(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_copy (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -2181,13 +2227,15 @@ static VALUE sm_vec3_normalize(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_normalize (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -2220,13 +2268,15 @@ static VALUE sm_vec3_inverse(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_inverse (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -2258,13 +2308,15 @@ static VALUE sm_vec3_negate(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_negate (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -2305,13 +2357,15 @@ static VALUE sm_vec3_project(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_project(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -2352,13 +2406,15 @@ static VALUE sm_vec3_reflect(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_reflect(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -2399,13 +2455,15 @@ static VALUE sm_vec3_cross_product(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_cross_product(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -2447,13 +2505,15 @@ static VALUE sm_vec3_multiply(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_multiply(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -2494,13 +2554,15 @@ static VALUE sm_vec3_add(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_add(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -2542,13 +2604,15 @@ static VALUE sm_vec3_subtract(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     vec3_subtract(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -2626,6 +2690,8 @@ static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
 {
   vec3_t *self = sm_unwrap_vec3(sm_self, NULL);
   size_t arr_index = 0;
+
+  rb_check_frozen(sm_self);
 
   switch(argc) {
 
@@ -2750,7 +2816,8 @@ static VALUE sm_vec3_scale(int argc, VALUE *argv, VALUE sm_self)
   rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
   scalar = rb_num2dbl(sm_scalar);
 
-  if (SM_IS_A(sm_out, vec3)) {
+  if (SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
+    rb_check_frozen(sm_out);
     vec3_scale(*self, scalar, *sm_unwrap_vec3(sm_out, NULL));
   } else {
     vec3_t out;
@@ -2780,7 +2847,8 @@ static VALUE sm_vec3_divide(int argc, VALUE *argv, VALUE sm_self)
   rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
   scalar = rb_num2dbl(sm_scalar);
 
-  if (SM_IS_A(sm_out, vec3)) {
+  if (SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
+    rb_check_frozen(sm_out);
     vec3_divide(*self, scalar, *sm_unwrap_vec3(sm_out, NULL));
   } else {
     vec3_t out;
@@ -2876,6 +2944,7 @@ static VALUE sm_vec4_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
   static const int max_index = sizeof(vec4_t) / sizeof(s_float_t);
   vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
   int index = NUM2INT(sm_index);
+  rb_check_frozen(sm_self);
   if (index < 0 || index >= max_index) {
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
@@ -2928,13 +2997,15 @@ static VALUE sm_vec4_copy(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     vec4_copy (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -2967,12 +3038,14 @@ static VALUE sm_vec4_normalize(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
      rb_raise(rb_eTypeError,
        kSM_WANT_FOUR_FORMAT_LIT,
        rb_obj_classname(sm_out));
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     vec4_normalize (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -3005,13 +3078,15 @@ static VALUE sm_vec4_inverse(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     vec4_inverse (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -3043,13 +3118,15 @@ static VALUE sm_vec4_negate(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     vec4_negate (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -3090,13 +3167,15 @@ static VALUE sm_vec4_project(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     vec4_project(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -3137,13 +3216,15 @@ static VALUE sm_vec4_reflect(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     vec4_reflect(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -3185,13 +3266,15 @@ static VALUE sm_vec4_multiply(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     vec4_multiply(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -3233,13 +3316,15 @@ static VALUE sm_vec4_add(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_rhs));
       return Qnil;
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     vec4_add(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -3281,13 +3366,15 @@ static VALUE sm_vec4_subtract(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_rhs, vec4) && !SM_IS_A(sm_rhs, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_rhs));
       return Qnil;
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     vec4_subtract(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -3363,6 +3450,8 @@ static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
 {
   vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
   size_t arr_index = 0;
+
+  rb_check_frozen(sm_self);
 
   switch(argc) {
 
@@ -3497,6 +3586,7 @@ static VALUE sm_vec4_scale(int argc, VALUE *argv, VALUE sm_self)
   scalar = rb_num2dbl(sm_scalar);
 
   if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
+    rb_check_frozen(sm_out);
     vec4_scale(*self, scalar, *sm_unwrap_vec4(sm_out, NULL));
   } else {
     vec4_t out;
@@ -3528,6 +3618,7 @@ static VALUE sm_vec4_divide(int argc, VALUE *argv, VALUE sm_self)
   scalar = rb_num2dbl(sm_scalar);
 
   if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
+    rb_check_frozen(sm_out);
     vec4_divide(*self, scalar, *sm_unwrap_vec4(sm_out, NULL));
   } else {
     vec4_t out;
@@ -3622,6 +3713,7 @@ static VALUE sm_quat_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
   static const int max_index = sizeof(quat_t) / sizeof(s_float_t);
   quat_t *self = sm_unwrap_quat(sm_self, NULL);
   int index = NUM2INT(sm_index);
+  rb_check_frozen(sm_self);
   if (index < 0 || index >= max_index) {
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
@@ -3675,13 +3767,15 @@ static VALUE sm_quat_inverse(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    quat_t *output;
     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    quat_t *output = sm_unwrap_quat(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_quat(sm_out, NULL);
     quat_inverse (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -3722,13 +3816,15 @@ static VALUE sm_quat_multiply(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    quat_t *output;
     if (!!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    quat_t *output = sm_unwrap_quat(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_quat(sm_out, NULL);
     quat_multiply(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -3769,13 +3865,15 @@ static VALUE sm_quat_multiply_vec3(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     quat_multiply_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -3830,6 +3928,8 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
 {
   quat_t *self = sm_unwrap_quat(sm_self, NULL);
   size_t arr_index = 0;
+
+  rb_check_frozen(sm_self);
 
   switch(argc) {
 
@@ -3958,6 +4058,7 @@ static VALUE sm_quat_angle_axis(int argc, VALUE *argv, VALUE self)
   axis = sm_unwrap_vec3(sm_axis, NULL);
 
   if (SM_IS_A(sm_out, quat) || SM_IS_A(sm_out, vec4)) {
+    rb_check_frozen(sm_out);
     quat_t *out = sm_unwrap_quat(sm_out, NULL);
     quat_from_angle_axis(angle, (*axis)[0], (*axis)[1], (*axis)[2], *out);
   } else {
@@ -4017,6 +4118,7 @@ static VALUE sm_quat_slerp(int argc, VALUE *argv, VALUE sm_self)
   destination = sm_unwrap_quat(sm_destination, NULL);
 
   if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
+    rb_check_frozen(sm_out);
     quat_slerp(*self, *destination, alpha, *sm_unwrap_quat(sm_out, NULL));
   } else {
     quat_t out;
@@ -4091,6 +4193,7 @@ static VALUE sm_mat4_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
   static const int max_index = sizeof(mat4_t) / sizeof(s_float_t);
   mat4_t *self = sm_unwrap_mat4(sm_self, NULL);
   int index = NUM2INT(sm_index);
+  rb_check_frozen(sm_self);
   if (index < 0 || index >= max_index) {
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
@@ -4143,8 +4246,10 @@ static VALUE sm_mat4_copy(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat4_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat4(sm_out, NULL);
     mat4_copy (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -4176,8 +4281,10 @@ static VALUE sm_mat4_to_mat3(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat3_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat3(sm_out, NULL);
     mat4_to_mat3 (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -4209,8 +4316,10 @@ static VALUE sm_mat4_transpose(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat4_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat4(sm_out, NULL);
     mat4_transpose (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -4242,8 +4351,10 @@ static VALUE sm_mat4_inverse_orthogonal(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat4_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat4(sm_out, NULL);
     mat4_inverse_orthogonal (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -4275,8 +4386,10 @@ static VALUE sm_mat4_adjoint(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat4_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat4(sm_out, NULL);
     mat4_adjoint (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -4312,8 +4425,10 @@ static VALUE sm_mat4_multiply(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat4_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat4(sm_out, NULL);
     mat4_multiply(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -4354,13 +4469,15 @@ static VALUE sm_mat4_multiply_vec4(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec4_t *output;
     if (!SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec4_t *output = sm_unwrap_vec4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec4(sm_out, NULL);
     mat4_multiply_vec4(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -4401,13 +4518,15 @@ static VALUE sm_mat4_transform_vec3(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     mat4_transform_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -4449,13 +4568,15 @@ static VALUE sm_mat4_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     mat4_rotate_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -4497,13 +4618,15 @@ static VALUE sm_mat4_inv_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     mat4_inv_rotate_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -4547,6 +4670,7 @@ static VALUE sm_mat4_inverse_affine(int argc, VALUE *argv, VALUE sm_self)
         rb_obj_classname(sm_out));
       return Qnil;
     }
+    rb_check_frozen(sm_out);
 
     output = sm_unwrap_mat4(sm_out, NULL);
     if (!mat4_inverse_affine(*self, *output)) {
@@ -4600,6 +4724,7 @@ static VALUE sm_mat4_inverse_general(int argc, VALUE *argv, VALUE sm_self)
         rb_obj_classname(sm_out));
       return Qnil;
     }
+    rb_check_frozen(sm_out);
 
     output = sm_unwrap_mat4(sm_out, NULL);
     if (!mat4_inverse_general(*self, *output)) {
@@ -4675,6 +4800,7 @@ static VALUE sm_mat4_translate(int argc, VALUE *argv, VALUE sm_self)
 
     SM_LABEL(get_output):
     if (RTEST(sm_out)) {
+      rb_check_frozen(sm_out);
       mat4_t *out = sm_unwrap_mat4(sm_out, NULL);
       mat4_translate(xyz[0], xyz[1], xyz[2], *self, *out);
     } else {
@@ -4726,6 +4852,7 @@ static VALUE sm_mat4_translation(int argc, VALUE *argv, VALUE sm_self)
 
     SM_LABEL(get_output):
     if (RTEST(sm_out)) {
+      rb_check_frozen(sm_out);
       mat4_t *out = sm_unwrap_mat4(sm_out, NULL);
       mat4_translation(xyz[0], xyz[1], xyz[2], *out);
     } else {
@@ -4778,6 +4905,8 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
 {
   mat4_t *self = sm_unwrap_mat4(sm_self, NULL);
   size_t arr_index = 0;
+
+  rb_check_frozen(sm_self);
 
   switch (argc) {
 
@@ -4921,6 +5050,7 @@ static VALUE sm_mat4_angle_axis(int argc, VALUE *argv, VALUE self)
   axis = sm_unwrap_vec3(sm_axis, NULL);
 
   if (SM_IS_A(sm_out, mat4)) {
+    rb_check_frozen(sm_out);
     mat4_t *out = sm_unwrap_mat4(sm_out, NULL);
     mat4_rotation(angle, (*axis)[0], (*axis)[1], (*axis)[2], *out);
   } else {
@@ -4969,6 +5099,7 @@ static VALUE sm_mat4_get_row3(int argc, VALUE *argv, VALUE sm_self)
           rb_obj_classname(sm_out));
         return Qnil;
       }
+      rb_check_frozen(sm_out);
     } else {
       goto SM_LABEL(no_output);
     }
@@ -5032,6 +5163,7 @@ static VALUE sm_mat4_get_row4(int argc, VALUE *argv, VALUE sm_self)
           rb_obj_classname(sm_out));
         return Qnil;
       }
+      rb_check_frozen(sm_out);
     } else {
       goto SM_LABEL(no_output);
     }
@@ -5095,6 +5227,7 @@ static VALUE sm_mat4_get_column3(int argc, VALUE *argv, VALUE sm_self)
           rb_obj_classname(sm_out));
         return Qnil;
       }
+      rb_check_frozen(sm_out);
     } else {
       goto SM_LABEL(no_output);
     }
@@ -5158,6 +5291,7 @@ static VALUE sm_mat4_get_column4(int argc, VALUE *argv, VALUE sm_self)
           rb_obj_classname(sm_out));
         return Qnil;
       }
+      rb_check_frozen(sm_out);
     } else {
       goto SM_LABEL(no_output);
     }
@@ -5374,6 +5508,7 @@ static VALUE sm_mat4_frustum(int argc, VALUE *argv, VALUE self)
   z_far = (s_float_t)rb_num2dbl(sm_z_far);
 
   if (SM_IS_A(sm_out, mat4)) {
+    rb_check_frozen(sm_out);
     mat4_t *out = sm_unwrap_mat4(sm_out, NULL);
     mat4_frustum(left, right, bottom, top, z_near, z_far, *out);
   } else {
@@ -5420,6 +5555,7 @@ static VALUE sm_mat4_orthographic(int argc, VALUE *argv, VALUE self)
   z_far = (s_float_t)rb_num2dbl(sm_z_far);
 
   if (SM_IS_A(sm_out, mat4)) {
+    rb_check_frozen(sm_out);
     mat4_t *out = sm_unwrap_mat4(sm_out, NULL);
     mat4_orthographic(left, right, bottom, top, z_near, z_far, *out);
   } else {
@@ -5460,6 +5596,7 @@ static VALUE sm_mat4_perspective(int argc, VALUE *argv, VALUE self)
   z_far = (s_float_t)rb_num2dbl(sm_z_far);
 
   if (SM_IS_A(sm_out, mat4)) {
+    rb_check_frozen(sm_out);
     mat4_t *out = sm_unwrap_mat4(sm_out, NULL);
     mat4_perspective(fov_y, aspect, z_near, z_far, *out);
   } else {
@@ -5498,6 +5635,7 @@ static VALUE sm_mat4_look_at(int argc, VALUE *argv, VALUE self)
   up = sm_unwrap_vec3(sm_up, NULL);
 
   if (SM_IS_A(sm_out, mat4)) {
+    rb_check_frozen(sm_out);
     mat4_t *out = sm_unwrap_mat4(sm_out, NULL);
     mat4_look_at(*eye, *center, *up, *out);
   } else {
@@ -5531,6 +5669,7 @@ static VALUE sm_mat4_scale(int argc, VALUE *argv, VALUE sm_self)
   z = rb_num2dbl(sm_z);
 
   if (SM_IS_A(sm_out, mat4)) {
+    rb_check_frozen(sm_out);
     mat4_scale(*self, x, y, z, *sm_unwrap_mat4(sm_out, NULL));
   } else {
     mat4_t out;
@@ -5622,6 +5761,7 @@ static VALUE sm_mat3_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
   static const int max_index = sizeof(mat3_t) / sizeof(s_float_t);
   mat3_t *self = sm_unwrap_mat3(sm_self, NULL);
   int index = NUM2INT(sm_index);
+  rb_check_frozen(sm_self);
   if (index < 0 || index >= max_index) {
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
@@ -5674,8 +5814,10 @@ static VALUE sm_mat3_copy(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat3_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat3(sm_out, NULL);
     mat3_copy (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -5707,8 +5849,10 @@ static VALUE sm_mat3_to_mat4(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat4_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat4);
-    mat4_t *output = sm_unwrap_mat4(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat4(sm_out, NULL);
     mat3_to_mat4 (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -5740,8 +5884,10 @@ static VALUE sm_mat3_transpose(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat3_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat3(sm_out, NULL);
     mat3_transpose (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -5773,8 +5919,10 @@ static VALUE sm_mat3_adjoint(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat3_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat3(sm_out, NULL);
     mat3_adjoint (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -5806,8 +5954,10 @@ static VALUE sm_mat3_orthogonal(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat3_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat3(sm_out, NULL);
     mat3_orthogonal (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -5839,8 +5989,10 @@ static VALUE sm_mat3_cofactor(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat3_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat3(sm_out, NULL);
     mat3_cofactor (*self, *output);
   }} else if (argc == 0) {
 SM_LABEL(skip_output): {
@@ -5876,8 +6028,10 @@ static VALUE sm_mat3_multiply(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    mat3_t *output;
     SM_RAISE_IF_NOT_TYPE(sm_out, mat3);
-    mat3_t *output = sm_unwrap_mat3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_mat3(sm_out, NULL);
     mat3_multiply(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -5918,13 +6072,15 @@ static VALUE sm_mat3_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     mat3_rotate_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -5966,13 +6122,15 @@ static VALUE sm_mat3_inv_rotate_vec3(int argc, VALUE *argv, VALUE sm_self)
     if (!RTEST(sm_out)) {
       goto SM_LABEL(skip_output);
     }{
+    vec3_t *output;
     if (!SM_IS_A(sm_out, vec3) && !SM_IS_A(sm_out, vec4) && !SM_IS_A(sm_out, quat)) {
       rb_raise(rb_eTypeError,
         kSM_WANT_THREE_OR_FOUR_FORMAT_LIT,
         rb_obj_classname(sm_out));
       return Qnil;
     }
-    vec3_t *output = sm_unwrap_vec3(sm_out, NULL);
+    rb_check_frozen(sm_out);
+    output = sm_unwrap_vec3(sm_out, NULL);
     mat3_inv_rotate_vec3(*self, *rhs, *output);
   }} else if (argc == 1) {
 SM_LABEL(skip_output): {
@@ -6030,6 +6188,7 @@ static VALUE sm_mat3_inverse(int argc, VALUE *argv, VALUE sm_self)
       return Qnil;
     }
 
+    rb_check_frozen(sm_out);
     output = sm_unwrap_mat3(sm_out, NULL);
     if (!mat3_inverse(*self, *output)) {
       return Qnil;
@@ -6090,6 +6249,8 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
 {
   mat3_t *self = sm_unwrap_mat3(sm_self, NULL);
   size_t arr_index = 0;
+
+  rb_check_frozen(sm_self);
 
   switch (argc) {
 
@@ -6230,6 +6391,7 @@ static VALUE sm_mat3_angle_axis(int argc, VALUE *argv, VALUE self)
   axis = sm_unwrap_vec3(sm_axis, NULL);
 
   if (SM_IS_A(sm_out, mat3)) {
+    rb_check_frozen(sm_out);
     mat3_t *out = sm_unwrap_mat3(sm_out, NULL);
     mat3_rotation(angle, (*axis)[0], (*axis)[1], (*axis)[2], *out);
   } else {
@@ -6278,6 +6440,7 @@ static VALUE sm_mat3_get_row3(int argc, VALUE *argv, VALUE sm_self)
           rb_obj_classname(sm_out));
         return Qnil;
       }
+      rb_check_frozen(sm_out);
     } else {
       goto SM_LABEL(no_output);
     }
@@ -6341,6 +6504,7 @@ static VALUE sm_mat3_get_column3(int argc, VALUE *argv, VALUE sm_self)
           rb_obj_classname(sm_out));
         return Qnil;
       }
+      rb_check_frozen(sm_out);
     } else {
       goto SM_LABEL(no_output);
     }
@@ -6474,6 +6638,7 @@ static VALUE sm_mat3_scale(int argc, VALUE *argv, VALUE sm_self)
   z = rb_num2dbl(sm_z);
 
   if (SM_IS_A(sm_out, mat3)) {
+    rb_check_frozen(sm_out);
     mat3_scale(*self, x, y, z, *sm_unwrap_mat3(sm_out, NULL));
   } else {
     mat3_t out;
