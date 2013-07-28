@@ -1896,10 +1896,10 @@ static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
 
   switch(argc) {
 
-  // Default value
+  /* Default value */
   case 0: { break; }
 
-  // Copy or by-array
+  /* Copy or by-array */
   case 1: {
     if (SM_IS_A(argv[0], vec2) ||
         SM_IS_A(argv[0], vec3) ||
@@ -1909,7 +1909,7 @@ static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
       break;
     }
 
-    // Optional offset into array provided
+    /* Optional offset into array provided */
     if (0) {
       case 2:
       if (!SM_RB_IS_A(argv[0], rb_cArray)) {
@@ -1920,7 +1920,7 @@ static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
       arr_index = NUM2SIZET(argv[1]);
     }
 
-    // Array of values
+    /* Array of values */
     VALUE arrdata = argv[0];
     const size_t arr_end = arr_index + 2;
     s_float_t *vec_elem = *self;
@@ -1934,7 +1934,7 @@ static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
     rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
-  } // switch (argc)
+  } /* switch (argc) */
 
   return sm_self;
 }
@@ -2695,10 +2695,10 @@ static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
 
   switch(argc) {
 
-  // Default value
+  /* Default value */
   case 0: { break; }
 
-  // Copy or by-array
+  /* Copy or by-array */
   case 1: {
     if (SM_IS_A(argv[0], vec3) ||
         SM_IS_A(argv[0], vec4) ||
@@ -2713,13 +2713,13 @@ static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
       break;
     }
 
-    // Optional offset into array provided
+    /* Optional offset into array provided */
     if (0) {
       case 2:
       arr_index = NUM2SIZET(argv[1]);
     }
 
-    // Array of values
+    /* Array of values */
     if (SM_RB_IS_A(argv[0], rb_cArray)) {
       VALUE arrdata = argv[0];
       const size_t arr_end = arr_index + 3;
@@ -2734,7 +2734,7 @@ static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
     break;
   }
 
-  // X, Y, Z
+  /* X, Y, Z */
   case 3: {
     self[0][0] = (s_float_t)rb_num2dbl(argv[0]);
     self[0][1] = (s_float_t)rb_num2dbl(argv[1]);
@@ -2746,7 +2746,7 @@ static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
     rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
-  } // switch (argc)
+  } /* switch (argc) */
 
   return sm_self;
 }
@@ -3455,10 +3455,10 @@ static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
 
   switch(argc) {
 
-  // Default value
+  /* Default value */
   case 0: { break; }
 
-  // Copy or by-array
+  /* Copy or by-array */
   case 1: {
     if (SM_IS_A(argv[0], quat) ||
         SM_IS_A(argv[0], vec4)) {
@@ -3479,13 +3479,13 @@ static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
       break;
     }
 
-    // Optional offset into array provided
+    /* Optional offset into array provided */
     if (0) {
       case 2:
       arr_index = NUM2SIZET(argv[1]);
     }
 
-    // Array of values
+    /* Array of values */
     if (SM_RB_IS_A(argv[0], rb_cArray)) {
       VALUE arrdata = argv[0];
       const size_t arr_end = arr_index + 4;
@@ -3500,10 +3500,10 @@ static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
     break;
   }
 
-  // W
+  /* W */
   case 4: {
     self[0][3] = (s_float_t)rb_num2dbl(argv[3]);
-    case 3: // X, Y, Z
+    case 3: /* X, Y, Z */
     self[0][0] = (s_float_t)rb_num2dbl(argv[0]);
     self[0][1] = (s_float_t)rb_num2dbl(argv[1]);
     self[0][2] = (s_float_t)rb_num2dbl(argv[2]);
@@ -3514,7 +3514,7 @@ static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
     rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
-  } // switch (argc)
+  } /* switch (argc) */
 
   return sm_self;
 }
@@ -3933,10 +3933,10 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
 
   switch(argc) {
 
-  // Default value
+  /* Default value */
   case 0: { break; }
 
-  // Copy or by-array
+  /* Copy or by-array */
   case 1: {
     if (SM_IS_A(argv[0], quat) ||
         SM_IS_A(argv[0], vec4)) {
@@ -3969,13 +3969,13 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
       break;
     }
 
-    // Optional offset into array provided
+    /* Optional offset into array provided */
     if (0) {
       case 2:
       arr_index = NUM2SIZET(argv[1]);
     }
 
-    // Array of values
+    /* Array of values */
     if (SM_RB_IS_A(argv[0], rb_cArray)) {
       VALUE arrdata = argv[0];
       const size_t arr_end = arr_index + 3;
@@ -3990,10 +3990,10 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
     break;
   }
 
-  // W
+  /* W */
   case 4: {
     self[0][3] = (s_float_t)rb_num2dbl(argv[3]);
-    case 3: // X, Y, Z
+    case 3: /* X, Y, Z */
     self[0][0] = (s_float_t)rb_num2dbl(argv[0]);
     self[0][1] = (s_float_t)rb_num2dbl(argv[1]);
     self[0][2] = (s_float_t)rb_num2dbl(argv[2]);
@@ -4004,7 +4004,7 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
     rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
-  } // switch (argc)
+  } /* switch (argc) */
 
   return sm_self;
 }
@@ -4911,37 +4911,37 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
   switch (argc) {
 
   case 0: {
-    // Identity (handled in _new)
+    /* Identity (handled in _new) */
     break;
   }
 
-  // Copy Mat4 or provided [Numeric..]
+  /* Copy Mat4 or provided [Numeric..] */
   case 1: {
-    // Copy Mat4
+    /* Copy Mat4 */
     if (SM_IS_A(argv[0], mat4)) {
       sm_unwrap_mat4(argv[0], *self);
       break;
     }
 
-    // Copy Mat3
+    /* Copy Mat3 */
     if (SM_IS_A(argv[0], mat3)) {
       mat3_to_mat4(*sm_unwrap_mat4(argv[0], NULL), *self);
       break;
     }
 
-    // Build from Quaternion
+    /* Build from Quaternion */
     if (SM_IS_A(argv[0], quat)) {
       mat4_from_quat(*sm_unwrap_quat(argv[0], NULL), *self);
       break;
     }
 
-    // Optional offset into array provided
+    /* Optional offset into array provided */
     if (0) {
       case 2:
       arr_index = NUM2SIZET(argv[1]);
     }
 
-    // Array of values
+    /* Array of values */
     if (SM_RB_IS_A(argv[0], rb_cArray)) {
       VALUE arrdata = argv[0];
       const size_t arr_end = arr_index + 16;
@@ -4956,7 +4956,7 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
     break;
   }
 
-  // Mat4(Vec4, Vec4, Vec4, Vec4)
+  /* Mat4(Vec4, Vec4, Vec4, Vec4) */
   case 4: {
     size_t arg_index;
     s_float_t *mat_elem = *self;
@@ -4973,7 +4973,7 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
     break;
   }
 
-  // Mat4(Numeric m00 .. m16)
+  /* Mat4(Numeric m00 .. m16) */
   case 16: {
     s_float_t *mat_elem = *self;
     VALUE *argv_p = argv;
@@ -4987,7 +4987,7 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
     rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
-  } // swtich (argc)
+  } /* switch (argc) */
 
   return sm_self;
 }
@@ -6255,37 +6255,37 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
   switch (argc) {
 
   case 0: {
-    // Identity (handled in _new)
+    /* Identity (handled in _new) */
     break;
   }
 
-  // Copy Mat3 or provided [Numeric..]
+  /* Copy Mat3 or provided [Numeric..] */
   case 1: {
-    // Copy Mat3
+    /* Copy Mat3 */
     if (SM_IS_A(argv[0], mat3)) {
       sm_unwrap_mat3(argv[0], *self);
       break;
     }
 
-    // Copy Mat4
+    /* Copy Mat4 */
     if (SM_IS_A(argv[0], mat4)) {
       mat4_to_mat3(*sm_unwrap_mat4(argv[0], NULL), *self);
       break;
     }
 
-    // Build from Quaternion
+    /* Build from Quaternion */
     if (SM_IS_A(argv[0], quat)) {
       mat3_from_quat(*sm_unwrap_quat(argv[0], NULL), *self);
       break;
     }
 
-    // Optional offset into array provided
+    /* Optional offset into array provided */
     if (0) {
       case 2:
       arr_index = NUM2SIZET(argv[1]);
     }
 
-    // Array of values
+    /* Array of values */
     if (SM_RB_IS_A(argv[0], rb_cArray)) {
       VALUE arrdata = argv[0];
       const size_t arr_end = arr_index + 9;
@@ -6300,7 +6300,7 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
     break;
   }
 
-  // Mat3(Vec3, Vec3, Vec3)
+  /* Mat3(Vec3, Vec3, Vec3) */
   case 3: {
     size_t arg_index;
     s_float_t *mat_elem = *self;
@@ -6317,7 +6317,7 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
     break;
   }
 
-  // Mat3(Numeric m00 .. m16)
+  /* Mat3(Numeric m00 .. m16) */
   case 9: {
     s_float_t *mat_elem = *self;
     VALUE *argv_p = argv;
@@ -6331,7 +6331,7 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
     rb_raise(rb_eArgError, "Invalid arguments to initialize/set");
     break;
   }
-  } // swtich (argc)
+  } /* switch (argc) */
 
   return sm_self;
 }
@@ -6825,7 +6825,7 @@ void Init_bindings()
   rb_define_method(s_sm_quat_klass, "multiply_quat", sm_quat_multiply, -1);
   rb_define_method(s_sm_quat_klass, "multiply_vec3", sm_quat_multiply_vec3, -1);
   rb_define_method(s_sm_quat_klass, "slerp", sm_quat_slerp, -1);
-  // Borrow some functions from vec4
+  /* Borrow some functions from vec4 */
   rb_define_method(s_sm_quat_klass, "copy", sm_vec4_copy, -1);
   rb_define_method(s_sm_quat_klass, "negate", sm_vec4_negate, -1);
   rb_define_method(s_sm_quat_klass, "normalize", sm_vec4_normalize, -1);

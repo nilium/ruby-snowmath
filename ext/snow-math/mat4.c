@@ -684,7 +684,7 @@ void mat4_multiply(const mat4_t left, const mat4_t right, mat4_t out)
   mat4_t temp;
   vec4_t c;
 
-  // Transpose the left matrix so we can be a little more cache-friendly.
+  /* Transpose the left matrix so we can be a little more cache-friendly. */
   mat4_transpose(left, temp);
 
   c[0]     = temp[0];

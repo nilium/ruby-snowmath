@@ -24,12 +24,12 @@ const mat3_t g_mat3_identity = {
 
 
 
-// Rows
+/* Rows */
 #define S_MR 0
 #define S_MS 3
 #define S_MT 6
 
-// row components
+/* row components */
 #define S_MR_X 0
 #define S_MR_Y 1
 #define S_MR_Z 2
@@ -40,7 +40,7 @@ const mat3_t g_mat3_identity = {
 #define S_MT_Y 7
 #define S_MT_Z 8
 
-// columns
+/* columns */
 #define S_MIR_X 0
 #define S_MIR_Y 3
 #define S_MIR_Z 6
