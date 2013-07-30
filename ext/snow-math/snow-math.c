@@ -6813,10 +6813,6 @@ void Init_bindings()
   kRB_IVAR_MATHARRAY_LENGTH = rb_intern("__length");
   kRB_IVAR_MATHARRAY_CACHE  = rb_intern("__cache");
   kRB_IVAR_MATHARRAY_SOURCE = rb_intern("__source");
-  kRB_CONST_SIZE            = rb_intern("SIZE");
-  kRB_CONST_LENGTH          = rb_intern("LENGTH");
-  kRB_CONST_FLOAT_SIZE      = rb_intern("SNOW_MATH_FLOAT_SIZE");
-  kRB_CONST_TYPE            = rb_intern("TYPE");
   kRB_SIZE_METHOD           = rb_intern("size");
   kRB_BYTESIZE_METHOD       = rb_intern("bytesize");
 
@@ -6833,19 +6829,22 @@ void Init_bindings()
   s_sm_mat3_klass   = rb_define_class_under(s_sm_snowmath_mod, "Mat3", rb_cData);
   s_sm_mat4_klass   = rb_define_class_under(s_sm_snowmath_mod, "Mat4", rb_cData);
 
-  rb_const_set(s_sm_snowmath_mod, kRB_CONST_FLOAT_SIZE, INT2FIX(sizeof(s_float_t)));
-  rb_const_set(s_sm_vec2_klass, kRB_CONST_SIZE, INT2FIX(sizeof(vec2_t)));
-  rb_const_set(s_sm_vec3_klass, kRB_CONST_SIZE, INT2FIX(sizeof(vec3_t)));
-  rb_const_set(s_sm_vec4_klass, kRB_CONST_SIZE, INT2FIX(sizeof(vec4_t)));
-  rb_const_set(s_sm_quat_klass, kRB_CONST_SIZE, INT2FIX(sizeof(quat_t)));
-  rb_const_set(s_sm_mat3_klass, kRB_CONST_SIZE, INT2FIX(sizeof(mat3_t)));
-  rb_const_set(s_sm_mat4_klass, kRB_CONST_SIZE, INT2FIX(sizeof(mat4_t)));
-  rb_const_set(s_sm_vec2_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(vec2_t) / sizeof(s_float_t)));
-  rb_const_set(s_sm_vec3_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(vec3_t) / sizeof(s_float_t)));
-  rb_const_set(s_sm_vec4_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(vec4_t) / sizeof(s_float_t)));
-  rb_const_set(s_sm_quat_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(quat_t) / sizeof(s_float_t)));
-  rb_const_set(s_sm_mat3_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(mat3_t) / sizeof(s_float_t)));
-  rb_const_set(s_sm_mat4_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(mat4_t) / sizeof(s_float_t)));
+  rb_define_const(s_sm_snowmath_mod, "SNOW_MATH_FLOAT_SIZE", INT2FIX(sizeof(s_float_t)));
+  rb_define_const(s_sm_snowmath_mod, "SNOW_MATH_DEFAULT_FLOAT_EPSILON", DBL2NUM(S_FLOAT_EPSILON));
+  rb_define_const(s_sm_snowmath_mod, "DEGREES_TO_RADIANS", DBL2NUM(S_DEG2RAD));
+  rb_define_const(s_sm_snowmath_mod, "RADIANS_TO_DEGREES", DBL2NUM(S_RAD2DEG));
+  rb_define_const(s_sm_vec2_klass, "SIZE",    INT2FIX(sizeof(vec2_t)));
+  rb_define_const(s_sm_vec3_klass, "SIZE",    INT2FIX(sizeof(vec3_t)));
+  rb_define_const(s_sm_vec4_klass, "SIZE",    INT2FIX(sizeof(vec4_t)));
+  rb_define_const(s_sm_quat_klass, "SIZE",    INT2FIX(sizeof(quat_t)));
+  rb_define_const(s_sm_mat3_klass, "SIZE",    INT2FIX(sizeof(mat3_t)));
+  rb_define_const(s_sm_mat4_klass, "SIZE",    INT2FIX(sizeof(mat4_t)));
+  rb_define_const(s_sm_vec2_klass, "LENGTH",  INT2FIX(sizeof(vec2_t) / sizeof(s_float_t)));
+  rb_define_const(s_sm_vec3_klass, "LENGTH",  INT2FIX(sizeof(vec3_t) / sizeof(s_float_t)));
+  rb_define_const(s_sm_vec4_klass, "LENGTH",  INT2FIX(sizeof(vec4_t) / sizeof(s_float_t)));
+  rb_define_const(s_sm_quat_klass, "LENGTH",  INT2FIX(sizeof(quat_t) / sizeof(s_float_t)));
+  rb_define_const(s_sm_mat3_klass, "LENGTH",  INT2FIX(sizeof(mat3_t) / sizeof(s_float_t)));
+  rb_define_const(s_sm_mat4_klass, "LENGTH",  INT2FIX(sizeof(mat4_t) / sizeof(s_float_t)));
 
   rb_define_singleton_method(s_sm_snowmath_mod, "float_epsilon=", sm_set_float_epsilon, 1);
   rb_define_singleton_method(s_sm_snowmath_mod, "float_epsilon", sm_get_float_epsilon, 0);
@@ -7033,7 +7032,7 @@ void Init_bindings()
   #if BUILD_ARRAY_TYPE
 
   s_sm_vec2_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Vec2Array", rb_cData);
-  rb_const_set(s_sm_vec2_array_klass, kRB_CONST_TYPE, s_sm_vec2_klass);
+  rb_define_const(s_sm_vec2_array_klass, "TYPE", s_sm_vec2_klass);
   rb_define_singleton_method(s_sm_vec2_array_klass, "new", sm_vec2_array_new, 1);
   rb_define_method(s_sm_vec2_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_vec2_array_klass, "fetch", sm_vec2_array_fetch, 1);
@@ -7045,7 +7044,7 @@ void Init_bindings()
   rb_alias(s_sm_vec2_array_klass, kRB_BYTESIZE_METHOD, kRB_SIZE_METHOD);
 
   s_sm_vec3_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Vec3Array", rb_cData);
-  rb_const_set(s_sm_vec3_array_klass, kRB_CONST_TYPE, s_sm_vec3_klass);
+  rb_define_const(s_sm_vec3_array_klass, "TYPE", s_sm_vec3_klass);
   rb_define_singleton_method(s_sm_vec3_array_klass, "new", sm_vec3_array_new, 1);
   rb_define_method(s_sm_vec3_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_vec3_array_klass, "fetch", sm_vec3_array_fetch, 1);
@@ -7057,7 +7056,7 @@ void Init_bindings()
   rb_alias(s_sm_vec3_array_klass, kRB_BYTESIZE_METHOD, kRB_SIZE_METHOD);
 
   s_sm_vec4_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Vec4Array", rb_cData);
-  rb_const_set(s_sm_vec4_array_klass, kRB_CONST_TYPE, s_sm_vec4_klass);
+  rb_define_const(s_sm_vec4_array_klass, "TYPE", s_sm_vec4_klass);
   rb_define_singleton_method(s_sm_vec4_array_klass, "new", sm_vec4_array_new, 1);
   rb_define_method(s_sm_vec4_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_vec4_array_klass, "fetch", sm_vec4_array_fetch, 1);
@@ -7069,7 +7068,7 @@ void Init_bindings()
   rb_alias(s_sm_vec4_array_klass, kRB_BYTESIZE_METHOD, kRB_SIZE_METHOD);
 
   s_sm_quat_array_klass = rb_define_class_under(s_sm_snowmath_mod, "QuatArray", rb_cData);
-  rb_const_set(s_sm_quat_array_klass, kRB_CONST_TYPE, s_sm_quat_klass);
+  rb_define_const(s_sm_quat_array_klass, "TYPE", s_sm_quat_klass);
   rb_define_singleton_method(s_sm_quat_array_klass, "new", sm_quat_array_new, 1);
   rb_define_method(s_sm_quat_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_quat_array_klass, "fetch", sm_quat_array_fetch, 1);
@@ -7081,7 +7080,7 @@ void Init_bindings()
   rb_alias(s_sm_quat_array_klass, kRB_BYTESIZE_METHOD, kRB_SIZE_METHOD);
 
   s_sm_mat3_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Mat3Array", rb_cData);
-  rb_const_set(s_sm_mat3_array_klass, kRB_CONST_TYPE, s_sm_mat3_klass);
+  rb_define_const(s_sm_mat3_array_klass, "TYPE", s_sm_mat3_klass);
   rb_define_singleton_method(s_sm_mat3_array_klass, "new", sm_mat3_array_new, 1);
   rb_define_method(s_sm_mat3_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_mat3_array_klass, "fetch", sm_mat3_array_fetch, 1);
@@ -7093,7 +7092,7 @@ void Init_bindings()
   rb_alias(s_sm_mat3_array_klass, kRB_BYTESIZE_METHOD, kRB_SIZE_METHOD);
 
   s_sm_mat4_array_klass = rb_define_class_under(s_sm_snowmath_mod, "Mat4Array", rb_cData);
-  rb_const_set(s_sm_mat4_array_klass, kRB_CONST_TYPE, s_sm_mat4_klass);
+  rb_define_const(s_sm_mat4_array_klass, "TYPE", s_sm_mat4_klass);
   rb_define_singleton_method(s_sm_mat4_array_klass, "new", sm_mat4_array_new, 1);
   rb_define_method(s_sm_mat4_array_klass, "freeze", sm_mathtype_array_freeze, 0);
   rb_define_method(s_sm_mat4_array_klass, "fetch", sm_mat4_array_fetch, 1);
