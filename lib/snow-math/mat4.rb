@@ -163,6 +163,34 @@ class Snow::Mat4
   end
 
   #
+  # Returns the pitch (X-axis rotation) of this matrix in degrees. This assumes
+  # the matrix is orthogonal.
+  #
+  def pitch
+    tx = self[8]
+    tz = self[10]
+    Math::atan2(
+      self[9],
+      Math::sqrt(tx * tx + tz * tz)) * ::Snow::RADIANS_TO_DEGREES
+  end
+
+  #
+  # Returns the yaw (Y-axis rotation) of this matrix in degrees. This assumes
+  # the matrix is orthogonal.
+  #
+  def yaw
+    -Math::atan2(self[8], self[10]) * ::Snow::RADIANS_TO_DEGREES
+  end
+
+  #
+  # Returns the roll (Z-axis rotation) of this matrix in degrees. This assumes
+  # the matrix is orthogonal.
+  #
+  def roll
+    Math::atan2(self[1], self[5]) * ::Snow::RADIANS_TO_DEGREES
+  end
+
+  #
   # call-seq:
   #   orthogonal? -> true or false
   #
