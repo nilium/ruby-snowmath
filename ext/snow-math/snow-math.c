@@ -6745,6 +6745,65 @@ static VALUE sm_get_address(VALUE sm_self)
 
 
 
+/*
+  call-seq:
+    float_epsilon -> Float
+
+  Gets the float epsilon for snow-math types. By default, this is 1e-9 for
+  double-precision floats and 1e-6 for single-precision floats.
+ */
+static VALUE sm_get_float_epsilon(VALUE sm_self)
+{
+  return DBL2NUM(S_FLOAT_EPSILON);
+}
+
+
+
+/*
+  call-seq:
+    float_epsilon = value -> value
+
+  Sets the float epsilon for snow-math types. If snow-math is compiled to use
+  single-precision floats, changing the epsilon for floats may cause the
+  assigned value to lose precision itself in the cast, resulting in a subtly
+  different epsilon than intended, as Ruby uses double-precision floats, which
+  may lead you to think you're setting the epsilon to one value when it's
+  another similar by not equal value.
+
+  Just be aware of what you're doing and the type of float you've compiled
+  snow-math to use.
+ */
+static VALUE sm_set_float_epsilon(VALUE sm_self, VALUE sm_value)
+{
+  switch (TYPE(sm_value)) {
+  case T_FLOAT:
+  case T_FIXNUM:
+  case T_BIGNUM:
+  case T_RATIONAL:
+  case T_COMPLEX: {
+    S_FLOAT_EPSILON = (s_float_t)NUM2DBL(sm_value);
+    break;
+  }
+  default: {
+    VALUE sm_value_s = rb_any_to_s(sm_value);
+    if (0) {
+      case T_STRING:
+      sm_value_s = sm_value;
+    }
+    S_FLOAT_EPSILON =
+      #ifdef USE_FLOAT
+      strtof(StringValueCStr(sm_value_s), NULL)
+      #else
+      strtod(StringValueCStr(sm_value_s), NULL)
+      #endif
+      ;
+  break;
+  }
+  } /* switch (TYPE(sm_value)) */
+  return sm_value;
+}
+
+
 void Init_bindings()
 {
   ID kRB_CONST_SIZE, kRB_CONST_LENGTH, kRB_CONST_FLOAT_SIZE, kRB_CONST_TYPE,
@@ -6787,6 +6846,9 @@ void Init_bindings()
   rb_const_set(s_sm_quat_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(quat_t) / sizeof(s_float_t)));
   rb_const_set(s_sm_mat3_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(mat3_t) / sizeof(s_float_t)));
   rb_const_set(s_sm_mat4_klass, kRB_CONST_LENGTH, INT2FIX(sizeof(mat4_t) / sizeof(s_float_t)));
+
+  rb_define_singleton_method(s_sm_snowmath_mod, "float_epsilon=", sm_set_float_epsilon, 1);
+  rb_define_singleton_method(s_sm_snowmath_mod, "float_epsilon", sm_get_float_epsilon, 0);
 
   rb_define_singleton_method(s_sm_vec2_klass, "new", sm_vec2_new, -1);
   rb_define_method(s_sm_vec2_klass, "initialize", sm_vec2_init, -1);
