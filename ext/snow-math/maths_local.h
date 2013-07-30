@@ -69,7 +69,7 @@ typedef s_float_t quat_t[4];
  *
  * It should be stressed that this is absolutely not an accurate epsilon.
  */
-#define S_FLOAT_EPSILON s_float_lit(1.0e-9)
+extern s_float_t S_FLOAT_EPSILON;
 
 #define S_DEG2RAD s_float_lit(0.01745329)
 #define S_RAD2DEG s_float_lit(57.2957795)
