@@ -1421,7 +1421,7 @@ static VALUE sm_vec2_fetch (VALUE sm_self, VALUE sm_index)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  return rb_float_new(self[0][NUM2INT(sm_index)]);
+  return DBL2NUM(self[0][NUM2INT(sm_index)]);
 }
 
 
@@ -1441,7 +1441,7 @@ static VALUE sm_vec2_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  self[0][index] = (s_float_t)rb_num2dbl(sm_value);
+  self[0][index] = (s_float_t)NUM2DBL(sm_value);
   return sm_value;
 }
 
@@ -1903,7 +1903,7 @@ static VALUE sm_vec2_dot_product(VALUE sm_self, VALUE sm_other)
       rb_obj_classname(sm_other));
     return Qnil;
   }
-  return rb_float_new(
+  return DBL2NUM(
     vec2_dot_product(
       *sm_unwrap_vec2(sm_self, NULL),
       *sm_unwrap_vec2(sm_other, NULL)));
@@ -1969,8 +1969,8 @@ static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
     if (0) {
       case 2:
       if (!SM_RB_IS_A(argv[0], rb_cArray)) {
-        self[0][0] = (s_float_t)rb_num2dbl(argv[0]);
-        self[0][1] = (s_float_t)rb_num2dbl(argv[1]);
+        self[0][0] = (s_float_t)NUM2DBL(argv[0]);
+        self[0][1] = (s_float_t)NUM2DBL(argv[1]);
         break;
       }
       arr_index = NUM2SIZET(argv[1]);
@@ -1981,7 +1981,7 @@ static VALUE sm_vec2_init(int argc, VALUE *argv, VALUE sm_self)
     const size_t arr_end = arr_index + 2;
     s_float_t *vec_elem = *self;
     for (; arr_index < arr_end; ++arr_index, ++vec_elem) {
-      *vec_elem = (s_float_t)rb_num2dbl(rb_ary_entry(arrdata, (long)arr_index));
+      *vec_elem = (s_float_t)NUM2DBL(rb_ary_entry(arrdata, (long)arr_index));
     }
     break;
   }
@@ -2026,7 +2026,7 @@ static VALUE sm_vec2_to_s(VALUE self)
  */
 static VALUE sm_vec2_magnitude_squared(VALUE sm_self)
 {
-  return rb_float_new(vec2_length_squared(*sm_unwrap_vec2(sm_self, NULL)));
+  return DBL2NUM(vec2_length_squared(*sm_unwrap_vec2(sm_self, NULL)));
 }
 
 
@@ -2039,7 +2039,7 @@ static VALUE sm_vec2_magnitude_squared(VALUE sm_self)
  */
 static VALUE sm_vec2_magnitude(VALUE sm_self)
 {
-  return rb_float_new(vec2_length(*sm_unwrap_vec2(sm_self, NULL)));
+  return DBL2NUM(vec2_length(*sm_unwrap_vec2(sm_self, NULL)));
 }
 
 
@@ -2058,7 +2058,7 @@ static VALUE sm_vec2_scale(int argc, VALUE *argv, VALUE sm_self)
   vec2_t *self = sm_unwrap_vec2(sm_self, NULL);
 
   rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
-  scalar = rb_num2dbl(sm_scalar);
+  scalar = NUM2DBL(sm_scalar);
 
   if (SM_IS_A(sm_out, vec2) || SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
     rb_check_frozen(sm_out);
@@ -2089,7 +2089,7 @@ static VALUE sm_vec2_divide(int argc, VALUE *argv, VALUE sm_self)
   vec2_t *self = sm_unwrap_vec2(sm_self, NULL);
 
   rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
-  scalar = rb_num2dbl(sm_scalar);
+  scalar = NUM2DBL(sm_scalar);
 
   if (SM_IS_A(sm_out, vec2) || SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
     rb_check_frozen(sm_out);
@@ -2174,7 +2174,7 @@ static VALUE sm_vec3_fetch (VALUE sm_self, VALUE sm_index)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  return rb_float_new(self[0][NUM2INT(sm_index)]);
+  return DBL2NUM(self[0][NUM2INT(sm_index)]);
 }
 
 
@@ -2194,7 +2194,7 @@ static VALUE sm_vec3_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  self[0][index] = (s_float_t)rb_num2dbl(sm_value);
+  self[0][index] = (s_float_t)NUM2DBL(sm_value);
   return sm_value;
 }
 
@@ -2703,7 +2703,7 @@ static VALUE sm_vec3_dot_product(VALUE sm_self, VALUE sm_other)
       rb_obj_classname(sm_other));
     return Qnil;
   }
-  return rb_float_new(
+  return DBL2NUM(
     vec3_dot_product(
       *sm_unwrap_vec3(sm_self, NULL),
       *sm_unwrap_vec3(sm_other, NULL)));
@@ -2781,7 +2781,7 @@ static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
       const size_t arr_end = arr_index + 3;
       s_float_t *vec_elem = *self;
       for (; arr_index < arr_end; ++arr_index, ++vec_elem) {
-        *vec_elem = (s_float_t)rb_num2dbl(rb_ary_entry(arrdata, (long)arr_index));
+        *vec_elem = (s_float_t)NUM2DBL(rb_ary_entry(arrdata, (long)arr_index));
       }
       break;
     }
@@ -2792,9 +2792,9 @@ static VALUE sm_vec3_init(int argc, VALUE *argv, VALUE sm_self)
 
   /* X, Y, Z */
   case 3: {
-    self[0][0] = (s_float_t)rb_num2dbl(argv[0]);
-    self[0][1] = (s_float_t)rb_num2dbl(argv[1]);
-    self[0][2] = (s_float_t)rb_num2dbl(argv[2]);
+    self[0][0] = (s_float_t)NUM2DBL(argv[0]);
+    self[0][1] = (s_float_t)NUM2DBL(argv[1]);
+    self[0][2] = (s_float_t)NUM2DBL(argv[2]);
     break;
   }
 
@@ -2838,7 +2838,7 @@ static VALUE sm_vec3_to_s(VALUE self)
  */
 static VALUE sm_vec3_magnitude_squared(VALUE sm_self)
 {
-  return rb_float_new(vec3_length_squared(*sm_unwrap_vec3(sm_self, NULL)));
+  return DBL2NUM(vec3_length_squared(*sm_unwrap_vec3(sm_self, NULL)));
 }
 
 
@@ -2851,7 +2851,7 @@ static VALUE sm_vec3_magnitude_squared(VALUE sm_self)
  */
 static VALUE sm_vec3_magnitude(VALUE sm_self)
 {
-  return rb_float_new(vec3_length(*sm_unwrap_vec3(sm_self, NULL)));
+  return DBL2NUM(vec3_length(*sm_unwrap_vec3(sm_self, NULL)));
 }
 
 
@@ -2870,7 +2870,7 @@ static VALUE sm_vec3_scale(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *self = sm_unwrap_vec3(sm_self, NULL);
 
   rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
-  scalar = rb_num2dbl(sm_scalar);
+  scalar = NUM2DBL(sm_scalar);
 
   if (SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
     rb_check_frozen(sm_out);
@@ -2901,7 +2901,7 @@ static VALUE sm_vec3_divide(int argc, VALUE *argv, VALUE sm_self)
   vec3_t *self = sm_unwrap_vec3(sm_self, NULL);
 
   rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
-  scalar = rb_num2dbl(sm_scalar);
+  scalar = NUM2DBL(sm_scalar);
 
   if (SM_IS_A(sm_out, vec3) || SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat)) {
     rb_check_frozen(sm_out);
@@ -2985,7 +2985,7 @@ static VALUE sm_vec4_fetch (VALUE sm_self, VALUE sm_index)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  return rb_float_new(self[0][NUM2INT(sm_index)]);
+  return DBL2NUM(self[0][NUM2INT(sm_index)]);
 }
 
 
@@ -3005,7 +3005,7 @@ static VALUE sm_vec4_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  self[0][index] = (s_float_t)rb_num2dbl(sm_value);
+  self[0][index] = (s_float_t)NUM2DBL(sm_value);
   return sm_value;
 }
 
@@ -3463,7 +3463,7 @@ static VALUE sm_vec4_dot_product(VALUE sm_self, VALUE sm_other)
       rb_obj_classname(sm_other));
     return Qnil;
   }
-  return rb_float_new(
+  return DBL2NUM(
     vec4_dot_product(
       *sm_unwrap_vec4(sm_self, NULL),
       *sm_unwrap_vec4(sm_other, NULL)));
@@ -3547,7 +3547,7 @@ static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
       const size_t arr_end = arr_index + 4;
       s_float_t *vec_elem = *self;
       for (; arr_index < arr_end; ++arr_index, ++vec_elem) {
-        *vec_elem = (s_float_t)rb_num2dbl(rb_ary_entry(arrdata, (long)arr_index));
+        *vec_elem = (s_float_t)NUM2DBL(rb_ary_entry(arrdata, (long)arr_index));
       }
       break;
     }
@@ -3558,11 +3558,11 @@ static VALUE sm_vec4_init(int argc, VALUE *argv, VALUE sm_self)
 
   /* W */
   case 4: {
-    self[0][3] = (s_float_t)rb_num2dbl(argv[3]);
+    self[0][3] = (s_float_t)NUM2DBL(argv[3]);
     case 3: /* X, Y, Z */
-    self[0][0] = (s_float_t)rb_num2dbl(argv[0]);
-    self[0][1] = (s_float_t)rb_num2dbl(argv[1]);
-    self[0][2] = (s_float_t)rb_num2dbl(argv[2]);
+    self[0][0] = (s_float_t)NUM2DBL(argv[0]);
+    self[0][1] = (s_float_t)NUM2DBL(argv[1]);
+    self[0][2] = (s_float_t)NUM2DBL(argv[2]);
     break;
   }
 
@@ -3606,7 +3606,7 @@ static VALUE sm_vec4_to_s(VALUE self)
  */
 static VALUE sm_vec4_magnitude_squared(VALUE sm_self)
 {
-  return rb_float_new(vec4_length_squared(*sm_unwrap_vec4(sm_self, NULL)));
+  return DBL2NUM(vec4_length_squared(*sm_unwrap_vec4(sm_self, NULL)));
 }
 
 
@@ -3619,7 +3619,7 @@ static VALUE sm_vec4_magnitude_squared(VALUE sm_self)
  */
 static VALUE sm_vec4_magnitude(VALUE sm_self)
 {
-  return rb_float_new(vec4_length(*sm_unwrap_vec4(sm_self, NULL)));
+  return DBL2NUM(vec4_length(*sm_unwrap_vec4(sm_self, NULL)));
 }
 
 
@@ -3639,7 +3639,7 @@ static VALUE sm_vec4_scale(int argc, VALUE *argv, VALUE sm_self)
   vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
 
   rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
-  scalar = rb_num2dbl(sm_scalar);
+  scalar = NUM2DBL(sm_scalar);
 
   if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
     rb_check_frozen(sm_out);
@@ -3671,7 +3671,7 @@ static VALUE sm_vec4_divide(int argc, VALUE *argv, VALUE sm_self)
   vec4_t *self = sm_unwrap_vec4(sm_self, NULL);
 
   rb_scan_args(argc, argv, "11", &sm_scalar, &sm_out);
-  scalar = rb_num2dbl(sm_scalar);
+  scalar = NUM2DBL(sm_scalar);
 
   if ((SM_IS_A(sm_out, vec4) || SM_IS_A(sm_out, quat))) {
     rb_check_frozen(sm_out);
@@ -3754,7 +3754,7 @@ static VALUE sm_quat_fetch (VALUE sm_self, VALUE sm_index)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  return rb_float_new(self[0][NUM2INT(sm_index)]);
+  return DBL2NUM(self[0][NUM2INT(sm_index)]);
 }
 
 
@@ -3774,7 +3774,7 @@ static VALUE sm_quat_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  self[0][index] = (s_float_t)rb_num2dbl(sm_value);
+  self[0][index] = (s_float_t)NUM2DBL(sm_value);
   return sm_value;
 }
 
@@ -4037,7 +4037,7 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
       const size_t arr_end = arr_index + 3;
       s_float_t *vec_elem = *self;
       for (; arr_index < arr_end; ++arr_index, ++vec_elem) {
-        *vec_elem = (s_float_t)rb_num2dbl(rb_ary_entry(arrdata, (long)arr_index));
+        *vec_elem = (s_float_t)NUM2DBL(rb_ary_entry(arrdata, (long)arr_index));
       }
       break;
     }
@@ -4048,11 +4048,11 @@ static VALUE sm_quat_init(int argc, VALUE *argv, VALUE sm_self)
 
   /* W */
   case 4: {
-    self[0][3] = (s_float_t)rb_num2dbl(argv[3]);
+    self[0][3] = (s_float_t)NUM2DBL(argv[3]);
     case 3: /* X, Y, Z */
-    self[0][0] = (s_float_t)rb_num2dbl(argv[0]);
-    self[0][1] = (s_float_t)rb_num2dbl(argv[1]);
-    self[0][2] = (s_float_t)rb_num2dbl(argv[2]);
+    self[0][0] = (s_float_t)NUM2DBL(argv[0]);
+    self[0][1] = (s_float_t)NUM2DBL(argv[1]);
+    self[0][2] = (s_float_t)NUM2DBL(argv[2]);
     break;
   }
 
@@ -4110,7 +4110,7 @@ static VALUE sm_quat_angle_axis(int argc, VALUE *argv, VALUE self)
     return Qnil;
   }
 
-  angle = (s_float_t)rb_num2dbl(sm_angle);
+  angle = (s_float_t)NUM2DBL(sm_angle);
   axis = sm_unwrap_vec3(sm_axis, NULL);
 
   if (SM_IS_A(sm_out, quat) || SM_IS_A(sm_out, vec4)) {
@@ -4162,7 +4162,7 @@ static VALUE sm_quat_slerp(int argc, VALUE *argv, VALUE sm_self)
   s_float_t alpha;
 
   rb_scan_args(argc, argv, "21", &sm_destination, &sm_alpha, &sm_out);
-  alpha = rb_num2dbl(sm_alpha);
+  alpha = NUM2DBL(sm_alpha);
 
   if (!SM_IS_A(sm_destination, vec4) && !SM_IS_A(sm_destination, quat)) {
     rb_raise(rb_eTypeError,
@@ -4234,7 +4234,7 @@ static VALUE sm_mat4_fetch (VALUE sm_self, VALUE sm_index)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  return rb_float_new(self[0][NUM2INT(sm_index)]);
+  return DBL2NUM(self[0][NUM2INT(sm_index)]);
 }
 
 
@@ -4254,7 +4254,7 @@ static VALUE sm_mat4_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  self[0][index] = (s_float_t)rb_num2dbl(sm_value);
+  self[0][index] = (s_float_t)NUM2DBL(sm_value);
   return sm_value;
 }
 
@@ -4850,9 +4850,9 @@ static VALUE sm_mat4_translate(int argc, VALUE *argv, VALUE sm_self)
   }
 
   case 3: {
-    xyz[0] = rb_num2dbl(argv[0]);
-    xyz[1] = rb_num2dbl(argv[1]);
-    xyz[2] = rb_num2dbl(argv[2]);
+    xyz[0] = NUM2DBL(argv[0]);
+    xyz[1] = NUM2DBL(argv[1]);
+    xyz[2] = NUM2DBL(argv[2]);
 
     SM_LABEL(get_output):
     if (RTEST(sm_out)) {
@@ -4902,9 +4902,9 @@ static VALUE sm_mat4_translation(int argc, VALUE *argv, VALUE sm_self)
   }
 
   case 3: {
-    xyz[0] = rb_num2dbl(argv[0]);
-    xyz[1] = rb_num2dbl(argv[1]);
-    xyz[2] = rb_num2dbl(argv[2]);
+    xyz[0] = NUM2DBL(argv[0]);
+    xyz[1] = NUM2DBL(argv[1]);
+    xyz[2] = NUM2DBL(argv[2]);
 
     SM_LABEL(get_output):
     if (RTEST(sm_out)) {
@@ -5003,7 +5003,7 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
       const size_t arr_end = arr_index + 16;
       s_float_t *mat_elem = *self;
       for (; arr_index < arr_end; ++arr_index, ++mat_elem) {
-        *mat_elem = rb_num2dbl(rb_ary_entry(arrdata, (long)arr_index));
+        *mat_elem = NUM2DBL(rb_ary_entry(arrdata, (long)arr_index));
       }
       break;
     }
@@ -5034,7 +5034,7 @@ static VALUE sm_mat4_init(int argc, VALUE *argv, VALUE sm_self)
     s_float_t *mat_elem = *self;
     VALUE *argv_p = argv;
     for (; argc; --argc, ++argv_p, ++mat_elem) {
-      *mat_elem = (s_float_t)rb_num2dbl(*argv_p);
+      *mat_elem = (s_float_t)NUM2DBL(*argv_p);
     }
     break;
   }
@@ -5102,7 +5102,7 @@ static VALUE sm_mat4_angle_axis(int argc, VALUE *argv, VALUE self)
     return Qnil;
   }
 
-  angle = (s_float_t)rb_num2dbl(sm_angle);
+  angle = (s_float_t)NUM2DBL(sm_angle);
   axis = sm_unwrap_vec3(sm_axis, NULL);
 
   if (SM_IS_A(sm_out, mat4)) {
@@ -5556,12 +5556,12 @@ static VALUE sm_mat4_frustum(int argc, VALUE *argv, VALUE self)
 
   rb_scan_args(argc, argv, "61", &sm_left, &sm_right, &sm_bottom, &sm_top, &sm_z_near, &sm_z_far, &sm_out);
 
-  left = (s_float_t)rb_num2dbl(sm_left);
-  right = (s_float_t)rb_num2dbl(sm_right);
-  bottom = (s_float_t)rb_num2dbl(sm_bottom);
-  top = (s_float_t)rb_num2dbl(sm_top);
-  z_near = (s_float_t)rb_num2dbl(sm_z_near);
-  z_far = (s_float_t)rb_num2dbl(sm_z_far);
+  left = (s_float_t)NUM2DBL(sm_left);
+  right = (s_float_t)NUM2DBL(sm_right);
+  bottom = (s_float_t)NUM2DBL(sm_bottom);
+  top = (s_float_t)NUM2DBL(sm_top);
+  z_near = (s_float_t)NUM2DBL(sm_z_near);
+  z_far = (s_float_t)NUM2DBL(sm_z_far);
 
   if (SM_IS_A(sm_out, mat4)) {
     rb_check_frozen(sm_out);
@@ -5603,12 +5603,12 @@ static VALUE sm_mat4_orthographic(int argc, VALUE *argv, VALUE self)
 
   rb_scan_args(argc, argv, "61", &sm_left, &sm_right, &sm_bottom, &sm_top, &sm_z_near, &sm_z_far, &sm_out);
 
-  left = (s_float_t)rb_num2dbl(sm_left);
-  right = (s_float_t)rb_num2dbl(sm_right);
-  bottom = (s_float_t)rb_num2dbl(sm_bottom);
-  top = (s_float_t)rb_num2dbl(sm_top);
-  z_near = (s_float_t)rb_num2dbl(sm_z_near);
-  z_far = (s_float_t)rb_num2dbl(sm_z_far);
+  left = (s_float_t)NUM2DBL(sm_left);
+  right = (s_float_t)NUM2DBL(sm_right);
+  bottom = (s_float_t)NUM2DBL(sm_bottom);
+  top = (s_float_t)NUM2DBL(sm_top);
+  z_near = (s_float_t)NUM2DBL(sm_z_near);
+  z_far = (s_float_t)NUM2DBL(sm_z_far);
 
   if (SM_IS_A(sm_out, mat4)) {
     rb_check_frozen(sm_out);
@@ -5646,10 +5646,10 @@ static VALUE sm_mat4_perspective(int argc, VALUE *argv, VALUE self)
 
   rb_scan_args(argc, argv, "41", &sm_fov_y, &sm_aspect, &sm_z_near, &sm_z_far, &sm_out);
 
-  fov_y = (s_float_t)rb_num2dbl(sm_fov_y);
-  aspect = (s_float_t)rb_num2dbl(sm_aspect);
-  z_near = (s_float_t)rb_num2dbl(sm_z_near);
-  z_far = (s_float_t)rb_num2dbl(sm_z_far);
+  fov_y = (s_float_t)NUM2DBL(sm_fov_y);
+  aspect = (s_float_t)NUM2DBL(sm_aspect);
+  z_near = (s_float_t)NUM2DBL(sm_z_near);
+  z_far = (s_float_t)NUM2DBL(sm_z_far);
 
   if (SM_IS_A(sm_out, mat4)) {
     rb_check_frozen(sm_out);
@@ -5720,9 +5720,9 @@ static VALUE sm_mat4_scale(int argc, VALUE *argv, VALUE sm_self)
   mat4_t *self = sm_unwrap_mat4(sm_self, NULL);
 
   rb_scan_args(argc, argv, "31", &sm_x, &sm_y, &sm_z, &sm_out);
-  x = rb_num2dbl(sm_x);
-  y = rb_num2dbl(sm_y);
-  z = rb_num2dbl(sm_z);
+  x = NUM2DBL(sm_x);
+  y = NUM2DBL(sm_y);
+  z = NUM2DBL(sm_z);
 
   if (SM_IS_A(sm_out, mat4)) {
     rb_check_frozen(sm_out);
@@ -5802,7 +5802,7 @@ static VALUE sm_mat3_fetch (VALUE sm_self, VALUE sm_index)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  return rb_float_new(self[0][NUM2INT(sm_index)]);
+  return DBL2NUM(self[0][NUM2INT(sm_index)]);
 }
 
 
@@ -5822,7 +5822,7 @@ static VALUE sm_mat3_store (VALUE sm_self, VALUE sm_index, VALUE sm_value)
     rb_raise(rb_eRangeError,
       "Index %d is out of bounds, must be from 0 through %d", index, max_index - 1);
   }
-  self[0][index] = (s_float_t)rb_num2dbl(sm_value);
+  self[0][index] = (s_float_t)NUM2DBL(sm_value);
   return sm_value;
 }
 
@@ -6347,7 +6347,7 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
       const size_t arr_end = arr_index + 9;
       s_float_t *mat_elem = *self;
       for (; arr_index < arr_end; ++arr_index, ++mat_elem) {
-        *mat_elem = rb_num2dbl(rb_ary_entry(arrdata, (long)arr_index));
+        *mat_elem = NUM2DBL(rb_ary_entry(arrdata, (long)arr_index));
       }
       break;
     }
@@ -6378,7 +6378,7 @@ static VALUE sm_mat3_init(int argc, VALUE *argv, VALUE sm_self)
     s_float_t *mat_elem = *self;
     VALUE *argv_p = argv;
     for (; argc; --argc, ++argv_p, ++mat_elem) {
-      *mat_elem = (s_float_t)rb_num2dbl(*argv_p);
+      *mat_elem = (s_float_t)NUM2DBL(*argv_p);
     }
     break;
   }
@@ -6443,7 +6443,7 @@ static VALUE sm_mat3_angle_axis(int argc, VALUE *argv, VALUE self)
     return Qnil;
   }
 
-  angle = (s_float_t)rb_num2dbl(sm_angle);
+  angle = (s_float_t)NUM2DBL(sm_angle);
   axis = sm_unwrap_vec3(sm_axis, NULL);
 
   if (SM_IS_A(sm_out, mat3)) {
@@ -6689,9 +6689,9 @@ static VALUE sm_mat3_scale(int argc, VALUE *argv, VALUE sm_self)
   mat3_t *self = sm_unwrap_mat3(sm_self, NULL);
 
   rb_scan_args(argc, argv, "31", &sm_x, &sm_y, &sm_z, &sm_out);
-  x = rb_num2dbl(sm_x);
-  y = rb_num2dbl(sm_y);
-  z = rb_num2dbl(sm_z);
+  x = NUM2DBL(sm_x);
+  y = NUM2DBL(sm_y);
+  z = NUM2DBL(sm_z);
 
   if (SM_IS_A(sm_out, mat3)) {
     rb_check_frozen(sm_out);
