@@ -136,6 +136,19 @@ class Snow::Mat3
     scale x, y, z, self
   end
 
+  #
+  # call-seq:
+  #   orthogonal? -> true or false
+  #
+  # Returns whether self is an orthogonal matrix (its columns and rows are all
+  # unit vectors). Note that this allocates a new matrix. You probably don't
+  # want to call it often.
+  #
+  def orthogonal?
+    temp = self.transpose
+    multiply_mat3(temp, temp) == IDENTITY
+  end
+
 
   alias_method :*, :multiply
   alias_method :**, :scale
