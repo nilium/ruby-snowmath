@@ -32,7 +32,6 @@ module Snow
   #
   #     # Bad
   #     Vec3[1, 2, 3].www           # => Invalid, no W component for Vec3
-  #     Vec3[1, 2, 3].xx            # => Invalid, no 2-component vector type
   #     Vec3[1, 2, 3].xxxxx         # => Invalid, no 5-component vector type
   #
   module SwizzleSupport
