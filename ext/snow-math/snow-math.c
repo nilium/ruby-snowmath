@@ -4346,7 +4346,7 @@ static VALUE sm_mat4_to_mat3(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     mat3_t output;
     mat4_to_mat3 (*self, output);
-    sm_out = sm_wrap_mat3(output, s_sm_mat4_klass);
+    sm_out = sm_wrap_mat3(output, s_sm_mat3_klass);
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to to_mat3");
@@ -5914,7 +5914,7 @@ static VALUE sm_mat3_to_mat4(int argc, VALUE *argv, VALUE sm_self)
 SM_LABEL(skip_output): {
     mat4_t output;
     mat3_to_mat4 (*self, output);
-    sm_out = sm_wrap_mat4(output, s_sm_mat3_klass);
+    sm_out = sm_wrap_mat4(output, s_sm_mat4_klass);
     rb_obj_call_init(sm_out, 0, 0);
   }} else {
     rb_raise(rb_eArgError, "Invalid number of arguments to to_mat4");
