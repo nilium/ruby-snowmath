@@ -121,16 +121,21 @@ void mat3_rotation(s_float_t angle, s_float_t x, s_float_t y, s_float_t z, mat3_
   const s_float_t xs = s * x;
   const s_float_t ys = s * y;
   const s_float_t zs = s * z;
+  const s_float_t xx = x * x;
+  const s_float_t yy = y * y;
+  const s_float_t zz = z * z;
 
-  out[0] = ((x * x) * ic) + c;
-  out[1] = xy + zs;
-  out[2] = xz - ys;
-  out[3] = xy - zs;
-  out[4] = ((y * y) * ic) + c;
-  out[5] = yz + xs;
-  out[6] = xz + ys;
-  out[7] = yz - xs;
-  out[8] = ((z * z) * ic) + c;
+  out[0] = xx + c * (s_float_lit(1.0) - xx);
+  out[1] = xy * ic - zs;
+  out[2] = z * x * ic + ys;
+
+  out[3] = xy * ic + zs;
+  out[4] = yy + c * (s_float_lit(1.0) - yy);
+  out[5] = yz * ic - xs;
+
+  out[6] = xz * ic - ys;
+  out[7] = yz * ic + xs;
+  out[8] = zz + c * (s_float_lit(1.0) - zz);
 }
 
 

@@ -206,8 +206,8 @@ void mat4_get_axes4(const mat4_t m, vec4_t x, vec4_t y, vec4_t z, vec4_t w)
 void mat4_rotation(s_float_t angle, s_float_t x, s_float_t y, s_float_t z, mat4_t out)
 {
   const s_float_t angle_rad = angle * S_DEG2RAD;
-  const s_float_t c = s_cos(angle_rad);
-  const s_float_t s = s_sin(angle_rad);
+  const s_float_t c  = s_cos(angle_rad);
+  const s_float_t s  = s_sin(angle_rad);
   const s_float_t ic = s_float_lit(1.0) - c;
   const s_float_t xy = x * y * ic;
   const s_float_t yz = y * z * ic;
@@ -215,16 +215,22 @@ void mat4_rotation(s_float_t angle, s_float_t x, s_float_t y, s_float_t z, mat4_
   const s_float_t xs = s * x;
   const s_float_t ys = s * y;
   const s_float_t zs = s * z;
+  const s_float_t xx = x * x;
+  const s_float_t yy = y * y;
+  const s_float_t zz = z * z;
 
-  out[0] = ((x * x) * ic) + c;
-  out[1] = xy + zs;
-  out[2] = xz - ys;
-  out[4] = xy - zs;
-  out[5] = ((y * y) * ic) + c;
-  out[6] = yz + xs;
-  out[8] = xz + ys;
-  out[9] = yz - xs;
-  out[10] = ((z * z) * ic) + c;
+  out[0] = xx + c * (s_float_lit(1.0) - xx);
+  out[1] = xy * ic - zs;
+  out[2] = z * x * ic + ys;
+
+  out[4] = xy * ic + zs;
+  out[5] = yy + c * (s_float_lit(1.0) - yy);
+  out[6] = yz * ic - xs;
+
+  out[8] = xz * ic - ys;
+  out[9] = yz * ic + xs;
+  out[10] = zz + c * (s_float_lit(1.0) - zz);
+
   out[3] = out[7] = out[11] =
   out[12] = out[13] = out[14] = s_float_lit(0.0);
   out[15] = s_float_lit(1.0);
