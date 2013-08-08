@@ -222,6 +222,28 @@ class Snow::Quat
     slerp(destination, alpha, self)
   end
 
+  def pitch
+    x, y, z, w = self[0], self[1], self[2], self[3]
+    tx = 2.0 * (x * z - w * y)
+    ty = 2.0 * (y * z + w * x)
+    tz = 1.0 - 2.0 * (x * x + y * y)
+    Math::atan2(ty, Math::sqrt(tx * tx - tz * tz)) * Snow::RADIANS_TO_DEGREES
+  end
+
+  def yaw
+    x, y, z, w = self[0], self[1], self[2], self[3]
+    tx = 2.0 * (x * z - w * y)
+    tz = 1.0 - 2.0 * (x * x + y * y)
+    -Math::atan2(tx, tz) * Snow::RADIANS_TO_DEGREES
+  end
+
+  def roll
+    x, y, z, w = self[0], self[1], self[2], self[3]
+    txy = 2.0 * (x * y - w * z)
+    tyy = 1.0 - 2.0 * (x * x + z * z)
+    Math::atan2(txy, tyy) * Snow::RADIANS_TO_DEGREES
+  end
+
 
   alias_method :-, :subtract
   alias_method :+, :add
