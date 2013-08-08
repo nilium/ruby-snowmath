@@ -315,34 +315,30 @@ void mat4_look_at(const vec3_t eye, const vec3_t center, const vec3_t up, mat4_t
 
 void mat4_from_quat(const quat_t quat, mat4_t out)
 {
-  s_float_t tx, ty, tz, xx, xy, xz, yy, yz, zz, wx, wy, wz;
+  s_float_t xx, xy, xz, yy, yz, zz, wx, wy, wz;
 
-  tx = s_float_lit(2.0) * quat[0];
-  ty = s_float_lit(2.0) * quat[1];
-  tz = s_float_lit(2.0) * quat[2];
+  xx = quat[0] * quat[0];
+  xy = quat[0] * quat[1];
+  xz = quat[0] * quat[2];
 
-  xx = tx * quat[0];
-  xy = tx * quat[1];
-  xz = tx * quat[2];
+  yy = quat[1] * quat[1];
+  yz = quat[2] * quat[2];
 
-  yy = ty * quat[1];
-  yz = tz * quat[1];
+  zz = quat[2] * quat[2];
 
-  zz = tz * quat[3];
+  wx = quat[0] * quat[3];
+  wy = quat[1] * quat[3];
+  wz = quat[2] * quat[3];
 
-  wx = tx * quat[3];
-  wy = ty * quat[3];
-  wz = tz * quat[3];
-
-  out[0 ] = s_float_lit(1.0) - (yy + zz);
-  out[1 ] = xy - wz;
-  out[2 ] = xz + wy;
-  out[4 ] = xy + wz;
-  out[5 ] = s_float_lit(1.0) - (xx + zz);
-  out[6 ] = yz - wx;
-  out[8 ] = xz - wy;
-  out[9 ] = yz + wx;
-  out[10] = s_float_lit(1.0) - (xx + yy);
+  out[0 ] = s_float_lit(1.0) - s_float_lit(2.0) * (yy + zz);
+  out[1 ] = s_float_lit(2.0) * (xy - wz);
+  out[2 ] = s_float_lit(2.0) * (xz + wy);
+  out[4 ] = s_float_lit(2.0) * (xy + wz);
+  out[5 ] = s_float_lit(1.0) - s_float_lit(2.0) * (xx + zz);
+  out[6 ] = s_float_lit(2.0) * (yz - wx);
+  out[8 ] = s_float_lit(2.0) * (xz - wy);
+  out[9 ] = s_float_lit(2.0) * (yz + wx);
+  out[10] = s_float_lit(1.0) - s_float_lit(2.0) * (xx + yy);
 
   out[7 ] = s_float_lit(0.0);
   out[3 ] = s_float_lit(0.0);

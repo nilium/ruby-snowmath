@@ -142,34 +142,30 @@ void mat3_rotation(s_float_t angle, s_float_t x, s_float_t y, s_float_t z, mat3_
 
 void mat3_from_quat(const quat_t in, mat3_t out)
 {
-  s_float_t tx, ty, tz, xx, xy, xz, yy, yz, zz, wx, wy, wz;
+  s_float_t xx, xy, xz, yy, yz, zz, wx, wy, wz;
 
-  tx = s_float_lit(2.0) * in[0];
-  ty = s_float_lit(2.0) * in[1];
-  tz = s_float_lit(2.0) * in[2];
+  xx = in[0] * in[0];
+  xy = in[0] * in[1];
+  xz = in[0] * in[2];
 
-  xx = tx * in[0];
-  xy = tx * in[1];
-  xz = tx * in[2];
+  yy = in[1] * in[1];
+  yz = in[2] * in[2];
 
-  yy = ty * in[1];
-  yz = tz * in[1];
+  zz = in[2] * in[2];
 
-  zz = tz * in[3];
+  wx = in[0] * in[3];
+  wy = in[1] * in[3];
+  wz = in[2] * in[3];
 
-  wx = tx * in[3];
-  wy = ty * in[3];
-  wz = tz * in[3];
-
-  out[0] = s_float_lit(1.0) - (yy + zz);
-  out[1] = xy - wz;
-  out[2] = xz + wy;
-  out[3] = xy + wz;
-  out[4] = s_float_lit(1.0) - (xx + zz);
-  out[5] = yz - wx;
-  out[6] = xz - wy;
-  out[7] = yz + wx;
-  out[8] = s_float_lit(1.0) - (xx + yy);
+  out[0] = s_float_lit(1.0) - s_float_lit(2.0) * (yy + zz);
+  out[1] = s_float_lit(2.0) * (xy - wz);
+  out[2] = s_float_lit(2.0) * (xz + wy);
+  out[3] = s_float_lit(2.0) * (xy + wz);
+  out[4] = s_float_lit(1.0) - s_float_lit(2.0) * (xx + zz);
+  out[5] = s_float_lit(2.0) * (yz - wx);
+  out[6] = s_float_lit(2.0) * (xz - wy);
+  out[7] = s_float_lit(2.0) * (yz + wx);
+  out[8] = s_float_lit(1.0) - s_float_lit(2.0) * (xx + yy);
 }
 
 
