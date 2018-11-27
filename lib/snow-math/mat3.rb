@@ -121,8 +121,8 @@ class Snow::Mat3
   #
   def multiply!(rhs)
     multiply rhs, case rhs
-      when Mat3, Numeric then self
-      when Vec3 then rhs
+      when ::Snow::Mat3, Numeric then self
+      when ::Snow::Vec3 then rhs
       else raise TypeError, "Invalid type for RHS"
       end
   end
