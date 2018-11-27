@@ -7,7 +7,7 @@ require File.expand_path('../lib/snow-math/version.rb', __FILE__)
 Gem::Specification.new { |s|
   s.name        = 'snow-math'
   s.version     = Snow::SNOW_MATH_VERSION
-  s.date        = '2013-07-29'
+  s.date        = '2018-11-26'
   s.summary     = 'Snow Math Types'
   s.description = 'Math types built on the SnowPalm math code'
   s.authors     = [ 'Noel Raymond Cower' ]
