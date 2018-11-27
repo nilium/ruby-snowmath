@@ -17,7 +17,7 @@ Gem::Specification.new { |s|
                   [ 'COPYING', 'README.md' ]
   s.extensions << 'ext/extconf.rb'
   s.homepage    = 'https://github.com/nilium/ruby-snowmath'
-  s.license     = 'Simplified BSD'
+  s.license     = 'BSD-2-Clause'
   s.has_rdoc    = true
   s.extra_rdoc_files = [
       'ext/snow-math/snow-math.c',
